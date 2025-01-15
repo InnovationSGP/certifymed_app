@@ -7,7 +7,12 @@ const DatePicker = dynamic(() => import("react-datepicker"), {
   ssr: false,
 });
 
-const CustomDatePicker = ({ onChange, value, label = "Date of birth" }) => {
+const CustomDatePicker = ({
+  onChange,
+  value,
+  label = "Date of birth",
+  disabled = false,
+}) => {
   const [selectedDate, setSelectedDate] = useState(value || null);
   const [mounted, setMounted] = useState(false);
 
@@ -17,9 +22,11 @@ const CustomDatePicker = ({ onChange, value, label = "Date of birth" }) => {
   }, []);
 
   const handleDateChange = (date) => {
-    setSelectedDate(date);
-    if (onChange) {
-      onChange(date);
+    if (!disabled) {
+      setSelectedDate(date);
+      if (onChange) {
+        onChange(date);
+      }
     }
   };
 
@@ -33,8 +40,8 @@ const CustomDatePicker = ({ onChange, value, label = "Date of birth" }) => {
         {`
           .react-datepicker-popper {
             max-width: 100%;
-           transform: none !important;
-           top: 60px ! important;
+            transform: none !important;
+            top: 60px !important;
           }
 
           .react-datepicker {
@@ -197,7 +204,11 @@ const CustomDatePicker = ({ onChange, value, label = "Date of birth" }) => {
             display: none !important;
           }
 
-    
+          .date-input-disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background-color: #f3f4f6;
+          }
         `}
       </style>
       <div className="relative w-full">
@@ -206,18 +217,30 @@ const CustomDatePicker = ({ onChange, value, label = "Date of birth" }) => {
           onChange={handleDateChange}
           dateFormat="dd/MM/yyyy"
           placeholderText="DD/MM/YYYY"
-          // className="input-style"
           minDate={new Date(1900, 0, 1)}
           maxDate={new Date()}
           isClearable={false}
+          disabled={disabled}
           customInput={
             <input
-              className="input-style min-w-full"
+              className={`input-style min-w-full ${
+                disabled ? "date-input-disabled" : ""
+              }`}
               placeholder="DD/MM/YYYY"
+              disabled={disabled}
             />
           }
           calendarClassName="bg-white shadow-lg border border-gray-200 rounded-lg"
           wrapperClassName="w-full"
+          showPopperArrow={false}
+          popperModifiers={[
+            {
+              name: "preventOverflow",
+              options: {
+                padding: 10,
+              },
+            },
+          ]}
         />
       </div>
     </div>

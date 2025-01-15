@@ -6,6 +6,7 @@ const CustomSelect = ({
   options,
   value,
   onChange,
+  disabled = false,
   placeholder = "Select an option",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,19 +22,24 @@ const CustomSelect = ({
       <div className="relative">
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between px-3 py-[18px] bg-superSilver h-[55px] xl:h-[60px] text-dimGray outline-primary rounded-xl font-medium"
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          className={`w-full flex items-center justify-between px-3 py-[18px] bg-superSilver h-[55px] xl:h-[60px] text-dimGray outline-primary rounded-xl font-medium
+            ${disabled ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}
+          `}
+          disabled={disabled}
         >
           <span className={`block truncate ${!value && "text-gray-500"}`}>
             {value || placeholder}
           </span>
-          <span className="pointer-events-none">
-            <CustomDownArrow />
-          </span>
+          {!disabled && (
+            <span className="pointer-events-none">
+              <CustomDownArrow />
+            </span>
+          )}
         </button>
 
-        {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white  border shadow-2xl border-gray-200 rounded-lg  max-h-60 overflow-auto">
+        {isOpen && !disabled && (
+          <div className="absolute z-10 w-full mt-1 bg-white border shadow-2xl border-gray-200 rounded-lg max-h-60 overflow-auto">
             {options.map((option) => (
               <button
                 key={option.value}

@@ -35,16 +35,16 @@ const ProfilePage = () => {
   return (
     <>
       <div className="p-6 lg:p-10">
-        <div className="max-w-5xl mx-auto bg-white rounded-xl">
-          <div className="px-6 py-4">
-            <h1 className="text-2xl font-medium">Profile Information</h1>
-          </div>
+        <div className="lg:px-[35px] px-6 pt-6 bg-white rounded-xl">
+          <h1 className="section-heading leading-[51px] mb-2">
+            Profile Information
+          </h1>
 
-          <div className="px-6 pb-6">
+          <div className="pb-14 lg:pb-6">
             {/* Profile Image */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-4 sm:mb-8">
               <div className="relative">
-                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
                   {profileImage ? (
                     <img
                       src={profileImage}
