@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useMemo, useEffect, useRef } from "react";
 
 const Flag = ({ iso }) => {
@@ -10,13 +11,13 @@ const Flag = ({ iso }) => {
   );
 };
 
-const PhoneNumberInput = ({ id, value, onChange, error }) => {
+const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
   const [countryCode, setCountryCode] = useState("+234");
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const dropdownRef = useRef(null); // Ref for the dropdown
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -52,7 +53,7 @@ const PhoneNumberInput = ({ id, value, onChange, error }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false); // Close the dropdown if clicked outside
+        setIsOpen(false);
       }
     };
 
@@ -86,30 +87,38 @@ const PhoneNumberInput = ({ id, value, onChange, error }) => {
   };
 
   const handlePhoneNumberChange = (e) => {
-    const value = e.target.value.replace(/[^\d]/g, "");
-    onChange(value);
+    if (!disabled && onChange) {
+      const value = e.target.value.replace(/[^\d]/g, "");
+      onChange(value);
+    }
   };
 
   return (
     <div
-      className={`${
-        error ? "border border-rose-500	" : ""
-      } flex items-center px-3 gap-3 py-[18px] bg-superSilver placeholder:!text-shadesOn placeholder:opacity-45 text-dimGray outline-primary rounded-xl font-medium h-[55px] xl:h-[60px]`}
+      className={`
+        flex items-center px-3 gap-3 py-[18px] bg-superSilver placeholder:!text-shadesOn 
+        placeholder:opacity-45 text-dimGray outline-primary rounded-xl font-medium h-[55px] xl:h-[60px]
+        ${error ? "border border-rose-500" : ""}
+        ${disabled ? "opacity-70 cursor-not-allowed pointer-events-none" : ""}
+      `}
     >
       <div className="relative flex items-center gap-4" ref={dropdownRef}>
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex gap-2 items-center justify-between text-sm focus:outline-none"
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          className={`flex gap-2 items-center justify-between text-sm focus:outline-none
+            ${disabled ? "cursor-not-allowed" : ""}
+          `}
+          disabled={disabled}
         >
           <span className="flex items-center gap-1.5 mr-2">
             {selectedCountry && <Flag iso={selectedCountry.iso} />}
             <span>{selectedCountry?.code}</span>
           </span>
-          <span className="text-gray-500 block pl-2">▼</span>
+          {!disabled && <span className="text-gray-500 block pl-2">▼</span>}
         </button>
 
-        {isOpen && (
+        {isOpen && !disabled && (
           <div className="absolute -left-2 top-[40px] max-w-[200px] hide-scrollbar p-[14px] max-h-[244px] z-10 mt-1 w-64 overflow-auto rounded-lg border border-gray-300 bg-white shadow-[0px_4px_24px_0px_rgba(0,0,0,0.20)]">
             <div className="mb-2">
               <input
@@ -161,7 +170,10 @@ const PhoneNumberInput = ({ id, value, onChange, error }) => {
         placeholder="8123456789"
         value={value}
         onChange={handlePhoneNumberChange}
-        className="bg-transparent w-full outline-none"
+        className={`bg-transparent w-full outline-none ${
+          disabled ? "cursor-not-allowed" : ""
+        }`}
+        disabled={disabled}
       />
     </div>
   );

@@ -8,7 +8,7 @@ const DashboardNav = () => {
   const ispatientview = true;
 
   const userMenuLinks = [
-    { href: "/profile", label: "My Profile" },
+    { href: "/dashboard/doctor/profile", label: "My Profile" },
     { href: "/settings", label: "Settings" },
     { href: "/help", label: "Help Center" },
     { href: "/logout", label: "Logout" },

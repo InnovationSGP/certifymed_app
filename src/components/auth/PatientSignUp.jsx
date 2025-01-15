@@ -8,7 +8,7 @@ import { CertifyLogo, LeftIcon } from "../common/AppIcons";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomSelect from "../common/CustomSelect";
 import GoogleButton from "../common/GoogleButton";
-import PhoneNumberInput from "../common/NumberSelect";
+import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import toast from "react-hot-toast";
 import { validatePassword } from "@/utils/inputFieldHelpers";
