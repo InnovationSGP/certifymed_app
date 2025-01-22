@@ -16,14 +16,14 @@ const SignUpOptions = () => {
           personalised healthcare.{" "}
         </p>
         <Link
-          href="/sign-up/patient-sign-up"
+          href="/sign-up/patient"
           className="primary-btn w-full h-[55px] xl:h-[60px] max-w-[220px] !px-7 md:max-w-[328px] mx-auto"
         >
           Sign up as a patient
         </Link>
         <div className="flex items-center justify-center">
           <Link
-            href="/sign-up/doctor-sign-up"
+            href="/sign-up/doctor"
             className="w-full max-w-[220px] h-[52px] xl:h-[60px] md:max-w-[328px] flex justify-center items-center text-primary mt-5 py-[13px] bg-white border border-primary rounded-xl hover:bg-primary font-medium hover:text-white duration-300 ease-in-out transition-colors"
           >
             Sign up as a doctor

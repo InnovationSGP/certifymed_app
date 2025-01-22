@@ -12,7 +12,11 @@ import CustomSelect from "../common/CustomSelect";
 import GoogleButton from "../common/GoogleButton";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { validatePassword, validateEmail, validatePhone } from "@/utils/inputFieldHelpers";
+import {
+  validatePassword,
+  validateEmail,
+  validatePhone,
+} from "@/utils/inputFieldHelpers";
 import axiosInstance from "@/utils/axios";
 
 const SignUp = ({ role }) => {
@@ -38,12 +42,15 @@ const SignUp = ({ role }) => {
     { value: "Female", label: "Female" },
   ];
 
-  const handleChange = useCallback((key, value) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-    if (errors[key]) {
-      setErrors((prev) => ({ ...prev, [key]: "" }));
-    }
-  }, [errors]);
+  const handleChange = useCallback(
+    (key, value) => {
+      setFormData((prev) => ({ ...prev, [key]: value }));
+      if (errors[key]) {
+        setErrors((prev) => ({ ...prev, [key]: "" }));
+      }
+    },
+    [errors]
+  );
 
   const validateForm = useCallback(() => {
     const newErrors = {};
@@ -68,9 +75,11 @@ const SignUp = ({ role }) => {
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = "Phone number is required";
     } else if (!validatePhone(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Please enter a valid phone number (10-15 digits)";
+      newErrors.phoneNumber =
+        "Please enter a valid phone number (10-15 digits)";
     }
-    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
+    if (!formData.dateOfBirth)
+      newErrors.dateOfBirth = "Date of birth is required";
     if (!formData.selectedValue) newErrors.selectedValue = "Gender is required";
 
     setErrors(newErrors);
@@ -92,7 +101,7 @@ const SignUp = ({ role }) => {
       const data = await axiosInstance.post("/auth/api/registration", userData);
       if (data) {
         toast.success("Sign up successful");
-        if (role === 'doctor') {
+        if (role === "doctor") {
           router.push("/dashboard/doctor");
         } else {
           router.push("/dashboard/patients");
@@ -105,7 +114,13 @@ const SignUp = ({ role }) => {
     }
   };
 
-  const renderInput = (label, name, type = "text", placeholder = "", customProps = {}) => (
+  const renderInput = (
+    label,
+    name,
+    type = "text",
+    placeholder = "",
+    customProps = {}
+  ) => (
     <div>
       <label className="font-medium text-dimGray" htmlFor={name}>
         {label}
@@ -113,14 +128,18 @@ const SignUp = ({ role }) => {
       <input
         id={name}
         name={name}
-        className={`input-style mt-[3px] ${errors[name] ? "border border-rose-500" : ""}`}
+        className={`input-style mt-[3px] ${
+          errors[name] ? "border border-rose-500" : ""
+        }`}
         type={type}
         placeholder={placeholder}
         value={formData[name]}
         onChange={(e) => handleChange(name, e.target.value)}
         {...customProps}
       />
-      {errors[name] && <p className="text-rose-500 mt-1 text-sm">{errors[name]}</p>}
+      {errors[name] && (
+        <p className="text-rose-500 mt-1 text-sm">{errors[name]}</p>
+      )}
     </div>
   );
 
@@ -134,7 +153,10 @@ const SignUp = ({ role }) => {
 
       <GoogleButton />
 
-      <form onSubmit={handleSubmit} className="gap-y-[23px] flex flex-col mb-8 sm:mb-[17px]">
+      <form
+        onSubmit={handleSubmit}
+        className="gap-y-[23px] flex flex-col mb-8 sm:mb-[17px]"
+      >
         <div className="grid md:grid-cols-2 gap-[23px]">
           {renderInput("First Name", "firstName", "text", "First name")}
           {renderInput("Last Name", "lastName", "text", "Last name")}
@@ -146,7 +168,11 @@ const SignUp = ({ role }) => {
               onChange={(value) => handleChange("selectedValue", value)}
               error={!!errors.selectedValue}
             />
-            {errors.selectedValue && <p className="text-rose-500 mt-1 text-sm">{errors.selectedValue}</p>}
+            {errors.selectedValue && (
+              <p className="text-rose-500 mt-1 text-sm">
+                {errors.selectedValue}
+              </p>
+            )}
           </div>
           <div>
             <label className="font-medium text-dimGray">Date of Birth</label>
@@ -155,7 +181,9 @@ const SignUp = ({ role }) => {
               onChange={(date) => handleChange("dateOfBirth", date)}
               error={!!errors.dateOfBirth}
             />
-            {errors.dateOfBirth && <p className="text-rose-500 mt-1 text-sm">{errors.dateOfBirth}</p>}
+            {errors.dateOfBirth && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.dateOfBirth}</p>
+            )}
           </div>
           {renderInput("Email", "email", "email", "example@gmail.com")}
           <div>
@@ -165,7 +193,9 @@ const SignUp = ({ role }) => {
               onChange={(value) => handleChange("phoneNumber", value)}
               error={!!errors.phoneNumber}
             />
-            {errors.phoneNumber && <p className="text-rose-500 mt-1 text-sm">{errors.phoneNumber}</p>}
+            {errors.phoneNumber && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.phoneNumber}</p>
+            )}
           </div>
         </div>
 
@@ -176,7 +206,9 @@ const SignUp = ({ role }) => {
           <div className="relative">
             <input
               id="password"
-              className={`input-style mt-[3px] ${errors.password ? "border border-rose-500" : ""}`}
+              className={`input-style mt-[3px] ${
+                errors.password ? "border border-rose-500" : ""
+              }`}
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={formData.password}
@@ -190,21 +222,30 @@ const SignUp = ({ role }) => {
               {showPassword ? <Eyeclose /> : <EyeIcon />}
             </button>
           </div>
-          {errors.password && <p className="text-rose-500 mt-1 text-sm">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-rose-500 mt-1 text-sm">{errors.password}</p>
+          )}
         </div>
 
         <div>
-          <label className="font-medium text-dimGray" htmlFor="passwordConfirmation">
+          <label
+            className="font-medium text-dimGray"
+            htmlFor="passwordConfirmation"
+          >
             Confirm Password
           </label>
           <div className="relative">
             <input
               id="passwordConfirmation"
-              className={`input-style mt-[3px] ${errors.passwordConfirmation ? "border border-rose-500" : ""}`}
+              className={`input-style mt-[3px] ${
+                errors.passwordConfirmation ? "border border-rose-500" : ""
+              }`}
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
               value={formData.passwordConfirmation}
-              onChange={(e) => handleChange("passwordConfirmation", e.target.value)}
+              onChange={(e) =>
+                handleChange("passwordConfirmation", e.target.value)
+              }
             />
             <button
               type="button"
@@ -214,7 +255,11 @@ const SignUp = ({ role }) => {
               {showConfirmPassword ? <Eyeclose /> : <EyeIcon />}
             </button>
           </div>
-          {errors.passwordConfirmation && <p className="text-rose-500 mt-1 text-sm">{errors.passwordConfirmation}</p>}
+          {errors.passwordConfirmation && (
+            <p className="text-rose-500 mt-1 text-sm">
+              {errors.passwordConfirmation}
+            </p>
+          )}
         </div>
 
         <PrimaryBtn
