@@ -1,16 +1,18 @@
 "use client";
 import { Eyeclose, EyeIcon } from "@/components/common/Icons";
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import { CertifyLogo } from "../common/AppIcons";
 import Link from "next/link";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { validatePassword } from "@/utils/inputFieldHelpers";
 import SpinnerLoader from "../common/SpinnerLoader";
-
+import axiosInstance from "@/utils/axios";
+import { useRouter, useSearchParams } from "next/navigation";
 const AuthenticationCode = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
   const [authCode, setAuthCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,41 +20,46 @@ const AuthenticationCode = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
+  const handleSubmit =  async (e) => {
     setLoading(true);
     e.preventDefault();
     const newErrors = {};
     let valid = true;
+      if (!newPassword) {
+        newErrors.newPassword = "Password is required";
+      } else if (!validatePassword(newPassword)) {
+        newErrors.newPassword = `Include at least one uppercase letter, one lowercase letter, one number,
+  and one special character (e.g., !, @, #, $, %, ^, &) with at least 8 characters.`;
+      }
 
-    // Validation
-    if (!authCode) {
-      newErrors.authCode = "Authentication code is required";
-    }
-
-    if (!newPassword) {
-      newErrors.newPassword = "Password is required";
-    } else if (!validatePassword(newPassword)) {
-      newErrors.newPassword = `Include at least one uppercase letter, one lowercase letter, one number,
- and one special character (e.g., !, @, #, $, %, ^, &) with at least 8 characters.`;
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (confirmPassword !== newPassword) {
-      newErrors.confirmPassword = "Password doesn’t match";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    // Proceed with form submission (e.g., API call)
-    setLoading(false);
-    router.push("/");
-    toast.success("Password reset successfully");
-  };
+      if (!confirmPassword) {
+        newErrors.confirmPassword = "Please confirm your password";
+      } else if (confirmPassword !== newPassword) {
+        newErrors.confirmPassword = "Password doesn’t match";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+      try {
+      const response =  await axiosInstance.post("/auth/api/registration/password/reset", {
+          email,
+          password: newPassword,
+          passwordConfirmation: confirmPassword,
+        });
+        toast.success("Password reset successfully");
+        if(response.data.user.roleType == "CARE_COORDINATOR"){
+          router.push("/dashboard/doctor");
+        }else {
+          router.push("/dashboard/patients");
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Error resetting password.");
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <div className="w-full max-w-[542px] mx-auto">
@@ -77,7 +84,7 @@ const AuthenticationCode = () => {
         className="space-y-[23px] xl:space-y-6 mt-10"
       >
         {/* Authentication Code */}
-        <div>
+        {/* <div>
           <label
             htmlFor="authCode"
             className="block font-medium text-dimGray mb-[3px]"
@@ -103,7 +110,7 @@ const AuthenticationCode = () => {
           {errors.authCode && (
             <p className="text-rose-500 mt-1 text-sm">{errors.authCode}</p>
           )}
-        </div>
+        </div> */}
 
         {/* New Password */}
         <div>

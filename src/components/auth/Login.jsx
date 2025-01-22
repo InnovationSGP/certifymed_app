@@ -60,7 +60,6 @@ const Login = () => {
     try {
       const response = await axiosInstance.post("/auth/api/users", formData);
 
-      console.log("===response==",response);
 
       if (response.status === 200) {
         // const data = response.data;
@@ -79,7 +78,11 @@ const Login = () => {
         //   })
         // );
         toast.success("Logged in successfully");
-        router.push("/");
+        if(response.data.roleType == "CARE_COORDINATOR"){
+          router.push("/dashboard/doctor");
+        }else {
+          router.push("/dashboard/patients");
+        }
       } else {
         toast.error(response.data.message || "Login failed");
       }
