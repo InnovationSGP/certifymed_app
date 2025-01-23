@@ -13,6 +13,7 @@ const Flag = ({ iso }) => {
 
 const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
   const [countryCode, setCountryCode] = useState("+234");
+  const [countryName, setCountryName] = useState("Nigeria");
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [countries, setCountries] = useState([]);
@@ -86,10 +87,29 @@ const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
     setSearchQuery(value);
   };
 
+  const handleCountrySelect = (country) => {
+    setCountryCode(country.code);
+    setCountryName(country.name);
+    setIsOpen(false);
+    setSearchQuery("");
+
+    if (onChange) {
+      onChange({
+        phoneNumber: value,
+        countryCode: country.code,
+        countryName: country.name,
+      });
+    }
+  };
+
   const handlePhoneNumberChange = (e) => {
     if (!disabled && onChange) {
-      const value = e.target.value.replace(/[^\d]/g, "");
-      onChange(value);
+      const phoneValue = e.target.value.replace(/[^\d]/g, "");
+      onChange({
+        phoneNumber: phoneValue,
+        countryCode,
+        countryName,
+      });
     }
   };
 
@@ -144,11 +164,7 @@ const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
                   <button
                     key={country.code}
                     className="flex w-full items-center gap-2.5 px-3 py-2 hover:bg-gray-100 rounded-md"
-                    onClick={() => {
-                      setCountryCode(country.code);
-                      setIsOpen(false);
-                      setSearchQuery("");
-                    }}
+                    onClick={() => handleCountrySelect(country)}
                   >
                     <Flag iso={country.iso} />
                     <span className="text-xs text-shadesOn">
@@ -168,7 +184,7 @@ const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
       <input
         type="tel"
         placeholder="8123456789"
-        value={value}
+        value={value?.phoneNumber || value}
         onChange={handlePhoneNumberChange}
         className={`bg-transparent w-full outline-none ${
           disabled ? "cursor-not-allowed" : ""

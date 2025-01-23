@@ -30,6 +30,8 @@ const SignUp = ({ role }) => {
     password: "",
     passwordConfirmation: "",
     phoneNumber: "",
+    countryCode: "+234",
+    countryName: "Nigeria",
     dateOfBirth: null,
     selectedValue: "",
   });
@@ -43,17 +45,16 @@ const SignUp = ({ role }) => {
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
-  
-    useEffect(() => {
-      // If user is already logged in, redirect to dashboard
-      if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-        if(user.roleType === "CUSTOMER"){
-          router.push("/dashboard/patients");
-        } else {
-          router.push("/dashboard/doctor");
-        }
+
+  useEffect(() => {
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if (user.roleType === "CUSTOMER") {
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
       }
-    }, [user.isLoggedIn, router]);
+    }
+  }, [user.isLoggedIn, router]);
 
   const handleChange = useCallback(
     (key, value) => {
@@ -64,6 +65,19 @@ const SignUp = ({ role }) => {
     },
     [errors]
   );
+
+  const handlePhoneChange = (phoneData) => {
+    setFormData((prev) => ({
+      ...prev,
+      phoneNumber: phoneData.phoneNumber,
+      countryCode: phoneData.countryCode,
+      countryName: phoneData.countryName,
+    }));
+
+    if (errors.phoneNumber) {
+      setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+    }
+  };
 
   const validateForm = useCallback(() => {
     const newErrors = {};
@@ -103,11 +117,16 @@ const SignUp = ({ role }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    // Destructure passwordConfirmation and create userData without it
+    const { passwordConfirmation, ...otherFormData } = formData;
+
     const userData = {
-      ...formData,
+      ...otherFormData,
       role: "USER",
       userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
     };
+
+    console.log(userData, "userData");
 
     try {
       setLoading(true);
@@ -126,7 +145,6 @@ const SignUp = ({ role }) => {
       setLoading(false);
     }
   };
-
   const renderInput = (
     label,
     name,
@@ -203,7 +221,7 @@ const SignUp = ({ role }) => {
             <label className="font-medium text-dimGray">Phone Number</label>
             <PhoneNumberInput
               value={formData.phoneNumber}
-              onChange={(value) => handleChange("phoneNumber", value)}
+              onChange={handlePhoneChange}
               error={!!errors.phoneNumber}
             />
             {errors.phoneNumber && (
