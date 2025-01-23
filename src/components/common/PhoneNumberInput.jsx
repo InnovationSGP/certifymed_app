@@ -11,14 +11,20 @@ const Flag = ({ iso }) => {
   );
 };
 
-const PhoneNumberInput = ({ id, value, onChange, error, disabled = false }) => {
-  const [countryCode, setCountryCode] = useState("+234");
-  const [countryName, setCountryName] = useState("Nigeria");
+  const PhoneNumberInput = ({ id, value, onChange, error, disabled = false , defaultCountryCode = "+234"}) => {
+    const [countryCode, setCountryCode] = useState(defaultCountryCode);
+    const [countryName, setCountryName] = useState("Nigeria");
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (defaultCountryCode !== countryCode) {
+      setCountryCode(defaultCountryCode);
+    }
+  }, [defaultCountryCode]); 
 
   useEffect(() => {
     const fetchCountries = async () => {
