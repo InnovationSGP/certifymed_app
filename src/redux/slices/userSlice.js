@@ -11,7 +11,8 @@ const initialState = {
   image: false,
   accessToken: "",
   refreshToken: "",
-    isLoggedIn: true,
+  isLoggedIn: false,
+  roleType: "CUSTOMER"
 };
 
 const userSlice = createSlice({
@@ -27,7 +28,9 @@ const userSlice = createSlice({
       state.gender = action.payload.gender;
       state.image = action.payload.image;
       state.accessToken = action.payload.accessToken;
+      state.isLoggedIn = action.payload.isLoggedIn
       state.refreshToken = action.payload.refreshToken;
+      state.roleType = action.payload.roleType
     },
     updateUser: (state, action) => {
       const { username, email, firstName, lastName, gender, image } =
@@ -49,6 +52,7 @@ const userSlice = createSlice({
       state.image = false;
       state.accessToken = "";
       state.refreshToken = "";
+      state.isLoggedIn = false;
     },
   },
 });

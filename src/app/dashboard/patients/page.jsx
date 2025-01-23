@@ -9,8 +9,23 @@ import RecentAppointments from "@/components/dashboard/patients/appointments/Rec
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setAppointmentsForPatients } from "@/redux/slices/patientAppointments";
+import { useRouter } from "next/navigation";
 
 const PatientsDashboardPage = () => {
+  const router = useRouter();
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
+  
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(

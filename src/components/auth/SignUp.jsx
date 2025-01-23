@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -18,9 +18,11 @@ import {
   validatePhone,
 } from "@/utils/inputFieldHelpers";
 import axiosInstance from "@/utils/axios";
+import { useSelector } from "react-redux";
 
 const SignUp = ({ role }) => {
   const router = useRouter();
+  const user = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -41,6 +43,17 @@ const SignUp = ({ role }) => {
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
+  
+    useEffect(() => {
+      // If user is already logged in, redirect to dashboard
+      if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+        if(user.roleType === "CUSTOMER"){
+          router.push("/dashboard/patients");
+        } else {
+          router.push("/dashboard/doctor");
+        }
+      }
+    }, [user.isLoggedIn, router]);
 
   const handleChange = useCallback(
     (key, value) => {

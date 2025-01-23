@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -24,6 +24,20 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Getting the user state from Redux
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,27 +74,28 @@ const Login = () => {
     try {
       const response = await axiosInstance.post("/auth/api/users", formData);
 
-
       if (response.status === 200) {
-        // const data = response.data;
-        // dispatch(
-        //   setUserAction({
-        //     id: data.id,
-        //     username: data.username,
-        //     email: data.email,
-        //     firstName: data.firstName,
-        //     lastName: data.lastName,
-        //     gender: data.gender,
-        //     image: data.image,
-        //     accessToken: data.accessToken,
-        //     refreshToken: data.refreshToken,
-        //     isLoggedIn: true,
-        //   })
-        // );
+        const data = response.data;
+
+        localStorage.setItem("accessToken", data.access_token);
+        localStorage.setItem("refreshToken", data.refreshToken);
+
+        dispatch(
+          setUserAction({
+            id: data._id,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            accessToken: data.access_token,
+            refreshToken: data.refreshToken,
+            isLoggedIn: true,
+            roleType: data.roleType
+          })
+        );
         toast.success("Logged in successfully");
-        if(response.data.roleType == "CARE_COORDINATOR"){
+        if (response.data.roleType === "CARE_COORDINATOR") {
           router.push("/dashboard/doctor");
-        }else {
+        } else {
           router.push("/dashboard/patients");
         }
       } else {

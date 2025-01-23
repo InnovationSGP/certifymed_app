@@ -8,7 +8,9 @@ import toast from "react-hot-toast";
 import { validatePassword } from "@/utils/inputFieldHelpers";
 import SpinnerLoader from "../common/SpinnerLoader";
 import axiosInstance from "@/utils/axios";
+import { useSelector } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
+
 const AuthenticationCode = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -20,6 +22,22 @@ const AuthenticationCode = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+
+  // Getting the user state from Redux
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
+
   const handleSubmit =  async (e) => {
     setLoading(true);
     e.preventDefault();

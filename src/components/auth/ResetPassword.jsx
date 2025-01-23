@@ -8,6 +8,7 @@ import { validateEmail } from "@/utils/inputFieldHelpers";
 import toast from "react-hot-toast";
 import SpinnerLoader from "../common/SpinnerLoader";
 import axiosInstance from "@/utils/axios";
+import { useSelector } from "react-redux";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -18,6 +19,21 @@ const ResetPassword = () => {
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
   const [isResendEnabled, setIsResendEnabled] = useState(false);
   const router = useRouter();
+
+
+  // Getting the user state from Redux
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
 
   useEffect(() => {
     let interval;

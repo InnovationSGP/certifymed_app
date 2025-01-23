@@ -1,13 +1,24 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import PrimaryBtn from "../common/PrimaryBtn";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 const Hero = () => {
   const router = useRouter();
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
   const navigationHandler = () => {
     router.push("/dashboard/doctor");
   };

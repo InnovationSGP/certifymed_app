@@ -3,7 +3,7 @@ import Link from "next/link";
 import SpinnerLoader from "../common/SpinnerLoader";
 import { useRouter } from "next/navigation";
 import { Eyeclose, EyeIcon } from "../common/Icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CertifyLogo, LeftIcon } from "../common/AppIcons";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomSelect from "../common/CustomSelect";
@@ -14,9 +14,11 @@ import toast from "react-hot-toast";
 import { validatePassword } from "@/utils/inputFieldHelpers";
 import { validateEmail } from "@/utils/inputFieldHelpers";
 import { validatePhone } from "@/utils/inputFieldHelpers";
+import { useSelector } from "react-redux";
 
 const DoctorSignUp = () => {
   const router = useRouter();
+  const user = useSelector((state) => state.user);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -28,6 +30,17 @@ const DoctorSignUp = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
+      if(user.roleType === "CUSTOMER"){
+        router.push("/dashboard/patients");
+      } else {
+        router.push("/dashboard/doctor");
+      }
+    }
+  }, [user.isLoggedIn, router]);
 
   const options = [
     { value: "Male", label: "Male" },
