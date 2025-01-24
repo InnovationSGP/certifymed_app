@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { setUser } from "@/redux/slices/userSlice";
+import { setAuth } from "@/utils/auth";
+import axiosInstance from "@/utils/axios";
+import {
+  validateEmail,
+  validatePassword,
+  validatePhone,
+} from "@/utils/inputFieldHelpers";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import SpinnerLoader from "../common/SpinnerLoader";
-import { Eyeclose, EyeIcon } from "../common/Icons";
 import { CertifyLogo } from "../common/AppIcons";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomSelect from "../common/CustomSelect";
 import GoogleButton from "../common/GoogleButton";
+import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
-import {
-  validatePassword,
-  validateEmail,
-  validatePhone,
-} from "@/utils/inputFieldHelpers";
-import axiosInstance from "@/utils/axios";
-import { setUser } from "@/redux/slices/userSlice";
-import { setAuth } from "@/utils/auth";
+import SpinnerLoader from "../common/SpinnerLoader";
 
 const SignUp = ({ role }) => {
   const router = useRouter();
@@ -114,7 +114,7 @@ const SignUp = ({ role }) => {
     try {
       setLoading(true);
 
-      const userData = {
+      const response = await axiosInstance.post("/auth/api/registration", {
         ...formData,
         dateOfBirth:
           formData.dateOfBirth instanceof Date
@@ -122,39 +122,25 @@ const SignUp = ({ role }) => {
             : null,
         role: "USER",
         userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
-      };
-
-      const response = await axiosInstance.post(
-        "/auth/api/registration",
-        userData
-      );
+      });
 
       if (response.status === 200 || response.status === 201) {
         const data = response.data;
 
-        // Set auth cookies and localStorage data
+        // Set auth cookies
         setAuth(data);
 
-        // Update Redux store
-        dispatch(
-          setUser({
-            id: data._id,
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            isLoggedIn: true,
-            roleType: data.roleType,
-          })
-        );
+        // Update Redux store with all relevant user data
+        dispatch(setUser(data));
 
         toast.success("Sign up successful!");
 
-        // Middleware will handle the redirect based on role
-        if (data.roleType === "CARE_COORDINATOR") {
-          router.push("/dashboard/doctor");
-        } else {
-          router.push("/dashboard/patients");
-        }
+        // Redirect based on role
+        router.push(
+          data.roleType === "CARE_COORDINATOR"
+            ? "/dashboard/doctor"
+            : "/dashboard/patients"
+        );
       }
     } catch (error) {
       console.error("Signup error:", error);

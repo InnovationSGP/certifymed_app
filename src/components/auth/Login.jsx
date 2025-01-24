@@ -1,21 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
-import GoogleButton from "../common/GoogleButton";
-import PrimaryBtn from "../common/PrimaryBtn";
-import PasswordInput from "../homepage/PasswordInput";
-import { CertifyLogo } from "../common/AppIcons";
-import SpinnerLoader from "../common/SpinnerLoader";
-import { Eyeclose, EyeIcon } from "../common/Icons";
-import { setUser as setUserAction } from "@/redux/slices/userSlice";
+import { setUser } from "@/redux/slices/userSlice";
+import { setAuth } from "@/utils/auth";
 import axiosInstance from "@/utils/axios";
 import { validateEmail, validatePassword } from "@/utils/inputFieldHelpers";
-import { setAuth } from "@/utils/auth";
+import { CertifyLogo } from "../common/AppIcons";
+import GoogleButton from "../common/GoogleButton";
+import { Eyeclose, EyeIcon } from "../common/Icons";
+import PrimaryBtn from "../common/PrimaryBtn";
+import SpinnerLoader from "../common/SpinnerLoader";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -67,30 +66,20 @@ const Login = () => {
       if (response.status === 200) {
         const data = response.data;
 
-        // Set auth cookies and local storage
+        // Set auth cookies
         setAuth(data);
 
-        // Update Redux store
-        dispatch(
-          setUserAction({
-            id: data._id,
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            isLoggedIn: true,
-            roleType: data.roleType,
-          })
-        );
+        // Update Redux store with all relevant user data
+        dispatch(setUser(data));
 
         toast.success("Logged in successfully");
 
-        // Redirect based on role (middleware will handle protection)
-        const destination =
+        // Redirect based on role
+        router.push(
           data.roleType === "CARE_COORDINATOR"
             ? "/dashboard/doctor"
-            : "/dashboard/patients";
-
-        router.push(destination);
+            : "/dashboard/patients"
+        );
       }
     } catch (error) {
       toast.error(
@@ -103,7 +92,6 @@ const Login = () => {
     }
   };
 
-  // Rest of your component JSX remains the same...
   return (
     <section className="h-full w-full max-w-[542px]">
       <form

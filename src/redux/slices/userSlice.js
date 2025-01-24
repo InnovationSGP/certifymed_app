@@ -1,18 +1,19 @@
-// slices/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   id: null,
-  username: "",
   email: "",
   firstName: "",
   lastName: "",
-  gender: "",
-  image: false,
+  isLoggedIn: false,
+  roleType: "CUSTOMER",
   accessToken: "",
   refreshToken: "",
-  isLoggedIn: false,
-  roleType: "CUSTOMER"
+  countryCode: "",
+  countryName: "",
+  phoneNumber: "",
+  gender: "",
+  dateOfBirth: null,
 };
 
 const userSlice = createSlice({
@@ -20,42 +21,44 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.id = action.payload.id;
-      state.username = action.payload.username;
-      state.email = action.payload.email;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
-      state.gender = action.payload.gender;
-      state.image = action.payload.image;
-      state.accessToken = action.payload.accessToken;
-      state.isLoggedIn = action.payload.isLoggedIn
-      state.refreshToken = action.payload.refreshToken;
-      state.roleType = action.payload.roleType
+      const {
+        _id,
+        email,
+        firstName,
+        lastName,
+        roleType,
+        accessToken,
+        refreshToken,
+        countryCode,
+        countryName,
+        phoneNumber,
+        gender,
+        dateOfBirth,
+        isLoggedIn = true,
+      } = action.payload;
+
+      state.id = _id;
+      state.email = email;
+      state.firstName = firstName;
+      state.lastName = lastName;
+      state.roleType = roleType;
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
+      state.countryCode = countryCode;
+      state.countryName = countryName;
+      state.phoneNumber = phoneNumber;
+      state.gender = gender;
+      state.dateOfBirth = dateOfBirth;
+      state.isLoggedIn = isLoggedIn;
     },
     updateUser: (state, action) => {
-      const { username, email, firstName, lastName, gender, image } =
-        action.payload;
-      if (username !== undefined) state.username = username;
-      if (email !== undefined) state.email = email;
-      if (firstName !== undefined) state.firstName = firstName;
-      if (lastName !== undefined) state.lastName = lastName;
-      if (gender !== undefined) state.gender = gender;
-      if (image !== undefined) state.image = image;
+      return { ...state, ...action.payload };
     },
-    deleteUser: (state) => {
-      state.id = null;
-      state.username = "";
-      state.email = "";
-      state.firstName = "";
-      state.lastName = "";
-      state.gender = "";
-      state.image = false;
-      state.accessToken = "";
-      state.refreshToken = "";
-      state.isLoggedIn = false;
+    clearUser: (state) => {
+      return initialState;
     },
   },
 });
 
-export const { setUser, updateUser, deleteUser } = userSlice.actions;
+export const { setUser, updateUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;

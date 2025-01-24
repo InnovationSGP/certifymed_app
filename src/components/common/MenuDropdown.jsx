@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import axiosInstance from "@/utils/axios";
 import toast from "react-hot-toast";
-import { deleteUser } from "@/redux/slices/userSlice";
+import { clearUser } from "@/redux/slices/userSlice";
+import Cookies from "js-cookie";
 
 const MenuDropdown = ({ links, heading, buttonContent }) => {
   const router = useRouter();
@@ -14,24 +15,46 @@ const MenuDropdown = ({ links, heading, buttonContent }) => {
 
   const handleLogout = async () => {
     try {
-      const response = await axiosInstance.post("/auth/api/users/logout");
-      console.log("Logout response: ", response);
+      // Make API call to logout
+      await axiosInstance.post("/auth/api/users/logout");
 
-      // Clear tokens from localStorage
+      // Clear all auth-related cookies
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      Cookies.remove("userData");
+      Cookies.remove("userRole");
+
+      // Clear any auth-related localStorage items
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userData");
 
-      // Reset user state in Redux store
-      dispatch(deleteUser());
+      // Clear the session storage if you're using it
+      sessionStorage.clear();
 
-      // Redirect to login page
-      router.push("/login");
+      // Clear Redux store state
+      dispatch(clearUser());
 
       // Show success message
       toast.success("Logged out successfully!");
+
+      // Redirect to login page
+      router.push("/login");
     } catch (error) {
-      toast.error("Failed to logout. Please try again.");
       console.error("Logout error:", error);
+      // Still clear everything even if the API call fails
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      Cookies.remove("userData");
+      localStorage.clear();
+      sessionStorage.clear();
+      dispatch(clearUser());
+
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred during logout. You have been logged out locally."
+      );
+      router.push("/login");
     }
   };
 
