@@ -33,7 +33,7 @@ const SignUp = ({ role }) => {
     countryCode: "+234",
     countryName: "Nigeria",
     dateOfBirth: null,
-    selectedValue: "",
+    gender: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -91,8 +91,8 @@ const SignUp = ({ role }) => {
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
-      newErrors.password = `Include at least one uppercase letter, one lowercase letter, one number,
-      and one special character with at least 8 characters.`;
+      newErrors.password =
+        "Password must include uppercase, lowercase, number, and special character (8+ chars)";
     }
     if (!formData.passwordConfirmation) {
       newErrors.passwordConfirmation = "Please confirm your password";
@@ -105,9 +105,10 @@ const SignUp = ({ role }) => {
       newErrors.phoneNumber =
         "Please enter a valid phone number (10-15 digits)";
     }
-    if (!formData.dateOfBirth)
+    if (!formData.dateOfBirth) {
       newErrors.dateOfBirth = "Date of birth is required";
-    if (!formData.selectedValue) newErrors.selectedValue = "Gender is required";
+    }
+    if (!formData.gender) newErrors.gender = "Gender is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -117,21 +118,27 @@ const SignUp = ({ role }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Destructure passwordConfirmation and create userData without it
-    const { passwordConfirmation, ...otherFormData } = formData;
-
-    const userData = {
-      ...otherFormData,
-      role: "USER",
-      userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
-    };
-
-    console.log(userData, "userData");
-
     try {
       setLoading(true);
-      const data = await axiosInstance.post("/auth/api/registration", userData);
-      if (data) {
+
+      const userData = {
+        ...formData,
+        dateOfBirth:
+          formData.dateOfBirth instanceof Date
+            ? formData.dateOfBirth.toISOString()
+            : null,
+        role: "USER",
+        userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
+      };
+
+      console.log("Submitting user data:", userData);
+
+      const response = await axiosInstance.post(
+        "/auth/api/registration",
+        userData
+      );
+
+      if (response.data) {
         toast.success("Sign up successful");
         if (role === "doctor") {
           router.push("/dashboard/doctor");
@@ -140,39 +147,12 @@ const SignUp = ({ role }) => {
         }
       }
     } catch (error) {
-      toast.error("Failed to sign up. Please try again.");
+      console.error("Signup error:", error);
+      toast.error(error?.message || "Failed to sign up. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-  const renderInput = (
-    label,
-    name,
-    type = "text",
-    placeholder = "",
-    customProps = {}
-  ) => (
-    <div>
-      <label className="font-medium text-dimGray" htmlFor={name}>
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        className={`input-style mt-[3px] ${
-          errors[name] ? "border border-rose-500" : ""
-        }`}
-        type={type}
-        placeholder={placeholder}
-        value={formData[name]}
-        onChange={(e) => handleChange(name, e.target.value)}
-        {...customProps}
-      />
-      {errors[name] && (
-        <p className="text-rose-500 mt-1 text-sm">{errors[name]}</p>
-      )}
-    </div>
-  );
 
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
@@ -189,34 +169,88 @@ const SignUp = ({ role }) => {
         className="gap-y-[23px] flex flex-col mb-8 sm:mb-[17px]"
       >
         <div className="grid md:grid-cols-2 gap-[23px]">
-          {renderInput("First Name", "firstName", "text", "First name")}
-          {renderInput("Last Name", "lastName", "text", "Last name")}
+          {/* First Name */}
+          <div>
+            <label className="font-medium text-dimGray">First Name</label>
+            <input
+              type="text"
+              className={`input-style mt-[3px] ${
+                errors.firstName ? "border-rose-500" : ""
+              }`}
+              placeholder="First name"
+              value={formData.firstName}
+              onChange={(e) => handleChange("firstName", e.target.value)}
+            />
+            {errors.firstName && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.firstName}</p>
+            )}
+          </div>
+
+          {/* Last Name */}
+          <div>
+            <label className="font-medium text-dimGray">Last Name</label>
+            <input
+              type="text"
+              className={`input-style mt-[3px] ${
+                errors.lastName ? "border-rose-500" : ""
+              }`}
+              placeholder="Last name"
+              value={formData.lastName}
+              onChange={(e) => handleChange("lastName", e.target.value)}
+            />
+            {errors.lastName && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.lastName}</p>
+            )}
+          </div>
+
+          {/* Gender */}
           <div>
             <label className="font-medium text-dimGray">Gender</label>
             <CustomSelect
               options={options}
-              value={formData.selectedValue}
-              onChange={(value) => handleChange("selectedValue", value)}
-              error={!!errors.selectedValue}
+              value={formData.gender}
+              onChange={(value) => handleChange("gender", value)}
+              error={!!errors.gender}
             />
-            {errors.selectedValue && (
-              <p className="text-rose-500 mt-1 text-sm">
-                {errors.selectedValue}
-              </p>
+            {errors.gender && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.gender}</p>
             )}
           </div>
+
+          {/* Date of Birth */}
           <div>
             <label className="font-medium text-dimGray">Date of Birth</label>
             <CustomDatePicker
               value={formData.dateOfBirth}
-              onChange={(date) => handleChange("dateOfBirth", date)}
+              onChange={(date) => {
+                console.log("Date selected:", date);
+                handleChange("dateOfBirth", date);
+              }}
               error={!!errors.dateOfBirth}
             />
             {errors.dateOfBirth && (
               <p className="text-rose-500 mt-1 text-sm">{errors.dateOfBirth}</p>
             )}
           </div>
-          {renderInput("Email", "email", "email", "example@gmail.com")}
+
+          {/* Email */}
+          <div>
+            <label className="font-medium text-dimGray">Email</label>
+            <input
+              type="email"
+              className={`input-style mt-[3px] ${
+                errors.email ? "border-rose-500" : ""
+              }`}
+              placeholder="example@gmail.com"
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
+            {errors.email && (
+              <p className="text-rose-500 mt-1 text-sm">{errors.email}</p>
+            )}
+          </div>
+
+          {/* Phone Number */}
           <div>
             <label className="font-medium text-dimGray">Phone Number</label>
             <PhoneNumberInput
@@ -230,15 +264,13 @@ const SignUp = ({ role }) => {
           </div>
         </div>
 
+        {/* Password */}
         <div>
-          <label className="font-medium text-dimGray" htmlFor="password">
-            Password
-          </label>
+          <label className="font-medium text-dimGray">Password</label>
           <div className="relative">
             <input
-              id="password"
               className={`input-style mt-[3px] ${
-                errors.password ? "border border-rose-500" : ""
+                errors.password ? "border-rose-500" : ""
               }`}
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
@@ -258,18 +290,13 @@ const SignUp = ({ role }) => {
           )}
         </div>
 
+        {/* Confirm Password */}
         <div>
-          <label
-            className="font-medium text-dimGray"
-            htmlFor="passwordConfirmation"
-          >
-            Confirm Password
-          </label>
+          <label className="font-medium text-dimGray">Confirm Password</label>
           <div className="relative">
             <input
-              id="passwordConfirmation"
               className={`input-style mt-[3px] ${
-                errors.passwordConfirmation ? "border border-rose-500" : ""
+                errors.passwordConfirmation ? "border-rose-500" : ""
               }`}
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
@@ -293,7 +320,9 @@ const SignUp = ({ role }) => {
           )}
         </div>
 
+        {/* Submit Button */}
         <PrimaryBtn
+          type="submit"
           disabled={loading}
           className="min-w-full col-span-2 !h-[55px] xl:!h-[60px] disabled:bg-gray-600"
         >
@@ -301,6 +330,7 @@ const SignUp = ({ role }) => {
         </PrimaryBtn>
       </form>
 
+      {/* Sign In Link */}
       <p className="text-center font-medium mt-[105px] mb-12">
         Already have an account?{" "}
         <Link href="/login" className="text-spandexGreen">

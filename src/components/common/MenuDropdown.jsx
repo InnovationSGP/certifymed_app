@@ -6,15 +6,14 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import axiosInstance from "@/utils/axios";
 import toast from "react-hot-toast";
-import { deleteUser } from "@/redux/slices/userSlice"; // Import the deleteUser action
+import { deleteUser } from "@/redux/slices/userSlice";
 
 const MenuDropdown = ({ links, heading, buttonContent }) => {
   const router = useRouter();
-  const dispatch = useDispatch(); // Get the dispatch function
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
-      // Optional: Make an API call to logout the user on the backend
       const response = await axiosInstance.post("/auth/api/users/logout");
       console.log("Logout response: ", response);
 
