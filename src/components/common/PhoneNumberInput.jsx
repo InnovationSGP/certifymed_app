@@ -1,61 +1,152 @@
 "use client";
+
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import countryList from "react-select-country-list";
+import { AsYouType, getCountryCallingCode } from "libphonenumber-js/max";
+
+// Get countries list with phone codes
+const getCountries = () => {
+  const countries = countryList().getData();
+  return countries
+    .map((country) => {
+      try {
+        // Some countries might not have calling codes, handle gracefully
+        const callingCode = getCountryCallingCode(country.value);
+        return {
+          name: country.label,
+          code: `+${callingCode}`,
+          iso: country.value.toLowerCase(),
+          format: getPhoneNumberFormat(country.value),
+        };
+      } catch (error) {
+        // Skip countries without valid calling codes
+        return null;
+      }
+    })
+    .filter(Boolean); // Remove null entries
+};
+
+// Helper function to get phone number format
+const getPhoneNumberFormat = (countryCode) => {
+  try {
+    const asYouType = new AsYouType(countryCode);
+    const example = asYouType.input("1234567890");
+    return example.replace(/\d/g, "0");
+  } catch {
+    return "0000000000";
+  }
+};
 
 const Flag = ({ iso }) => {
   return (
-    <img
-      src={`https://flagcdn.com/24x18/${iso.toLowerCase()}.png`}
-      alt=""
-      className="h-4 w-6 rounded-sm object-cover"
-    />
+    <div className="relative h-4 w-6">
+      <img
+        src={`https://flagcdn.com/24x18/${iso?.toLowerCase()}.png`}
+        alt=""
+        className="h-4 w-6 rounded-sm object-cover"
+        loading="eager"
+        onError={(e) => {
+          e.target.src = `https://flagcdn.com/24x18/in.png`;
+        }}
+      />
+    </div>
   );
 };
 
-  const PhoneNumberInput = ({ id, value, onChange, error, disabled = false , defaultCountryCode = "+234"}) => {
-    const [countryCode, setCountryCode] = useState(defaultCountryCode);
-    const [countryName, setCountryName] = useState("Nigeria");
+const PhoneNumberInput = ({
+  id,
+  value,
+  onChange,
+  error,
+  disabled = false,
+  defaultCountryCode = "+91",
+}) => {
+  const allCountries = useMemo(() => getCountries(), []);
+  const [countryCode, setCountryCode] = useState(defaultCountryCode);
+  const [countryName, setCountryName] = useState(() => {
+    const defaultCountry = allCountries.find(
+      (c) => c.code === defaultCountryCode
+    );
+    return defaultCountry ? defaultCountry.name : "India";
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [formattedInput, setFormattedInput] = useState("");
   const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    if (defaultCountryCode !== countryCode) {
-      setCountryCode(defaultCountryCode);
+  const selectedCountry = useMemo(
+    () =>
+      allCountries.find((country) => country.code === countryCode) ||
+      allCountries[0],
+    [countryCode, allCountries]
+  );
+
+  const formatPhoneNumber = (phoneNumber, country) => {
+    if (!phoneNumber || !country) return "";
+    try {
+      const asYouType = new AsYouType(country.iso.toUpperCase());
+      return asYouType.input(phoneNumber);
+    } catch {
+      return phoneNumber;
     }
-  }, [defaultCountryCode]); 
+  };
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=name,idd,cca2"
-        );
-        const data = await response.json();
+  const filteredCountries = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return allCountries;
 
-        const formattedCountries = data
-          .filter((country) => country.idd.root)
-          .map((country) => ({
-            code: `${country.idd.root}${
-              country.idd.suffixes ? country.idd.suffixes[0] : ""
-            }`.replace(/\s/g, ""),
-            iso: country.cca2,
-            name: country.name.common,
-            searchName: country.name.common.toLowerCase(),
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
+    return allCountries.filter((country) => {
+      const matchName = country.name.toLowerCase().includes(query);
+      const matchCode = country.code
+        .toLowerCase()
+        .includes(query.startsWith("+") ? query : `+${query}`);
+      return matchName || matchCode;
+    });
+  }, [searchQuery, allCountries]);
 
-        setCountries(formattedCountries);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-        setLoading(false);
-      }
-    };
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setIsOpen(true);
+  };
 
-    fetchCountries();
-  }, []);
+  const handleCountrySelect = (country) => {
+    setCountryCode(country.code);
+    setCountryName(country.name);
+    setIsOpen(false);
+    setSearchQuery("");
+
+    if (value?.phoneNumber) {
+      const formatted = formatPhoneNumber(value.phoneNumber, country);
+      setFormattedInput(formatted);
+    }
+
+    if (onChange) {
+      onChange({
+        phoneNumber: value?.phoneNumber || "",
+        countryCode: country.code,
+        countryName: country.name,
+        formattedNumber: value?.phoneNumber
+          ? `${country.code}${value.phoneNumber}`
+          : "",
+      });
+    }
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    if (!disabled && onChange && selectedCountry) {
+      const inputValue = e.target.value.replace(/[^\d]/g, "");
+      const formatted = formatPhoneNumber(inputValue, selectedCountry);
+      setFormattedInput(formatted);
+
+      onChange({
+        phoneNumber: inputValue,
+        countryCode,
+        countryName,
+        formattedNumber: `${countryCode}${inputValue}`,
+      });
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -65,76 +156,24 @@ const Flag = ({ iso }) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const selectedCountry = countries.find(
-    (country) => country.code === countryCode
-  );
-
-  const filteredCountries = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return countries;
-
-    return countries.filter((country) => {
-      if (query.match(/^[+\d]/)) {
-        const searchCode = query.startsWith("+") ? query : `+${query}`;
-        return country.code.startsWith(searchCode);
-      }
-      const countryName = country.name.toLowerCase();
-      return countryName === query || countryName.startsWith(query);
-    });
-  }, [searchQuery, countries]);
-
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-  };
-
-  const handleCountrySelect = (country) => {
-    setCountryCode(country.code);
-    setCountryName(country.name);
-    setIsOpen(false);
-    setSearchQuery("");
-
-    if (onChange) {
-      onChange({
-        phoneNumber: value,
-        countryCode: country.code,
-        countryName: country.name,
-      });
-    }
-  };
-
-  const handlePhoneNumberChange = (e) => {
-    if (!disabled && onChange) {
-      const phoneValue = e.target.value.replace(/[^\d]/g, "");
-      onChange({
-        phoneNumber: phoneValue,
-        countryCode,
-        countryName,
-      });
-    }
-  };
 
   return (
     <div
       className={`
-        flex items-center px-3 gap-3 py-[18px] bg-superSilver placeholder:!text-shadesOn 
-        placeholder:opacity-45 text-dimGray outline-primary rounded-xl font-medium h-[55px] xl:h-[60px]
-        ${error ? "border border-rose-500" : ""}
-        ${disabled ? "opacity-70 cursor-not-allowed pointer-events-none" : ""}
-      `}
+      flex items-center px-3 gap-3 py-[18px] bg-superSilver placeholder:!text-shadesOn 
+      placeholder:opacity-45 text-dimGray outline-primary rounded-xl font-medium h-[55px] xl:h-[60px]
+      ${error ? "border border-rose-500" : ""}
+      ${disabled ? "opacity-70 cursor-not-allowed pointer-events-none" : ""}
+    `}
     >
       <div className="relative flex items-center gap-4" ref={dropdownRef}>
         <button
           type="button"
           onClick={() => !disabled && setIsOpen(!isOpen)}
           className={`flex gap-2 items-center justify-between text-sm focus:outline-none
-            ${disabled ? "cursor-not-allowed" : ""}
-          `}
+            ${disabled ? "cursor-not-allowed" : ""}`}
           disabled={disabled}
         >
           <span className="flex items-center gap-1.5 mr-2">
@@ -145,11 +184,11 @@ const Flag = ({ iso }) => {
         </button>
 
         {isOpen && !disabled && (
-          <div className="absolute -left-2 top-[40px] max-w-[200px] hide-scrollbar p-[14px] max-h-[244px] z-10 mt-1 w-64 overflow-auto rounded-lg border border-gray-300 bg-white shadow-[0px_4px_24px_0px_rgba(0,0,0,0.20)]">
+          <div className="absolute -left-2 top-[40px] max-w-[300px] hide-scrollbar p-[14px] max-h-[244px] z-10 mt-1 w-64 overflow-auto rounded-lg border border-gray-300 bg-white shadow-[0px_4px_24px_0px_rgba(0,0,0,0.20)]">
             <div className="mb-2">
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search country or code..."
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="w-full placeholder:!text-shadesOn !text-[13px] py-2 text-sm focus:outline-none focus:border-blue-500"
@@ -157,18 +196,14 @@ const Flag = ({ iso }) => {
               />
             </div>
             <div className="space-y-1">
-              {loading ? (
-                <div className="text-center py-2 text-gray-500">
-                  Loading countries...
-                </div>
-              ) : filteredCountries.length === 0 ? (
+              {filteredCountries.length === 0 ? (
                 <div className="text-center py-2 text-gray-500">
                   No countries found
                 </div>
               ) : (
                 filteredCountries.map((country) => (
                   <button
-                    key={country.code}
+                    key={country.iso}
                     className="flex w-full items-center gap-2.5 px-3 py-2 hover:bg-gray-100 rounded-md"
                     onClick={() => handleCountrySelect(country)}
                   >
@@ -189,8 +224,8 @@ const Flag = ({ iso }) => {
 
       <input
         type="tel"
-        placeholder="8123456789"
-        value={value?.phoneNumber || value}
+        placeholder={selectedCountry?.format || "0000000000"}
+        value={formattedInput}
         onChange={handlePhoneNumberChange}
         className={`bg-transparent w-full outline-none ${
           disabled ? "cursor-not-allowed" : ""
