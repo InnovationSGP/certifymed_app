@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 import GoogleButton from "../common/GoogleButton";
@@ -15,6 +15,7 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import { setUser as setUserAction } from "@/redux/slices/userSlice";
 import axiosInstance from "@/utils/axios";
 import { validateEmail, validatePassword } from "@/utils/inputFieldHelpers";
+import { setAuth } from "@/utils/auth";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -24,18 +25,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const user = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if (user.roleType === "CUSTOMER") {
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +50,6 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    // Prevent default form submission
     if (e) e.preventDefault();
 
     const newErrors = validateForm();
@@ -70,7 +58,7 @@ const Login = () => {
       return;
     }
 
-    if (isLoggingIn) return; // Prevent multiple submissions
+    if (isLoggingIn) return;
     setIsLoggingIn(true);
 
     try {
@@ -79,29 +67,30 @@ const Login = () => {
       if (response.status === 200) {
         const data = response.data;
 
-        localStorage.setItem("accessToken", data.access_token);
-        localStorage.setItem("refreshToken", data.refreshToken);
+        // Set auth cookies and local storage
+        setAuth(data);
 
+        // Update Redux store
         dispatch(
           setUserAction({
             id: data._id,
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
-            accessToken: data.access_token,
-            refreshToken: data.refreshToken,
             isLoggedIn: true,
             roleType: data.roleType,
           })
         );
+
         toast.success("Logged in successfully");
-        if (response.data.roleType === "CARE_COORDINATOR") {
-          router.push("/dashboard/doctor");
-        } else {
-          router.push("/dashboard/patients");
-        }
-      } else {
-        toast.error(response.data.message || "Login failed");
+
+        // Redirect based on role (middleware will handle protection)
+        const destination =
+          data.roleType === "CARE_COORDINATOR"
+            ? "/dashboard/doctor"
+            : "/dashboard/patients";
+
+        router.push(destination);
       }
     } catch (error) {
       toast.error(
@@ -114,6 +103,7 @@ const Login = () => {
     }
   };
 
+  // Rest of your component JSX remains the same...
   return (
     <section className="h-full w-full max-w-[542px]">
       <form

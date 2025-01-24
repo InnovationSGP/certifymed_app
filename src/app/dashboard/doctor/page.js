@@ -1,33 +1,18 @@
 "use client";
-import DoctorDashboard from "@/components/dashboard/doctor/DoctorDashboard";
 import DashboardLayout from "@/components/common/DashboardLayout";
-import NotesWelcome from "@/components/dashboard/patients/notes/NotesWelcome";
-import React, { useEffect } from "react";
-import DoctorAnalytics from "@/components/dashboard/doctor/DoctorAnalytics";
-import { setDoctorAppointments } from "@/redux/slices/doctorRecentAppointmentsSlice";
-import { useDispatch, useSelector } from "react-redux";
 import {
   patientappointments,
   patientsdatalist,
 } from "@/components/common/Helper";
+import DoctorAnalytics from "@/components/dashboard/doctor/DoctorAnalytics";
+import DoctorDashboard from "@/components/dashboard/doctor/DoctorDashboard";
+import NotesWelcome from "@/components/dashboard/patients/notes/NotesWelcome";
 import { setPatients } from "@/redux/slices/allPatientsForDoctorSlice";
-import { useRouter } from "next/navigation";
+import { setDoctorAppointments } from "@/redux/slices/doctorRecentAppointmentsSlice";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const DoctorDashboardPage = () => {
-  const router = useRouter();
-  const user = useSelector((state) => state.user);
-
-  useEffect(() => {
-    // If user is already logged in, redirect to dashboard
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if(user.roleType === "CUSTOMER"){
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router]);
-
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(

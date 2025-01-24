@@ -3,16 +3,35 @@
 import Link from "next/link";
 import { CertifyLogo, DownArrow, UserImage } from "./AppIcons";
 import MenuDropdown from "./MenuDropdown";
+import { useEffect, useState } from "react";
 
 const DashboardNav = () => {
-  const ispatientview = true;
+  const [userRole, setUserRole] = useState(null);
 
-  const userMenuLinks = [
-    { href: "/dashboard/doctor/profile", label: "My Profile" },
-    { href: "/settings", label: "Settings" },
-    { href: "/help", label: "Help Center" },
-    { href: "/logout", label: "Logout" },
-  ];
+  useEffect(() => {
+    // Fetch the user role from cookies
+    const cookies = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("userRole="));
+    const role = cookies ? cookies.split("=")[1] : null;
+    setUserRole(role);
+  }, []);
+
+  const isPatientView = userRole === "CUSTOMER";
+
+  const userMenuLinks = isPatientView
+    ? [
+        { href: "/dashboard/patients/profile", label: "My Profile" },
+        { href: "/settings", label: "Settings" },
+        { href: "/help", label: "Help Center" },
+        { href: "/logout", label: "Logout" },
+      ]
+    : [
+        { href: "/dashboard/doctor/profile", label: "My Profile" },
+        { href: "/settings", label: "Settings" },
+        { href: "/help", label: "Help Center" },
+        { href: "/logout", label: "Logout" },
+      ];
 
   return (
     <>
@@ -21,7 +40,7 @@ const DashboardNav = () => {
           <CertifyLogo />
         </Link>
         <div className="flex items-center gap-x-[19px]">
-          {ispatientview && (
+          {isPatientView && (
             <h5 className="text-sm font-poppins font-medium hidden sm:block">
               Balance: ₦20,000
             </h5>

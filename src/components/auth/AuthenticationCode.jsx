@@ -1,15 +1,14 @@
 "use client";
 import { Eyeclose, EyeIcon } from "@/components/common/Icons";
-import { useState, useEffect } from "react";
-import { CertifyLogo } from "../common/AppIcons";
-import Link from "next/link";
-import PrimaryBtn from "../common/PrimaryBtn";
-import toast from "react-hot-toast";
-import { validatePassword } from "@/utils/inputFieldHelpers";
-import SpinnerLoader from "../common/SpinnerLoader";
 import axiosInstance from "@/utils/axios";
-import { useSelector } from "react-redux";
+import { validatePassword } from "@/utils/inputFieldHelpers";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { CertifyLogo } from "../common/AppIcons";
+import PrimaryBtn from "../common/PrimaryBtn";
+import SpinnerLoader from "../common/SpinnerLoader";
 
 const AuthenticationCode = () => {
   const router = useRouter();
@@ -26,26 +25,12 @@ const AuthenticationCode = () => {
   const [timer, setTimer] = useState(300); // 5 minutes in seconds
   const [isResendEnabled, setIsResendEnabled] = useState(false);
 
-  // Getting the user state from Redux
-  const user = useSelector((state) => state.user);
-
   // Redirect if no email in URL
   useEffect(() => {
     if (!email) {
       router.push("/reset-password");
     }
   }, [email, router]);
-
-  // Check for logged in user
-  useEffect(() => {
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if (user.roleType === "CUSTOMER") {
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router, user.roleType]);
 
   // Timer management
   useEffect(() => {

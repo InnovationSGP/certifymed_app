@@ -1,34 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
+import axiosInstance from "@/utils/axios";
+import { validateEmail } from "@/utils/inputFieldHelpers";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { CertifyLogo } from "../common/AppIcons";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { useRouter } from "next/navigation";
-import { validateEmail } from "@/utils/inputFieldHelpers";
-import toast from "react-hot-toast";
 import SpinnerLoader from "../common/SpinnerLoader";
-import axiosInstance from "@/utils/axios";
-import { useSelector } from "react-redux";
 
 const ResetPassword = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Getting the user state from Redux
-  const user = useSelector((state) => state.user);
-
-  useEffect(() => {
-    // If user is already logged in, redirect to dashboard
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if (user.roleType === "CUSTOMER") {
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router]);
 
   const handleRequestCode = async () => {
     setLoading(true);

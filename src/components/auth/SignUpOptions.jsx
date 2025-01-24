@@ -1,29 +1,9 @@
-"use client"
+"use client";
 
-import React, { useEffect } from "react";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-
 import { CertifyLogo } from "../common/AppIcons";
 
 const SignUpOptions = () => {
-  
-  // Getting the user state from Redux
-  const router = useRouter();
-  const user = useSelector((state) => state.user);
-
-  useEffect(() => {
-    // If user is already logged in, redirect to dashboard
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if(user.roleType === "CUSTOMER"){
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router]);
-
   return (
     <section className="w-full max-w-[542px] mx-auto flex flex-col h-full">
       <div className="grow h-full">

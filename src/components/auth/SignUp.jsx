@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import SpinnerLoader from "../common/SpinnerLoader";
 import { Eyeclose, EyeIcon } from "../common/Icons";
 import { CertifyLogo } from "../common/AppIcons";
@@ -18,11 +19,13 @@ import {
   validatePhone,
 } from "@/utils/inputFieldHelpers";
 import axiosInstance from "@/utils/axios";
-import { useSelector } from "react-redux";
+import { setUser } from "@/redux/slices/userSlice";
+import { setAuth } from "@/utils/auth";
 
 const SignUp = ({ role }) => {
   const router = useRouter();
-  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -45,16 +48,6 @@ const SignUp = ({ role }) => {
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
-
-  useEffect(() => {
-    if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if (user.roleType === "CUSTOMER") {
-        router.push("/dashboard/patients");
-      } else {
-        router.push("/dashboard/doctor");
-      }
-    }
-  }, [user.isLoggedIn, router]);
 
   const handleChange = useCallback(
     (key, value) => {
@@ -131,16 +124,33 @@ const SignUp = ({ role }) => {
         userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
       };
 
-      console.log("Submitting user data:", userData);
-
       const response = await axiosInstance.post(
         "/auth/api/registration",
         userData
       );
 
-      if (response.data) {
-        toast.success("Sign up successful");
-        if (role === "doctor") {
+      if (response.status === 200 || response.status === 201) {
+        const data = response.data;
+
+        // Set auth cookies and localStorage data
+        setAuth(data);
+
+        // Update Redux store
+        dispatch(
+          setUser({
+            id: data._id,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            isLoggedIn: true,
+            roleType: data.roleType,
+          })
+        );
+
+        toast.success("Sign up successful!");
+
+        // Middleware will handle the redirect based on role
+        if (data.roleType === "CARE_COORDINATOR") {
           router.push("/dashboard/doctor");
         } else {
           router.push("/dashboard/patients");
@@ -148,12 +158,15 @@ const SignUp = ({ role }) => {
       }
     } catch (error) {
       console.error("Signup error:", error);
-      toast.error(error?.message || "Failed to sign up. Please try again.");
+      toast.error(
+        error.response?.data?.message || "Failed to sign up. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Your existing JSX remains the same...
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
       <div className="flex items-center justify-center my-9 xl:mt-[110px] xl:mb-[50px]">
@@ -168,6 +181,7 @@ const SignUp = ({ role }) => {
         onSubmit={handleSubmit}
         className="gap-y-[23px] flex flex-col mb-8 sm:mb-[17px]"
       >
+        {/* Rest of your form JSX remains the same... */}
         <div className="grid md:grid-cols-2 gap-[23px]">
           {/* First Name */}
           <div>
@@ -222,10 +236,7 @@ const SignUp = ({ role }) => {
             <label className="font-medium text-dimGray">Date of Birth</label>
             <CustomDatePicker
               value={formData.dateOfBirth}
-              onChange={(date) => {
-                console.log("Date selected:", date);
-                handleChange("dateOfBirth", date);
-              }}
+              onChange={(date) => handleChange("dateOfBirth", date)}
               error={!!errors.dateOfBirth}
             />
             {errors.dateOfBirth && (
