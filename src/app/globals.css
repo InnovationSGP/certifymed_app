@@ -322,6 +322,7 @@ body::-webkit-scrollbar {
 }
 .react-datepicker__day:hover {
   background-color: #4059d6 !important;
+  color: white !important;
 }
 .react-datepicker__day--selected {
   background-color: #293991 !important;

@@ -17,13 +17,15 @@ const ProfilePage = () => {
     phone: "",
     gender: "",
     dob: null,
-    countryCode: "",
+    countryCode: "+91",
   });
   const [userId, setUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setIsLoading(true);
         const response = await axiosInstance.get("/auth/api/users/user");
         console.log("API Response:", response.data);
 
@@ -34,7 +36,6 @@ const ProfilePage = () => {
           try {
             if (profileData?.dateOfBirth) {
               dateOfBirth = new Date(profileData.dateOfBirth);
-              // Validate if the date is valid
               if (isNaN(dateOfBirth.getTime())) {
                 dateOfBirth = null;
                 console.error(
@@ -47,23 +48,32 @@ const ProfilePage = () => {
             console.error("Error parsing date:", error);
           }
 
-          console.log("Original date from backend:", profileData?.dateOfBirth);
-          console.log("Parsed date:", dateOfBirth);
+          const phoneNumber =
+            profileData?.phoneNumber?.replace(/\D/g, "") || "";
+          const countryCode = profileData?.countryCode || "+91";
+
+          console.log("Phone Data:", {
+            rawPhone: profileData?.phoneNumber,
+            parsedPhone: phoneNumber,
+            countryCode,
+          });
 
           setUserId(profileData._id);
           setFormData({
             firstName: profileData?.firstName || "",
             lastName: profileData?.lastName || "",
             email: profileData?.email || "",
-            phone: profileData?.phoneNumber || "",
+            phone: phoneNumber,
             gender: profileData?.gender || "",
             dob: dateOfBirth,
-            countryCode: profileData?.countryCode || "",
+            countryCode: countryCode,
           });
         }
       } catch (error) {
         console.error("Profile fetch error:", error);
         toast.error(error?.message || "Error fetching profile");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -89,6 +99,10 @@ const ProfilePage = () => {
       toast.error(error?.message || "Update profile failed");
     }
   };
+
+  if (isLoading) {
+    return <div className="p-6 lg:p-10">Loading...</div>;
+  }
 
   return (
     <div className="p-6 lg:p-10 min-h-[calc(100vh-72px)]">
@@ -147,9 +161,16 @@ const ProfilePage = () => {
               </label>
               <PhoneNumberInput
                 value={formData.phone}
-                disabled={true}
-                className="opacity-70 cursor-not-allowed"
                 defaultCountryCode={formData.countryCode}
+                disabled={!isEditing}
+                onChange={(phoneData) => {
+                  console.log("Phone changed:", phoneData);
+                  setFormData({
+                    ...formData,
+                    phone: phoneData.phoneNumber,
+                    countryCode: phoneData.countryCode,
+                  });
+                }}
               />
             </div>
 

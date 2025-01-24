@@ -10,7 +10,6 @@ const getCountries = () => {
   return countries
     .map((country) => {
       try {
-        // Some countries might not have calling codes, handle gracefully
         const callingCode = getCountryCallingCode(country.value);
         return {
           name: country.label,
@@ -19,7 +18,6 @@ const getCountries = () => {
           format: getPhoneNumberFormat(country.value),
         };
       } catch (error) {
-        // Skip countries without valid calling codes
         return null;
       }
     })
@@ -38,15 +36,20 @@ const getPhoneNumberFormat = (countryCode) => {
 };
 
 const Flag = ({ iso }) => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className="relative h-4 w-6">
       <img
-        src={`https://flagcdn.com/24x18/${iso?.toLowerCase()}.png`}
+        src={`/api/flag/${iso}`}
         alt=""
         className="h-4 w-6 rounded-sm object-cover"
         loading="eager"
         onError={(e) => {
-          e.target.src = `https://flagcdn.com/24x18/in.png`;
+          if (!imgError) {
+            setImgError(true);
+            e.target.src = `/api/flag/in`;
+          }
         }}
       />
     </div>
@@ -55,7 +58,7 @@ const Flag = ({ iso }) => {
 
 const PhoneNumberInput = ({
   id,
-  value,
+  value: externalValue,
   onChange,
   error,
   disabled = false,
@@ -63,16 +66,40 @@ const PhoneNumberInput = ({
 }) => {
   const allCountries = useMemo(() => getCountries(), []);
   const [countryCode, setCountryCode] = useState(defaultCountryCode);
+  const [formattedInput, setFormattedInput] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef(null);
+  const initialRender = useRef(true);
+
   const [countryName, setCountryName] = useState(() => {
     const defaultCountry = allCountries.find(
       (c) => c.code === defaultCountryCode
     );
     return defaultCountry ? defaultCountry.name : "India";
   });
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [formattedInput, setFormattedInput] = useState("");
-  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
+
+    if (externalValue) {
+      const formatted = formatPhoneNumber(externalValue, selectedCountry);
+      setFormattedInput(formatted);
+    }
+  }, [externalValue]);
+
+  useEffect(() => {
+    if (defaultCountryCode && defaultCountryCode !== countryCode) {
+      setCountryCode(defaultCountryCode);
+      const country = allCountries.find((c) => c.code === defaultCountryCode);
+      if (country) {
+        setCountryName(country.name);
+      }
+    }
+  }, [defaultCountryCode, allCountries]);
 
   const selectedCountry = useMemo(
     () =>
@@ -116,19 +143,16 @@ const PhoneNumberInput = ({
     setIsOpen(false);
     setSearchQuery("");
 
-    if (value?.phoneNumber) {
-      const formatted = formatPhoneNumber(value.phoneNumber, country);
+    if (externalValue) {
+      const formatted = formatPhoneNumber(externalValue, country);
       setFormattedInput(formatted);
     }
 
     if (onChange) {
       onChange({
-        phoneNumber: value?.phoneNumber || "",
+        phoneNumber: externalValue || "",
         countryCode: country.code,
         countryName: country.name,
-        formattedNumber: value?.phoneNumber
-          ? `${country.code}${value.phoneNumber}`
-          : "",
       });
     }
   };
@@ -143,7 +167,6 @@ const PhoneNumberInput = ({
         phoneNumber: inputValue,
         countryCode,
         countryName,
-        formattedNumber: `${countryCode}${inputValue}`,
       });
     }
   };
