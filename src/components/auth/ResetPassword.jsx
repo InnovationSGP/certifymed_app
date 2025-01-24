@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CertifyLogo } from "../common/AppIcons";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { validateEmail } from "@/utils/inputFieldHelpers";
 import toast from "react-hot-toast";
 import SpinnerLoader from "../common/SpinnerLoader";
@@ -12,16 +12,9 @@ import { useSelector } from "react-redux";
 
 const ResetPassword = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const emailFromParams = searchParams.get("email");
-
-  const [email, setEmail] = useState(emailFromParams || "");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showOtpField, setShowOtpField] = useState(!!emailFromParams);
-  const [timer, setTimer] = useState(300);
-  const [isResendEnabled, setIsResendEnabled] = useState(false);
 
   // Getting the user state from Redux
   const user = useSelector((state) => state.user);
@@ -36,33 +29,6 @@ const ResetPassword = () => {
       }
     }
   }, [user.isLoggedIn, router]);
-
-  useEffect(() => {
-    // Initialize timer if email exists in params
-    if (emailFromParams) {
-      setShowOtpField(true);
-      setTimer(300);
-      setIsResendEnabled(false);
-    }
-  }, [emailFromParams]);
-
-  useEffect(() => {
-    let interval;
-    if (showOtpField && timer > 0) {
-      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-    }
-    if (timer === 0) {
-      setIsResendEnabled(true);
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [showOtpField, timer]);
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
 
   const handleRequestCode = async () => {
     setLoading(true);
@@ -88,85 +54,21 @@ const ResetPassword = () => {
 
       if (response.status === 200) {
         toast.success("Password reset email sent successfully");
-        // Update URL with email parameter
-        router.push(`/reset-password?email=${encodeURIComponent(email)}`);
-        setShowOtpField(true);
-        setTimer(300);
-        setIsResendEnabled(false);
-      } else {
-        toast.error("An unexpected error occurred. Please try again.");
-      }
-    } catch (error) {
-      setError(error.response.data.message);
-      toast.error(
-        error.response?.data?.message ||
-          "Something went wrong. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setLoading(true);
-    setError("");
-
-    if (!otp) {
-      setError("OTP is required");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await axiosInstance.post(
-        "/auth/api/registration/verify/otp",
-        { email, otp }
-      );
-
-      if (response.status === 200) {
-        toast.success("OTP verified successfully");
+        // Redirect to authentication code page with email parameter
         router.push(
           `/reset-password/authentication-code?email=${encodeURIComponent(
             email
           )}`
         );
       } else {
-        toast.error("Invalid OTP. Please try again.");
-      }
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Something went wrong. Please try again."
-      );
-      setError(error.response?.data?.message || "Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await axiosInstance.post(
-        "/auth/api/registration/password/resend/otp",
-        { email }
-      );
-
-      if (response.status === 200) {
-        toast.success("OTP resent successfully");
-        setTimer(300);
-        setIsResendEnabled(false);
-      } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
     } catch (error) {
+      setError(error.response?.data?.message || "Something went wrong.");
       toast.error(
         error.response?.data?.message ||
           "Something went wrong. Please try again."
       );
-      setError(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -185,9 +87,8 @@ const ResetPassword = () => {
           Reset your Password
         </p>
         <p className="text-center paragraph font-medium tracking-[-0.32px] max-w-[491px] mx-auto">
-          {showOtpField
-            ? "Enter the OTP sent to your email address to verify your identity."
-            : "Please provide your email address to receive an authentication code for resetting your password."}
+          Please provide your email address to receive an authentication code
+          for resetting your password.
         </p>
 
         <div className="mt-[23px] xl:mt-[30px]">
@@ -198,7 +99,7 @@ const ResetPassword = () => {
             id="email"
             name="email"
             className={`input-style mt-[3px] ${
-              error && !showOtpField ? "border border-rose-500" : ""
+              error ? "border border-rose-500" : ""
             }`}
             type="email"
             placeholder="example@gmail.com"
@@ -207,55 +108,16 @@ const ResetPassword = () => {
               setEmail(e.target.value);
               if (error) setError("");
             }}
-            disabled={showOtpField}
           />
         </div>
 
-        {showOtpField && (
-          <div className="mt-[23px] xl:mt-[30px]">
-            <label className="font-medium text-dimGray" htmlFor="otp">
-              OTP
-            </label>
-            <input
-              id="otp"
-              name="otp"
-              className={`input-style mt-[3px] ${
-                error && otp ? "border border-rose-500" : ""
-              }`}
-              type="text"
-              placeholder="Enter your OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">{`Time remaining: ${formatTime(
-                timer
-              )}`}</span>
-              <button
-                onClick={handleResendOtp}
-                disabled={!isResendEnabled}
-                className={`text-sm font-medium ${
-                  isResendEnabled ? "text-spandexGreen" : "text-gray-400"
-                }`}
-              >
-                Resend OTP
-              </button>
-            </div>
-          </div>
-        )}
         {error && <p className="text-rose-500 mt-1 text-sm">{error}</p>}
 
         <PrimaryBtn
-          onClick={showOtpField ? handleVerifyOtp : handleRequestCode}
+          onClick={handleRequestCode}
           className="w-full !tracking-[-0.32px] !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
         >
-          {loading ? (
-            <SpinnerLoader />
-          ) : showOtpField ? (
-            "Verify OTP"
-          ) : (
-            "Request Code"
-          )}
+          {loading ? <SpinnerLoader /> : "Request Code"}
         </PrimaryBtn>
       </div>
       <p className="text-center font-poppins font-medium py-5">
