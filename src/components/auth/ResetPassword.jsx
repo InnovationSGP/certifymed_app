@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CertifyLogo } from "../common/AppIcons";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { validateEmail } from "@/utils/inputFieldHelpers";
 import toast from "react-hot-toast";
 import SpinnerLoader from "../common/SpinnerLoader";
@@ -11,15 +11,17 @@ import axiosInstance from "@/utils/axios";
 import { useSelector } from "react-redux";
 
 const ResetPassword = () => {
-  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const emailFromParams = searchParams.get("email");
+
+  const [email, setEmail] = useState(emailFromParams || "");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showOtpField, setShowOtpField] = useState(false);
-  const [timer, setTimer] = useState(300); // 5 minutes in seconds
+  const [showOtpField, setShowOtpField] = useState(!!emailFromParams);
+  const [timer, setTimer] = useState(300);
   const [isResendEnabled, setIsResendEnabled] = useState(false);
-  const router = useRouter();
-
 
   // Getting the user state from Redux
   const user = useSelector((state) => state.user);
@@ -27,13 +29,22 @@ const ResetPassword = () => {
   useEffect(() => {
     // If user is already logged in, redirect to dashboard
     if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if(user.roleType === "CUSTOMER"){
+      if (user.roleType === "CUSTOMER") {
         router.push("/dashboard/patients");
       } else {
         router.push("/dashboard/doctor");
       }
     }
   }, [user.isLoggedIn, router]);
+
+  useEffect(() => {
+    // Initialize timer if email exists in params
+    if (emailFromParams) {
+      setShowOtpField(true);
+      setTimer(300);
+      setIsResendEnabled(false);
+    }
+  }, [emailFromParams]);
 
   useEffect(() => {
     let interval;
@@ -55,7 +66,7 @@ const ResetPassword = () => {
 
   const handleRequestCode = async () => {
     setLoading(true);
-    setError(""); 
+    setError("");
 
     if (!email) {
       setError("Email is required");
@@ -70,19 +81,27 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/auth/api/registration/password/forgot", { email });
+      const response = await axiosInstance.post(
+        "/auth/api/registration/password/forgot",
+        { email }
+      );
 
       if (response.status === 200) {
         toast.success("Password reset email sent successfully");
+        // Update URL with email parameter
+        router.push(`/reset-password?email=${encodeURIComponent(email)}`);
         setShowOtpField(true);
-        setTimer(300); // Reset the timer
-        setIsResendEnabled(false); // Disable resend until timer ends
+        setTimer(300);
+        setIsResendEnabled(false);
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
     } catch (error) {
       setError(error.response.data.message);
-      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -99,16 +118,26 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/auth/api/registration/verify/otp", { email, otp });
+      const response = await axiosInstance.post(
+        "/auth/api/registration/verify/otp",
+        { email, otp }
+      );
 
       if (response.status === 200) {
         toast.success("OTP verified successfully");
-        router.push(`/reset-password/authentication-code?email=${encodeURIComponent(email)}`);
+        router.push(
+          `/reset-password/authentication-code?email=${encodeURIComponent(
+            email
+          )}`
+        );
       } else {
         toast.error("Invalid OTP. Please try again.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
       setError(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -120,17 +149,23 @@ const ResetPassword = () => {
     setError("");
 
     try {
-      const response = await axiosInstance.post("/auth/api/registration/password/resend/otp", { email });
+      const response = await axiosInstance.post(
+        "/auth/api/registration/password/resend/otp",
+        { email }
+      );
 
       if (response.status === 200) {
         toast.success("OTP resent successfully");
-        setTimer(300); // Restart the timer
-        setIsResendEnabled(false); // Disable resend
+        setTimer(300);
+        setIsResendEnabled(false);
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
       setError(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -140,7 +175,7 @@ const ResetPassword = () => {
   return (
     <section className="w-full max-w-[542px] mx-auto flex flex-col h-full">
       <div className="grow h-full">
-        <div className="flex  items-center justify-center my-8 lg:mb-[50px] lg:mt-[110px]">
+        <div className="flex items-center justify-center my-8 lg:mb-[50px] lg:mt-[110px]">
           <Link href="/">
             <CertifyLogo />
           </Link>
@@ -193,7 +228,9 @@ const ResetPassword = () => {
               onChange={(e) => setOtp(e.target.value)}
             />
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">{`Time remaining: ${formatTime(timer)}`}</span>
+              <span className="text-sm text-gray-500">{`Time remaining: ${formatTime(
+                timer
+              )}`}</span>
               <button
                 onClick={handleResendOtp}
                 disabled={!isResendEnabled}
@@ -206,17 +243,23 @@ const ResetPassword = () => {
             </div>
           </div>
         )}
-            {error && <p className="text-rose-500 mt-1 text-sm">{error}</p>}
+        {error && <p className="text-rose-500 mt-1 text-sm">{error}</p>}
 
         <PrimaryBtn
           onClick={showOtpField ? handleVerifyOtp : handleRequestCode}
           className="w-full !tracking-[-0.32px] !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
         >
-          {loading ? <SpinnerLoader /> : showOtpField ? "Verify OTP" : "Request Code"}
+          {loading ? (
+            <SpinnerLoader />
+          ) : showOtpField ? (
+            "Verify OTP"
+          ) : (
+            "Request Code"
+          )}
         </PrimaryBtn>
       </div>
       <p className="text-center font-poppins font-medium py-5">
-        Don’t have an account yet?
+        Don&apos;t have an account yet?
         <Link className="text-spandexGreen pl-1" href="/sign-up">
           Sign up
         </Link>

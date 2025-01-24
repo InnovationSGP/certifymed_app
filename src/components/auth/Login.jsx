@@ -25,13 +25,11 @@ const Login = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Getting the user state from Redux
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    // If user is already logged in, redirect to dashboard
     if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if(user.roleType === "CUSTOMER"){
+      if (user.roleType === "CUSTOMER") {
         router.push("/dashboard/patients");
       } else {
         router.push("/dashboard/doctor");
@@ -62,13 +60,17 @@ const Login = () => {
     return newErrors;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    // Prevent default form submission
+    if (e) e.preventDefault();
+
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    if (isLoggingIn) return; // Prevent multiple submissions
     setIsLoggingIn(true);
 
     try {
@@ -89,7 +91,7 @@ const Login = () => {
             accessToken: data.access_token,
             refreshToken: data.refreshToken,
             isLoggedIn: true,
-            roleType: data.roleType
+            roleType: data.roleType,
           })
         );
         toast.success("Logged in successfully");
@@ -102,21 +104,20 @@ const Login = () => {
         toast.error(response.data.message || "Login failed");
       }
     } catch (error) {
-      toast.error("An error occurred during login. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred during login. Please try again."
+      );
       console.error("Login error:", error);
     } finally {
       setIsLoggingIn(false);
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleLogin();
-  };
-
   return (
     <section className="h-full w-full max-w-[542px]">
-      <div
-        onKeyDown={handleKeyDown}
+      <form
+        onSubmit={handleLogin}
         className="min-w-full mx-auto flex flex-col h-full"
       >
         <div className="grow h-full">
@@ -184,7 +185,7 @@ const Login = () => {
           </div>
 
           <PrimaryBtn
-            onClick={handleLogin}
+            type="submit"
             className="w-full !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
           >
             {isLoggingIn ? <SpinnerLoader /> : "Log in"}
@@ -198,12 +199,12 @@ const Login = () => {
           </Link>
         </div>
         <p className="text-center font-medium py-5">
-          Don’t have an account yet?
+          Don&apos;t have an account yet?
           <Link href="/sign-up" className="text-spandexGreen pl-1">
             Sign up
           </Link>
         </p>
-      </div>
+      </form>
     </section>
   );
 };

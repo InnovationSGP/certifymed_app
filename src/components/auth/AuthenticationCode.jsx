@@ -1,6 +1,6 @@
 "use client";
 import { Eyeclose, EyeIcon } from "@/components/common/Icons";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { CertifyLogo } from "../common/AppIcons";
 import Link from "next/link";
 import PrimaryBtn from "../common/PrimaryBtn";
@@ -23,14 +23,13 @@ const AuthenticationCode = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-
   // Getting the user state from Redux
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
     // If user is already logged in, redirect to dashboard
     if (user.isLoggedIn || localStorage.getItem("accessToken")) {
-      if(user.roleType === "CUSTOMER"){
+      if (user.roleType === "CUSTOMER") {
         router.push("/dashboard/patients");
       } else {
         router.push("/dashboard/doctor");
@@ -38,46 +37,49 @@ const AuthenticationCode = () => {
     }
   }, [user.isLoggedIn, router]);
 
-  const handleSubmit =  async (e) => {
+  const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
     const newErrors = {};
     let valid = true;
-      if (!newPassword) {
-        newErrors.newPassword = "Password is required";
-      } else if (!validatePassword(newPassword)) {
-        newErrors.newPassword = `Include at least one uppercase letter, one lowercase letter, one number,
+    if (!newPassword) {
+      newErrors.newPassword = "Password is required";
+    } else if (!validatePassword(newPassword)) {
+      newErrors.newPassword = `Include at least one uppercase letter, one lowercase letter, one number,
   and one special character (e.g., !, @, #, $, %, ^, &) with at least 8 characters.`;
-      }
+    }
 
-      if (!confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your password";
-      } else if (confirmPassword !== newPassword) {
-        newErrors.confirmPassword = "Password doesn’t match";
-      }
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
-      try {
-      const response =  await axiosInstance.post("/auth/api/registration/password/reset", {
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (confirmPassword !== newPassword) {
+      newErrors.confirmPassword = "Password doesn’t match";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    try {
+      const response = await axiosInstance.post(
+        "/auth/api/registration/password/reset",
+        {
           email,
           password: newPassword,
           passwordConfirmation: confirmPassword,
-        });
-        toast.success("Password reset successfully");
-        if(response.data.user.roleType == "CARE_COORDINATOR"){
-          router.push("/dashboard/doctor");
-        }else {
-          router.push("/dashboard/patients");
         }
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Error resetting password.");
-        setLoading(false);
-      } finally {
-        setLoading(false);
+      );
+      toast.success("Password reset successfully");
+      if (response.data.user.roleType == "CARE_COORDINATOR") {
+        router.push("/dashboard/doctor");
+      } else {
+        router.push("/dashboard/patients");
       }
-    };
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Error resetting password.");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-[542px] mx-auto">
@@ -179,6 +181,7 @@ const AuthenticationCode = () => {
             <input
               type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
+              placeholder="Enter your confirm password"
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
