@@ -91,7 +91,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="p-6 lg:p-10">
+    <div className="p-6 lg:p-10 min-h-[calc(100vh-72px)]">
       <div className="lg:px-[35px] px-6 pt-6 bg-white rounded-xl">
         <h1 className="section-heading leading-[51px] mb-2">
           Profile Information
@@ -135,7 +135,7 @@ const ProfilePage = () => {
               </label>
               <input
                 type="email"
-                className="mt-1 input-style"
+                className="mt-1 input-style opacity-70 cursor-not-allowed"
                 value={formData.email}
                 disabled={true}
               />
