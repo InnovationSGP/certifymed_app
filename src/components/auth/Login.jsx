@@ -65,16 +65,10 @@ const Login = () => {
 
       if (response.status === 200) {
         const data = response.data;
-
-        // Set auth cookies
         setAuth(data);
-
-        // Update Redux store with all relevant user data
         dispatch(setUser(data));
-
         toast.success("Logged in successfully");
 
-        // Redirect based on role
         router.push(
           data.roleType === "CARE_COORDINATOR"
             ? "/dashboard/doctor"
@@ -84,7 +78,7 @@ const Login = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "An error occurred during login. Please try again."
+        "An error occurred during login. Please try again."
       );
       console.error("Login error:", error);
     } finally {
@@ -92,10 +86,21 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignin = () => {
+    const baseUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/google`;
+    const state = {
+      redirectUrl: window.location.origin + '/auth/callback'
+    };
+    const params = new URLSearchParams({
+      state: JSON.stringify(state)
+    });
+
+    window.location.href = `${baseUrl}?${params.toString()}`;
+  };
+
   return (
     <section className="h-full w-full max-w-[542px]">
-      <form
-        onSubmit={handleLogin}
+      <div
         className="min-w-full mx-auto flex flex-col h-full"
       >
         <div className="grow h-full">
@@ -107,68 +112,66 @@ const Login = () => {
           <p className="text-center text-base md:text-xl font-semibold mb-10 xl:mb-[55px]">
             Welcome back! Login to continue
           </p>
-          <GoogleButton />
-
-          <div className="flex flex-col items-center gap-y-8 justify-center">
-            {/* Email */}
-            <div className="mt-[23px] w-full xl:mt-[30px]">
-              <label htmlFor="email" className="font-medium text-dimGray">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                className={`input-style mt-[3px] ${
-                  errors.email ? "border border-rose-500" : ""
-                }`}
-                type="email"
-                placeholder="example@gmail.com"
-                value={formData.email}
-                onChange={handleChange}
-              />
-              {errors.email && (
-                <p className="text-rose-500 mt-1 text-sm">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="w-full">
-              <label htmlFor="password" className="font-medium text-dimGray">
-                Password
-              </label>
-              <div className="relative">
+          <GoogleButton text="Sign in with Google" onClick={handleGoogleSignin} />
+          <form onSubmit={handleLogin} >
+            <div className="flex flex-col items-center gap-y-8 justify-center">
+              {/* Email */}
+              <div className="mt-[23px] w-full xl:mt-[30px]">
+                <label htmlFor="email" className="font-medium text-dimGray">
+                  Email
+                </label>
                 <input
-                  id="password"
-                  name="password"
-                  className={`input-style mt-[3px] ${
-                    errors.password ? "border border-rose-500" : ""
-                  }`}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
+                  id="email"
+                  name="email"
+                  className={`input-style mt-[3px] ${errors.email ? "border border-rose-500" : ""
+                    }`}
+                  type="email"
+                  placeholder="example@gmail.com"
+                  value={formData.email}
                   onChange={handleChange}
                 />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <Eyeclose /> : <EyeIcon />}
-                </button>
+                {errors.email && (
+                  <p className="text-rose-500 mt-1 text-sm">{errors.email}</p>
+                )}
               </div>
-              {errors.password && (
-                <p className="text-rose-500 mt-1 text-sm">{errors.password}</p>
-              )}
+
+              {/* Password */}
+              <div className="w-full">
+                <label htmlFor="password" className="font-medium text-dimGray">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    className={`input-style mt-[3px] ${errors.password ? "border border-rose-500" : ""
+                      }`}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <Eyeclose /> : <EyeIcon />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-rose-500 mt-1 text-sm">{errors.password}</p>
+                )}
+              </div>
             </div>
-          </div>
 
-          <PrimaryBtn
-            type="submit"
-            className="w-full !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
-          >
-            {isLoggingIn ? <SpinnerLoader /> : "Log in"}
-          </PrimaryBtn>
-
+            <PrimaryBtn
+              type="submit"
+              className="w-full !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
+            >
+              {isLoggingIn ? <SpinnerLoader /> : "Log in"}
+            </PrimaryBtn>
+          </form>
           <Link
             href="/reset-password"
             className="text-primary tracking-[-0.32px] font-medium mt-3 block xl:mt-[18px]"
@@ -182,8 +185,8 @@ const Login = () => {
             Sign up
           </Link>
         </p>
-      </form>
-    </section>
+      </div>
+    </section >
   );
 };
 

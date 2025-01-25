@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 
 const routes = {
-  publicRoutes: ["/login", "/sign-up", "/reset-password", "/"],
+  publicRoutes: ["/login",'/sign-up', "/sign-up/patient", '/sign-up/doctor', "/reset-password", "/"],
   patientRoutes: ["/dashboard/patients"],
   doctorRoutes: ["/dashboard/doctor"],
 };
 
 export function middleware(request) {
-  console.log(request.nextUrl, "request.nextUrl");
 
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get("accessToken")?.value;
@@ -21,11 +20,9 @@ export function middleware(request) {
       )
     );
   }
-
   const isProtectedRoute = !routes.publicRoutes.includes(pathname);
   if (!accessToken && isProtectedRoute) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 

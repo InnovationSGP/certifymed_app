@@ -9,7 +9,6 @@ import {
   validatePhone,
 } from "@/utils/inputFieldHelpers";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -21,9 +20,11 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const SignUp = ({ role }) => {
   const router = useRouter();
+  const searchParams = useSearchParams()
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -152,7 +153,22 @@ const SignUp = ({ role }) => {
     }
   };
 
-  // Your existing JSX remains the same...
+  const handleGoogleSignUp = () => {
+
+    const userType= role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
+    const baseUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/google`;
+    const stateParam = {
+      role:'USER',
+      userType,
+      redirectUrl: window.location.origin + '/auth/callback'
+    };
+    const params = new URLSearchParams({
+      state: JSON.stringify(stateParam)
+    });
+    
+    window.location.href = `${baseUrl}?${params.toString()}`;
+  };
+
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
       <div className="flex items-center justify-center my-9 xl:mt-[110px] xl:mb-[50px]">
@@ -161,7 +177,7 @@ const SignUp = ({ role }) => {
         </Link>
       </div>
 
-      <GoogleButton />
+      <GoogleButton onClick={handleGoogleSignUp}/>
 
       <form
         onSubmit={handleSubmit}
