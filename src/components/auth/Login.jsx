@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
@@ -86,14 +86,63 @@ const Login = () => {
     }
   };
 
+  const handleGoogleRedirect = () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('auth=')) {
+      try {
+        const encodedData = hash.split('auth=')[1];
+
+        const decodedData = Buffer.from(encodedData, 'base64').toString();
+
+        const authData = JSON.parse(decodedData);
+
+        if (!authData) {
+          console.error('No auth data found');
+          return;
+        }
+
+        setAuth(authData);
+
+        dispatch(setUser(authData));
+
+        toast.success('Google sign in successful!');
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        router.push(
+          authData.roleType === 'CARE_COORDINATOR'
+            ? '/dashboard/doctor'
+            : '/dashboard/patients'
+        );
+      } catch (error) {
+        console.error('Error processing Google auth data:', error);
+        toast.error('Failed to complete Google authentication');
+      }
+    } else {
+      console.log('No auth data in URL');
+    }
+  };
+
+  useEffect(() => {
+    if (window.location.hash) {
+      handleGoogleRedirect();
+    }
+  }, [dispatch, router]);
+
   const handleGoogleSignin = () => {
+    const userType=  "CUSTOMER";
     const baseUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/google`;
     const state = {
+      role:'USER',
+      userType,
       redirectUrl: window.location.origin + '/auth/callback'
     };
     const params = new URLSearchParams({
       state: JSON.stringify(state)
     });
+
+
+    localStorage.removeItem('isLoggedIn');
 
     window.location.href = `${baseUrl}?${params.toString()}`;
   };

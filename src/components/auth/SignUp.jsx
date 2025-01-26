@@ -9,7 +9,7 @@ import {
   validatePhone,
 } from "@/utils/inputFieldHelpers";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { CertifyLogo } from "../common/AppIcons";
@@ -153,19 +153,71 @@ const SignUp = ({ role }) => {
     }
   };
 
+  const handleGoogleRedirect = () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('auth=')) {
+      try {
+        const encodedData = hash.split('auth=')[1];
+
+        const decodedData = Buffer.from(encodedData, 'base64').toString();
+
+        const authData = JSON.parse(decodedData);
+
+        if (!authData) {
+          console.error('No auth data found');
+          return;
+        }
+
+        setAuth(authData);
+
+        dispatch(setUser(authData));
+
+        toast.success('Google sign in successful!');
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        router.push(
+          authData.roleType === 'CARE_COORDINATOR'
+            ? '/dashboard/doctor'
+            : '/dashboard/patients'
+        );
+      } catch (error) {
+        console.error('Error processing Google auth data:', error);
+        toast.error('Failed to complete Google authentication');
+      }
+    } else {
+      console.log('No auth data in URL');
+    }
+  };
+
+  useEffect(() => {
+    if (window.location.hash) {
+      handleGoogleRedirect();
+    }
+  }, [dispatch, router]);
+
   const handleGoogleSignUp = () => {
 
-    const userType= role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
+    const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
     const baseUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/google`;
     const stateParam = {
-      role:'USER',
+      role: 'USER',
       userType,
       redirectUrl: window.location.origin + '/auth/callback'
     };
     const params = new URLSearchParams({
       state: JSON.stringify(stateParam)
     });
-    
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Clear cookies
+    const cookiesToClear = ['accessToken', 'refreshToken', 'userData', 'userRole', 'connect.sid', 'jwt'];
+    cookiesToClear.forEach(cookieName => {
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    });
+
     window.location.href = `${baseUrl}?${params.toString()}`;
   };
 
@@ -177,7 +229,7 @@ const SignUp = ({ role }) => {
         </Link>
       </div>
 
-      <GoogleButton onClick={handleGoogleSignUp}/>
+      <GoogleButton onClick={handleGoogleSignUp} />
 
       <form
         onSubmit={handleSubmit}
@@ -190,9 +242,8 @@ const SignUp = ({ role }) => {
             <label className="font-medium text-dimGray">First Name</label>
             <input
               type="text"
-              className={`input-style mt-[3px] ${
-                errors.firstName ? "border-rose-500" : ""
-              }`}
+              className={`input-style mt-[3px] ${errors.firstName ? "border-rose-500" : ""
+                }`}
               placeholder="First name"
               value={formData.firstName}
               onChange={(e) => handleChange("firstName", e.target.value)}
@@ -207,9 +258,8 @@ const SignUp = ({ role }) => {
             <label className="font-medium text-dimGray">Last Name</label>
             <input
               type="text"
-              className={`input-style mt-[3px] ${
-                errors.lastName ? "border-rose-500" : ""
-              }`}
+              className={`input-style mt-[3px] ${errors.lastName ? "border-rose-500" : ""
+                }`}
               placeholder="Last name"
               value={formData.lastName}
               onChange={(e) => handleChange("lastName", e.target.value)}
@@ -251,9 +301,8 @@ const SignUp = ({ role }) => {
             <label className="font-medium text-dimGray">Email</label>
             <input
               type="email"
-              className={`input-style mt-[3px] ${
-                errors.email ? "border-rose-500" : ""
-              }`}
+              className={`input-style mt-[3px] ${errors.email ? "border-rose-500" : ""
+                }`}
               placeholder="example@gmail.com"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
@@ -282,9 +331,8 @@ const SignUp = ({ role }) => {
           <label className="font-medium text-dimGray">Password</label>
           <div className="relative">
             <input
-              className={`input-style mt-[3px] ${
-                errors.password ? "border-rose-500" : ""
-              }`}
+              className={`input-style mt-[3px] ${errors.password ? "border-rose-500" : ""
+                }`}
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={formData.password}
@@ -308,9 +356,8 @@ const SignUp = ({ role }) => {
           <label className="font-medium text-dimGray">Confirm Password</label>
           <div className="relative">
             <input
-              className={`input-style mt-[3px] ${
-                errors.passwordConfirmation ? "border-rose-500" : ""
-              }`}
+              className={`input-style mt-[3px] ${errors.passwordConfirmation ? "border-rose-500" : ""
+                }`}
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
               value={formData.passwordConfirmation}
