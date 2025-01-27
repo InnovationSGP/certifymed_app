@@ -78,7 +78,7 @@ const Login = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-        "An error occurred during login. Please try again."
+          "An error occurred during login. Please try again."
       );
       console.error("Login error:", error);
     } finally {
@@ -88,16 +88,16 @@ const Login = () => {
 
   const handleGoogleRedirect = () => {
     const hash = window.location.hash;
-    if (hash && hash.includes('auth=')) {
+    if (hash && hash.includes("auth=")) {
       try {
-        const encodedData = hash.split('auth=')[1];
+        const encodedData = hash.split("auth=")[1];
 
-        const decodedData = Buffer.from(encodedData, 'base64').toString();
+        const decodedData = Buffer.from(encodedData, "base64").toString();
 
         const authData = JSON.parse(decodedData);
 
         if (!authData) {
-          console.error('No auth data found');
+          console.error("No auth data found");
           return;
         }
 
@@ -105,21 +105,25 @@ const Login = () => {
 
         dispatch(setUser(authData));
 
-        toast.success('Google sign in successful!');
+        toast.success("Google sign in successful!");
 
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
 
         router.push(
-          authData.roleType === 'CARE_COORDINATOR'
-            ? '/dashboard/doctor'
-            : '/dashboard/patients'
+          authData.roleType === "CARE_COORDINATOR"
+            ? "/dashboard/doctor"
+            : "/dashboard/patients"
         );
       } catch (error) {
-        console.error('Error processing Google auth data:', error);
-        toast.error('Failed to complete Google authentication');
+        console.error("Error processing Google auth data:", error);
+        toast.error("Failed to complete Google authentication");
       }
     } else {
-      console.log('No auth data in URL');
+      console.log("No auth data in URL");
     }
   };
 
@@ -130,28 +134,25 @@ const Login = () => {
   }, [dispatch, router]);
 
   const handleGoogleSignin = () => {
-    const userType=  "CUSTOMER";
-    const baseUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/auth/google`;
+    const userType = "CUSTOMER";
+    const baseUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/google`;
     const state = {
-      role:'USER',
+      role: "USER",
       userType,
-      redirectUrl: window.location.origin + '/auth/callback'
+      redirectUrl: window.location.origin + "/auth/callback",
     };
     const params = new URLSearchParams({
-      state: JSON.stringify(state)
+      state: JSON.stringify(state),
     });
 
-
-    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem("isLoggedIn");
 
     window.location.href = `${baseUrl}?${params.toString()}`;
   };
 
   return (
     <section className="h-full w-full max-w-[542px]">
-      <div
-        className="min-w-full mx-auto flex flex-col h-full"
-      >
+      <div className="min-w-full mx-auto flex flex-col h-full">
         <div className="grow h-full">
           <div className="flex items-center justify-center my-8 xl:my-[50px]">
             <Link href="/">
@@ -161,8 +162,11 @@ const Login = () => {
           <p className="text-center text-base md:text-xl font-semibold mb-10 xl:mb-[55px]">
             Welcome back! Login to continue
           </p>
-          <GoogleButton text="Sign in with Google" onClick={handleGoogleSignin} />
-          <form onSubmit={handleLogin} >
+          <GoogleButton
+            text="Sign in with Google"
+            onClick={handleGoogleSignin}
+          />
+          <form onSubmit={handleLogin}>
             <div className="flex flex-col items-center gap-y-8 justify-center">
               {/* Email */}
               <div className="mt-[23px] w-full xl:mt-[30px]">
@@ -172,8 +176,9 @@ const Login = () => {
                 <input
                   id="email"
                   name="email"
-                  className={`input-style mt-[3px] ${errors.email ? "border border-rose-500" : ""
-                    }`}
+                  className={`input-style mt-[3px] ${
+                    errors.email ? "border border-rose-500" : ""
+                  }`}
                   type="email"
                   placeholder="example@gmail.com"
                   value={formData.email}
@@ -193,8 +198,9 @@ const Login = () => {
                   <input
                     id="password"
                     name="password"
-                    className={`input-style mt-[3px] ${errors.password ? "border border-rose-500" : ""
-                      }`}
+                    className={`input-style mt-[3px] ${
+                      errors.password ? "border border-rose-500" : ""
+                    }`}
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={formData.password}
@@ -209,7 +215,9 @@ const Login = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-rose-500 mt-1 text-sm">{errors.password}</p>
+                  <p className="text-rose-500 mt-1 text-sm">
+                    {errors.password}
+                  </p>
                 )}
               </div>
             </div>
@@ -235,7 +243,7 @@ const Login = () => {
           </Link>
         </p>
       </div>
-    </section >
+    </section>
   );
 };
 
