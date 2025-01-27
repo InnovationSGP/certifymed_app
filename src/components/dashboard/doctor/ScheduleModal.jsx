@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Clock, Plus, X, ChevronDown } from "lucide-react";
-import { getTimeOptions } from "@/utlis/dateHelpers";
 import DurationSelect from "@/components/common/DurationSelect";
 import { HiddenIcon } from "@/components/common/Icons";
+import { getTimeOptions } from "@/utils/dateHelpers";
+import { Clock, Plus, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
   const [scheduleTitle, setScheduleTitle] = useState("");

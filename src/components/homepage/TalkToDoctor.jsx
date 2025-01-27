@@ -2,7 +2,7 @@ import React from "react";
 import PrimaryBtn from "../common/PrimaryBtn";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useTransitionRouteChange } from "@/utlis/useTransitionRouteChange";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 
 const TalkToDoctor = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { footerLinks, socialLinks } from "./Helper";
 import { LogoIcon } from "./Icons";
-import { TransitionLink } from "@/utlis/TransitionLink";
+import { TransitionLink } from "@/utils/TransitionLink";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
