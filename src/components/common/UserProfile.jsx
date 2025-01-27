@@ -1,14 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import CustomDatePicker from "@/components/common/CustomDatePicker";
 import CustomSelect from "@/components/common/CustomSelect";
 import PhoneNumberInput from "@/components/common/PhoneNumberInput";
 import PrimaryBtn from "@/components/common/PrimaryBtn";
 import axiosInstance from "@/utils/axios";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { setUser, updateUser } from "@/redux/slices/userSlice";
 
-const ProfilePage = () => {
+const UserProfile = () => {
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -52,11 +55,23 @@ const ProfilePage = () => {
             profileData?.phoneNumber?.replace(/\D/g, "") || "";
           const countryCode = profileData?.countryCode || "+91";
 
-          console.log("Phone Data:", {
-            rawPhone: profileData?.phoneNumber,
-            parsedPhone: phoneNumber,
-            countryCode,
-          });
+          // Update Redux store with user data
+          dispatch(
+            setUser({
+              _id: profileData._id,
+              email: profileData.email,
+              firstName: profileData.firstName,
+              lastName: profileData.lastName,
+              phoneNumber: phoneNumber,
+              countryCode: countryCode,
+              countryName: profileData.countryName,
+              gender: profileData.gender,
+              dateOfBirth: dateOfBirth,
+              createdAt: profileData.createdAt,
+              updatedAt: profileData.updatedAt,
+              roleType: profileData.roleType || "CUSTOMER",
+            })
+          );
 
           setUserId(profileData._id);
           setFormData({
@@ -71,14 +86,14 @@ const ProfilePage = () => {
         }
       } catch (error) {
         console.error("Profile fetch error:", error);
-        toast.error(error?.message || "Error fetching profile");
+        toast.error(error?.response?.data?.message || "Error fetching profile");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [dispatch]);
 
   const handleSave = async () => {
     try {
@@ -91,12 +106,29 @@ const ProfilePage = () => {
 
       console.log("Saving profile data:", dataToSend);
 
-      await axiosInstance.put(`/auth/api/users/${userId}`, dataToSend);
+      const response = await axiosInstance.put(
+        `/auth/api/users/${userId}`,
+        dataToSend
+      );
+
+      // Update Redux store with new data
+      dispatch(
+        updateUser({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phone,
+          countryCode: formData.countryCode,
+          gender: formData.gender,
+          dateOfBirth: formData.dob,
+          updatedAt: new Date().toISOString(),
+        })
+      );
+
       setIsEditing(false);
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Profile update error:", error);
-      toast.error(error?.message || "Update profile failed");
+      toast.error(error?.response?.data?.message || "Update profile failed");
     }
   };
 
@@ -230,4 +262,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default UserProfile;

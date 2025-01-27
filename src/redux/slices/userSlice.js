@@ -9,11 +9,13 @@ const initialState = {
   roleType: "CUSTOMER",
   accessToken: "",
   refreshToken: "",
-  countryCode: "",
-  countryName: "",
+  countryCode: "+91",
+  countryName: "India",
   phoneNumber: "",
   gender: "",
   dateOfBirth: null,
+  createdAt: null,
+  updatedAt: null,
 };
 
 const userSlice = createSlice({
@@ -34,6 +36,8 @@ const userSlice = createSlice({
         phoneNumber,
         gender,
         dateOfBirth,
+        createdAt,
+        updatedAt,
         isLoggedIn = true,
       } = action.payload;
 
@@ -44,17 +48,28 @@ const userSlice = createSlice({
       state.roleType = roleType;
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
-      state.countryCode = countryCode;
-      state.countryName = countryName;
+      state.countryCode = countryCode || "+91";
+      state.countryName = countryName || "India";
       state.phoneNumber = phoneNumber;
       state.gender = gender;
       state.dateOfBirth = dateOfBirth;
+      state.createdAt = createdAt;
+      state.updatedAt = updatedAt;
       state.isLoggedIn = isLoggedIn;
     },
     updateUser: (state, action) => {
-      return { ...state, ...action.payload };
+      // Handle date conversion for dateOfBirth if needed
+      const payload = { ...action.payload };
+      if (payload.dateOfBirth && !(payload.dateOfBirth instanceof Date)) {
+        try {
+          payload.dateOfBirth = new Date(payload.dateOfBirth);
+        } catch (error) {
+          console.error("Error parsing date:", error);
+        }
+      }
+      return { ...state, ...payload };
     },
-    clearUser: (state) => {
+    clearUser: () => {
       return initialState;
     },
   },
