@@ -135,7 +135,7 @@ const Login = () => {
 
   const handleGoogleSignin = () => {
     const userType = "CUSTOMER";
-    const baseUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/google`;
+    const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
     const state = {
       role: "USER",
       userType,

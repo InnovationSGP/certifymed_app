@@ -202,7 +202,7 @@ const SignUp = ({ role }) => {
 
   const handleGoogleSignUp = () => {
     const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
-    const baseUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/google`;
+    const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
     const stateParam = {
       role: "USER",
       userType,
