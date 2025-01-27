@@ -1,7 +1,7 @@
-import { generateTimeSlots, getWeekDays } from "@/utlis/dateHelpers";
 import { isSameDay } from "date-fns";
 import React from "react";
 import AppointmentCard from "./AppointmentCard";
+import { generateTimeSlots, getWeekDays } from "@/utils/dateHelpers";
 
 const WeekView = ({ selectedDate, appointments }) => {
   const timeSlots = generateTimeSlots();
