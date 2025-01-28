@@ -26,6 +26,7 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const userData = action.payload;
+      console.log(userData.access_token);
 
       return {
         ...state,
@@ -35,7 +36,7 @@ const userSlice = createSlice({
         lastName: userData.lastName || "",
         roleType: userData.roleType || "CUSTOMER",
         userType: userData.userType || "CUSTOMER",
-        accessToken: userData.access_token || userData.jwt || "",
+        accessToken: userData.access_token,
         refreshToken: userData.refreshToken || "",
         countryCode: userData.countryCode || "+91",
         countryName: userData.countryName || "India",

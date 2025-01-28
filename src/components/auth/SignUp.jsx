@@ -138,11 +138,14 @@ const SignUp = ({ role }) => {
 
       if (response.status === 200 || response.status === 201) {
         const responseData = response.data;
+        console.log(responseData, "responseData");
+
+        console.log(response, "-----response");
 
         // Transform the response data to match our expected structure
         const userData = {
           ...responseData,
-          access_token: responseData.jwt || responseData.access_token,
+          access_token: responseData.user.access_token,
           roleType:
             responseData.role?.role || responseData.roleType || "CUSTOMER",
           userType:
@@ -174,6 +177,8 @@ const SignUp = ({ role }) => {
           createdAt: responseData.user?.createdAt || responseData.createdAt,
           updatedAt: responseData.user?.updatedAt || responseData.updatedAt,
         };
+
+        console.log(userData, "userData");
 
         // Set auth data
         setAuth(userData);
