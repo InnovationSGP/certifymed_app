@@ -2,7 +2,7 @@ import { setUser, updateUser } from "@/redux/slices/userSlice";
 import axiosInstance from "@/utils/axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialFormState = {
   firstName: "",
@@ -47,8 +47,8 @@ export const useProfileForm = () => {
 
 export const useProfileData = () => {
   const dispatch = useDispatch();
-  const [userId, setUserId] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const user = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
 
   const parseDateOfBirth = (dateString) => {
     if (!dateString) return null;
@@ -78,6 +78,12 @@ export const useProfileData = () => {
   };
 
   const fetchProfile = async () => {
+    // If we already have user data in Redux, use that instead of making another API call
+    if (user.id) {
+      const parsedData = parseProfileData(user);
+      return parsedData;
+    }
+
     try {
       setIsLoading(true);
       const response = await axiosInstance.get("/auth/api/users/user");
@@ -97,7 +103,6 @@ export const useProfileData = () => {
           })
         );
 
-        setUserId(profileData._id);
         return parsedData;
       }
     } catch (error) {
@@ -118,7 +123,7 @@ export const useProfileData = () => {
         phoneNumber: formData.phone,
       };
 
-      await axiosInstance.put(`/auth/api/users/${userId}`, dataToSend);
+      await axiosInstance.put(`/auth/api/users/${user.id}`, dataToSend);
 
       dispatch(
         updateUser({

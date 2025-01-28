@@ -9,9 +9,11 @@ import NotesCard from "@/components/dashboard/patients/notes/NotesCard";
 import { setAppointmentsForPatients } from "@/redux/slices/patientAppointments";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "@/redux/slices/userSlice";
 
 const PatientsDashboardPage = () => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     dispatch(
@@ -28,11 +30,13 @@ const PatientsDashboardPage = () => {
     (state) => state.patientDashboard.appointmentsHistory
   );
 
+  const userFullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
   return (
     <>
       <DashboardLayout className="overflow-auto">
         <DashboardWelcome
-          heading="Hi, John Mark"
+          heading={`Hi, ${userFullName}`}
           description="Welcome back!"
           emergencycall={true}
           buttontext="Book a Doctor"

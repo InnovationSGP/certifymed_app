@@ -10,10 +10,13 @@ import NotesWelcome from "@/components/dashboard/patients/notes/NotesWelcome";
 import { setPatients } from "@/redux/slices/allPatientsForDoctorSlice";
 import { setDoctorAppointments } from "@/redux/slices/doctorRecentAppointmentsSlice";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "@/redux/slices/userSlice";
 
 const DoctorDashboardPage = () => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
   useEffect(() => {
     dispatch(
       setDoctorAppointments({
@@ -27,10 +30,17 @@ const DoctorDashboardPage = () => {
     dispatch(setPatients(patientsdatalist));
   }, [dispatch]);
 
+  const userFullName = `Dr. ${user.firstName || ""} ${
+    user.lastName || ""
+  }`.trim();
+
   return (
     <>
       <DashboardLayout className="overflow-auto">
-        <NotesWelcome heading="Hi, Dr. John" description="Welcome back!" />
+        <NotesWelcome
+          heading={`Hi, ${userFullName}`}
+          description="Welcome back!"
+        />
         <DoctorAnalytics />
         <DoctorDashboard />
       </DashboardLayout>
