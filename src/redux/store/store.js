@@ -15,8 +15,20 @@ export function makeStore() {
       patientsTests: patientTestsReducer,
       doctorUpcomingAppointments: doctorUpcomingAppointmentsReducer,
       allConcernedPatients: patientsInfo,
-      isLoggedIn: true,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          // Ignore these action types
+          ignoredActions: ["user/setUser", "user/updateUser"],
+          // Ignore these paths in the state
+          ignoredPaths: [
+            "user.dateOfBirth",
+            "user.createdAt",
+            "user.updatedAt",
+          ],
+        },
+      }),
   });
 }
 

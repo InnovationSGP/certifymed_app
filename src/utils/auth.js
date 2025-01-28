@@ -7,6 +7,11 @@ export const setAuth = (data) => {
     ...(data.role || {}),
   };
 
+  // Convert dates to ISO strings before storage
+  const dateOfBirth = userData.dateOfBirth
+    ? new Date(userData.dateOfBirth).toISOString()
+    : null;
+
   // Store auth token
   if (userData.access_token) {
     localStorage.setItem("authToken", userData.access_token);
@@ -26,6 +31,7 @@ export const setAuth = (data) => {
   localStorage.setItem("gender", userData.gender || "");
   localStorage.setItem("countryCode", userData.countryCode || "+91");
   localStorage.setItem("countryName", userData.countryName || "India");
+  localStorage.setItem("dateOfBirth", dateOfBirth || "");
 
   // Set cookies
   const cookieExpiry = 30 * 24 * 60 * 60; // 30 days
