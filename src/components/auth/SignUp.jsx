@@ -1,3 +1,4 @@
+// components/auth/SignUp.js
 "use client";
 
 import { setUser } from "@/redux/slices/userSlice";
@@ -20,11 +21,10 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const SignUp = ({ role }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -45,7 +45,7 @@ const SignUp = ({ role }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const options = [
+  const genderOptions = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
@@ -60,45 +60,55 @@ const SignUp = ({ role }) => {
     [errors]
   );
 
-  const handlePhoneChange = (phoneData) => {
-    setFormData((prev) => ({
-      ...prev,
-      phoneNumber: phoneData.phoneNumber,
-      countryCode: phoneData.countryCode,
-      countryName: phoneData.countryName,
-    }));
+  const handlePhoneChange = useCallback(
+    (phoneData) => {
+      setFormData((prev) => ({
+        ...prev,
+        phoneNumber: phoneData.phoneNumber,
+        countryCode: phoneData.countryCode,
+        countryName: phoneData.countryName,
+      }));
 
-    if (errors.phoneNumber) {
-      setErrors((prev) => ({ ...prev, phoneNumber: "" }));
-    }
-  };
+      if (errors.phoneNumber) {
+        setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+      }
+    },
+    [errors]
+  );
 
   const validateForm = useCallback(() => {
     const newErrors = {};
+
     if (!formData.firstName) newErrors.firstName = "First name is required";
     if (!formData.lastName) newErrors.lastName = "Last name is required";
+
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
       newErrors.password =
         "Password must include uppercase, lowercase, number, and special character (8+ chars)";
     }
+
     if (!formData.passwordConfirmation) {
       newErrors.passwordConfirmation = "Please confirm your password";
     } else if (formData.password !== formData.passwordConfirmation) {
       newErrors.passwordConfirmation = "Passwords do not match";
     }
+    // Continuing from previous validateForm function...
+
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = "Phone number is required";
     } else if (!validatePhone(formData.phoneNumber)) {
       newErrors.phoneNumber =
         "Please enter a valid phone number (10-15 digits)";
     }
+
     if (!formData.dateOfBirth) {
       newErrors.dateOfBirth = "Date of birth is required";
     }
@@ -114,6 +124,7 @@ const SignUp = ({ role }) => {
 
     try {
       setLoading(true);
+      const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
 
       const response = await axiosInstance.post("/auth/api/registration", {
         ...formData,
@@ -122,23 +133,59 @@ const SignUp = ({ role }) => {
             ? formData.dateOfBirth.toISOString()
             : null,
         role: "USER",
-        userType: role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER",
+        userType,
       });
 
       if (response.status === 200 || response.status === 201) {
-        const data = response.data;
+        const responseData = response.data;
 
-        // Set auth cookies
-        setAuth(data);
+        // Transform the response data to match our expected structure
+        const userData = {
+          ...responseData,
+          access_token: responseData.jwt || responseData.access_token,
+          roleType:
+            responseData.role?.role || responseData.roleType || "CUSTOMER",
+          userType:
+            responseData.role?.userType || responseData.userType || userType,
+          _id: responseData.role?._id || responseData._id,
+          firstName: responseData.user?.firstName || responseData.firstName,
+          lastName: responseData.user?.lastName || responseData.lastName,
+          email: responseData.role?.email || responseData.email,
+          // Additional user details
+          phoneNumber:
+            responseData.user?.phoneNumber ||
+            responseData.phoneNumber ||
+            formData.phoneNumber,
+          countryCode:
+            responseData.user?.countryCode ||
+            responseData.countryCode ||
+            formData.countryCode,
+          countryName:
+            responseData.user?.countryName ||
+            responseData.countryName ||
+            formData.countryName,
+          gender:
+            responseData.user?.gender || responseData.gender || formData.gender,
+          dateOfBirth:
+            responseData.user?.dateOfBirth ||
+            responseData.dateOfBirth ||
+            formData.dateOfBirth,
+          // Additional fields from response
+          createdAt: responseData.user?.createdAt || responseData.createdAt,
+          updatedAt: responseData.user?.updatedAt || responseData.updatedAt,
+        };
 
-        // Update Redux store with all relevant user data
-        dispatch(setUser(data));
+        // Set auth data
+        setAuth(userData);
+
+        // Update Redux store
+        dispatch(setUser(userData));
 
         toast.success("Sign up successful!");
 
-        // Redirect based on role
+        // Redirect based on user type
         router.push(
-          data.roleType === "CARE_COORDINATOR"
+          userData.userType === "CARE_COORDINATOR"
             ? "/dashboard/doctor"
             : "/dashboard/patients"
         );
@@ -153,14 +200,12 @@ const SignUp = ({ role }) => {
     }
   };
 
-  const handleGoogleRedirect = () => {
+  const handleGoogleRedirect = useCallback(() => {
     const hash = window.location.hash;
     if (hash && hash.includes("auth=")) {
       try {
         const encodedData = hash.split("auth=")[1];
-
         const decodedData = Buffer.from(encodedData, "base64").toString();
-
         const authData = JSON.parse(decodedData);
 
         if (!authData) {
@@ -168,18 +213,27 @@ const SignUp = ({ role }) => {
           return;
         }
 
+        // Set auth data
         setAuth(authData);
 
-        dispatch(setUser(authData));
+        // Update Redux store
+        dispatch(
+          setUser({
+            ...authData,
+            isLoggedIn: true,
+          })
+        );
 
         toast.success("Google sign in successful!");
 
+        // Clean up URL
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
 
+        // Redirect based on role
         router.push(
           authData.roleType === "CARE_COORDINATOR"
             ? "/dashboard/doctor"
@@ -189,18 +243,10 @@ const SignUp = ({ role }) => {
         console.error("Error processing Google auth data:", error);
         toast.error("Failed to complete Google authentication");
       }
-    } else {
-      console.log("No auth data in URL");
-    }
-  };
-
-  useEffect(() => {
-    if (window.location.hash) {
-      handleGoogleRedirect();
     }
   }, [dispatch, router]);
 
-  const handleGoogleSignUp = () => {
+  const handleGoogleSignUp = useCallback(() => {
     const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
     const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
     const stateParam = {
@@ -208,10 +254,8 @@ const SignUp = ({ role }) => {
       userType,
       redirectUrl: window.location.origin + "/auth/callback",
     };
-    const params = new URLSearchParams({
-      state: JSON.stringify(stateParam),
-    });
 
+    // Clear existing auth data
     localStorage.clear();
     sessionStorage.clear();
 
@@ -228,8 +272,18 @@ const SignUp = ({ role }) => {
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
     });
 
-    window.location.href = `${baseUrl}?${params.toString()}`;
-  };
+    // Redirect to Google auth
+    window.location.href = `${baseUrl}?${new URLSearchParams({
+      state: JSON.stringify(stateParam),
+    }).toString()}`;
+  }, [role]);
+
+  // Handle Google redirect on component mount
+  useEffect(() => {
+    if (window.location.hash) {
+      handleGoogleRedirect();
+    }
+  }, [handleGoogleRedirect]);
 
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
@@ -245,7 +299,6 @@ const SignUp = ({ role }) => {
         onSubmit={handleSubmit}
         className="gap-y-[23px] flex flex-col mb-8 sm:mb-[17px]"
       >
-        {/* Rest of your form JSX remains the same... */}
         <div className="grid md:grid-cols-2 gap-[23px]">
           {/* First Name */}
           <div>
@@ -285,7 +338,7 @@ const SignUp = ({ role }) => {
           <div>
             <label className="font-medium text-dimGray">Gender</label>
             <CustomSelect
-              options={options}
+              options={genderOptions}
               value={formData.gender}
               onChange={(value) => handleChange("gender", value)}
               error={!!errors.gender}

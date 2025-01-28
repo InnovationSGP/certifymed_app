@@ -1,3 +1,4 @@
+// redux/slices/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -20,46 +21,52 @@ const initialState = {
 
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: {
+    id: null,
+    email: "",
+    firstName: "",
+    lastName: "",
+    isLoggedIn: false,
+    roleType: "CUSTOMER",
+    userType: "CUSTOMER",
+    accessToken: "",
+    refreshToken: "",
+    countryCode: "+91",
+    countryName: "India",
+    phoneNumber: "",
+    gender: "",
+    dateOfBirth: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   reducers: {
     setUser: (state, action) => {
-      const {
-        _id,
-        email,
-        firstName,
-        lastName,
-        roleType,
-        accessToken,
-        refreshToken,
-        countryCode,
-        countryName,
-        phoneNumber,
-        gender,
-        dateOfBirth,
-        createdAt,
-        updatedAt,
-        isLoggedIn = true,
-      } = action.payload;
-
-      state.id = _id;
-      state.email = email;
-      state.firstName = firstName;
-      state.lastName = lastName;
-      state.roleType = roleType;
-      state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
-      state.countryCode = countryCode || "+91";
-      state.countryName = countryName || "India";
-      state.phoneNumber = phoneNumber;
-      state.gender = gender;
-      state.dateOfBirth = dateOfBirth;
-      state.createdAt = createdAt;
-      state.updatedAt = updatedAt;
-      state.isLoggedIn = isLoggedIn;
+      const userData = action.payload;
+      return {
+        ...state,
+        id: userData._id,
+        email: userData.email || "",
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        roleType: userData.roleType || "CUSTOMER",
+        userType: userData.userType || "CUSTOMER",
+        accessToken: userData.access_token || "",
+        refreshToken: userData.refreshToken || "",
+        countryCode: userData.countryCode || "+91",
+        countryName: userData.countryName || "India",
+        phoneNumber: userData.phoneNumber || "",
+        gender: userData.gender || "",
+        dateOfBirth: userData.dateOfBirth
+          ? new Date(userData.dateOfBirth)
+          : null,
+        createdAt: userData.createdAt ? new Date(userData.createdAt) : null,
+        updatedAt: userData.updatedAt ? new Date(userData.updatedAt) : null,
+        isLoggedIn: true,
+      };
     },
     updateUser: (state, action) => {
-      // Handle date conversion for dateOfBirth if needed
       const payload = { ...action.payload };
+      // Handle date fields
       if (payload.dateOfBirth && !(payload.dateOfBirth instanceof Date)) {
         try {
           payload.dateOfBirth = new Date(payload.dateOfBirth);
@@ -69,9 +76,7 @@ const userSlice = createSlice({
       }
       return { ...state, ...payload };
     },
-    clearUser: () => {
-      return initialState;
-    },
+    clearUser: () => initialState,
   },
 });
 

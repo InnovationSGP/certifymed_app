@@ -1,49 +1,76 @@
 "use client";
 
-// Set auth cookies and local storage
 export const setAuth = (data) => {
-  // Set HttpOnly cookies for security
-  document.cookie = `accessToken=${data.access_token}; path=/; max-age=${
-    30 * 24 * 60 * 60
-  }; SameSite=Lax`;
-  document.cookie = `userRole=${data.roleType}; path=/; max-age=${
-    30 * 24 * 60 * 60
-  }; SameSite=Lax`;
-  document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=${
-    30 * 24 * 60 * 60
-  }; SameSite=Lax; HttpOnly`;
+  const userData = {
+    ...data,
+    ...(data.user || {}),
+    ...(data.role || {}),
+  };
 
-  // Store non-sensitive data in localStorage
+  // Store auth token
+  if (userData.access_token) {
+    localStorage.setItem("authToken", userData.access_token);
+  } else if (userData.jwt) {
+    localStorage.setItem("authToken", userData.jwt);
+  }
+
+  // Store user details in localStorage
+  localStorage.setItem("userRole", userData.roleType || "CUSTOMER");
+  localStorage.setItem("userType", userData.userType || "CUSTOMER");
+  localStorage.setItem("userId", userData._id || "");
+  localStorage.setItem("firstName", userData.firstName || "");
+  localStorage.setItem("lastName", userData.lastName || "");
+  localStorage.setItem("email", userData.email || "");
   localStorage.setItem("isLoggedIn", "true");
-  localStorage.setItem("firstName", data.firstName);
-  localStorage.setItem("lastName", data.lastName);
+  localStorage.setItem("phoneNumber", userData.phoneNumber || "");
+  localStorage.setItem("gender", userData.gender || "");
+  localStorage.setItem("countryCode", userData.countryCode || "+91");
+  localStorage.setItem("countryName", userData.countryName || "India");
+
+  // Set cookies
+  const cookieExpiry = 30 * 24 * 60 * 60; // 30 days
+  document.cookie = `userRole=${
+    userData.roleType || "CUSTOMER"
+  }; path=/; max-age=${cookieExpiry}; SameSite=Lax`;
+  document.cookie = `userType=${
+    userData.userType || "CUSTOMER"
+  }; path=/; max-age=${cookieExpiry}; SameSite=Lax`;
+  document.cookie = `accessToken=${
+    userData.access_token || userData.jwt || ""
+  }; path=/; max-age=${cookieExpiry}; SameSite=Lax`;
+  if (userData.refreshToken) {
+    document.cookie = `refreshToken=${userData.refreshToken}; path=/; max-age=${cookieExpiry}; SameSite=Lax; HttpOnly`;
+  }
 };
 
-// Clear auth state
 export const clearAuth = () => {
   // Clear cookies
-  document.cookie =
-    "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  document.cookie =
-    "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  const cookiesToClear = [
+    "accessToken",
+    "userRole",
+    "refreshToken",
+    "connect.sid",
+    "jwt",
+  ];
+
+  cookiesToClear.forEach((cookie) => {
+    document.cookie = `${cookie}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  });
 
   // Clear localStorage
   localStorage.clear();
+  sessionStorage.clear();
 };
 
-// Check auth status
 export const getAuthStatus = () => {
-  if (typeof window === "undefined") return {};
+  if (typeof window === "undefined") return false;
 
-  const cookies = document.cookie.split(";").reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split("=");
-    acc[key] = value;
-    return acc;
-  }, {});
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const authToken = localStorage.getItem("authToken");
+  const userRole = localStorage.getItem("userRole");
 
   return {
-    isAuthenticated: !!cookies.accessToken,
-    role: cookies.userRole,
+    isAuthenticated: isLoggedIn && !!authToken,
+    role: userRole || null,
   };
 };
