@@ -35,18 +35,18 @@ const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 mt-8">
-          <PrimaryBtn
+          <button
             onClick={() => onRoleSelect("CUSTOMER")}
+            className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100"
             disabled={isLoading}
-            className="w-full !h-[55px] xl:!h-[60px]"
           >
             {isLoading ? <SpinnerLoader /> : "Continue as a Patient"}
-          </PrimaryBtn>
+          </button>
 
           <button
             onClick={() => onRoleSelect("CARE_COORDINATOR")}
-            disabled={isLoading}
             className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-primary bg-white border border-primary rounded-xl hover:bg-primary hover:text-white transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-500"
+            disabled={isLoading}
           >
             {isLoading ? <SpinnerLoader /> : "Continue as a Doctor"}
           </button>
@@ -117,22 +117,42 @@ const Login = () => {
     }
   };
 
+  const processAuthData = async (authData) => {
+    try {
+      // If user already has a role, use it directly
+      if (authData.roleType && authData.userType) {
+        setAuth(authData);
+        dispatch(setUser(authData));
+        toast.success("Logged in successfully");
+
+        router.push(
+          authData.roleType === "CARE_COORDINATOR"
+            ? "/dashboard/doctor"
+            : "/dashboard/patients"
+        );
+      } else {
+        // If no role is set, show the role selection modal
+        setPendingGoogleData({ ...authData, googleAuth: true });
+        setShowRoleModal(true);
+      }
+    } catch (error) {
+      console.error("Error processing auth data:", error);
+      toast.error("Failed to complete authentication");
+    }
+  };
+
   const handleRoleSelection = async (selectedRole) => {
     if (!pendingGoogleData) return;
 
     try {
       setIsLoggingIn(true);
 
-      // Determine userType based on selection
-      const userType =
-        selectedRole === "CUSTOMER" ? "CUSTOMER" : "CARE_COORDINATOR";
-
       // For Google login
       if (pendingGoogleData.googleAuth) {
         const authData = {
           ...pendingGoogleData,
           roleType: selectedRole,
-          userType: userType,
+          userType: selectedRole,
         };
 
         setAuth(authData);
@@ -143,7 +163,7 @@ const Login = () => {
       else {
         const loginData = {
           ...pendingGoogleData, // contains email and password
-          userType: userType,
+          userType: selectedRole,
           roleType: selectedRole,
         };
 
@@ -161,7 +181,7 @@ const Login = () => {
       setShowRoleModal(false);
 
       router.push(
-        userType === "CARE_COORDINATOR"
+        selectedRole === "CARE_COORDINATOR"
           ? "/dashboard/doctor"
           : "/dashboard/patients"
       );
@@ -172,7 +192,6 @@ const Login = () => {
       setIsLoggingIn(false);
     }
   };
-
   const handleGoogleRedirect = () => {
     const hash = window.location.hash;
     if (hash && hash.includes("auth=")) {
@@ -186,8 +205,8 @@ const Login = () => {
           return;
         }
 
-        setPendingGoogleData({ ...authData, googleAuth: true });
-        setShowRoleModal(true);
+        // Process the auth data - this will check for existing role
+        processAuthData(authData);
 
         window.history.replaceState(
           {},
