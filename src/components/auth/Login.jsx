@@ -14,6 +14,48 @@ import GoogleButton from "../common/GoogleButton";
 import { Eyeclose, EyeIcon } from "../common/Icons";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../common/Dialog";
+
+// Role Selection Modal Component
+const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <div className="flex items-center justify-center mb-8">
+            <CertifyLogo />
+          </div>
+          <DialogTitle className="text-center">
+            Please select your role to continue
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4 mt-8">
+          <button
+            onClick={() => onRoleSelect("CUSTOMER")}
+            className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100"
+            disabled={isLoading}
+          >
+            {isLoading ? <SpinnerLoader /> : "Continue as a Patient"}
+          </button>
+
+          <button
+            onClick={() => onRoleSelect("CARE_COORDINATOR")}
+            className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-primary bg-white border border-primary rounded-xl hover:bg-primary hover:text-white transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-500"
+            disabled={isLoading}
+          >
+            {isLoading ? <SpinnerLoader /> : "Continue as a Doctor"}
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -23,35 +65,58 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [pendingGoogleData, setPendingGoogleData] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+  const setCookiesAndStorage = (userData) => {
+    try {
+      // Set cookies with proper attributes
+      const cookieExpiry = new Date();
+      cookieExpiry.setDate(cookieExpiry.getDate() + 30);
+
+      // Make sure path is set to root and include necessary attributes
+      const cookieOptions = `expires=${cookieExpiry.toUTCString()}; path=/; SameSite=Lax`;
+
+      // Set auth token cookies - ensure they are being set
+      document.cookie = `accessToken=${userData.access_token}; ${cookieOptions}`;
+      document.cookie = `jwt=${userData.access_token}; ${cookieOptions}`;
+      document.cookie = `userRole=${userData.roleType}; ${cookieOptions}`;
+
+      // Log cookie setting for debugging
+      console.log("Setting cookies with roleType:", userData.roleType);
+
+      // Set localStorage values
+      const localStorageData = {
+        authToken: userData.access_token,
+        userRole: userData.roleType,
+        userType: userData.roleType,
+        isLoggedIn: "true",
+        userId: userData._id,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber || "",
+      };
+
+      // Set all localStorage items
+      Object.entries(localStorageData).forEach(([key, value]) => {
+        localStorage.setItem(key, value || "");
+      });
+
+      // Update axios headers
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${userData.access_token}`;
+
+      return true;
+    } catch (error) {
+      console.error("Error setting auth data:", error);
+      return false;
     }
-  };
-
-  const validateForm = () => {
-    const { email, password } = formData;
-    const newErrors = {};
-
-    if (!email) newErrors.email = "Email is required";
-    else if (!validateEmail(email)) newErrors.email = "Invalid email address";
-
-    if (!password) newErrors.password = "Password is required";
-    else if (!validatePassword(password)) {
-      newErrors.password =
-        "Password must include at least 8 characters, with uppercase, lowercase, number, and special character.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async (e) => {
     if (e) e.preventDefault();
-
     if (!validateForm()) return;
     if (isLoggingIn) return;
 
@@ -64,23 +129,19 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-        const data = response.data;
-        localStorage.setItem("authToken", data.token);
+        const userData = response.data;
 
-        // Get user details
-        const userResponse = await axiosInstance.get("/auth/api/users/user");
-        const userData = userResponse.data;
+        if (setCookiesAndStorage(userData)) {
+          setAuth(userData);
+          dispatch(setUser(userData));
+          toast.success("Logged in successfully");
 
-        setAuth(userData);
-        dispatch(setUser(userData));
-        toast.success("Logged in successfully");
-
-        // Redirect based on user type
-        router.push(
-          userData.roleType === "CARE_COORDINATOR"
-            ? "/dashboard/doctor"
-            : "/dashboard/patients"
-        );
+          router.push(
+            userData.roleType === "CARE_COORDINATOR"
+              ? "/dashboard/doctor"
+              : "/dashboard/patients"
+          );
+        }
       }
     } catch (error) {
       toast.error(
@@ -101,50 +162,121 @@ const Login = () => {
         const decodedData = Buffer.from(encodedData, "base64").toString();
         const authData = JSON.parse(decodedData);
 
-        if (!authData) {
-          console.error("No auth data found");
-          return;
+        if (!authData || !authData.access_token) {
+          throw new Error("No auth token found");
         }
 
-        console.log(authData, "authData");
-
-        // Store the token
-        localStorage.setItem("authToken", authData.token);
+        // Set the token in localStorage and axios headers
+        localStorage.setItem("authToken", authData.access_token);
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${authData.access_token}`;
 
         try {
-          // Get user details using the token
           const userResponse = await axiosInstance.get("/auth/api/users/user");
           const userData = userResponse.data;
-          console.log(userData, "userData");
 
+          if (userData && userData.roleType) {
+            const completeUserData = {
+              ...userData,
+              access_token: authData.access_token,
+            };
+
+            // Make sure cookies are set before redirect
+            const cookiesSet = setCookiesAndStorage(completeUserData);
+
+            if (cookiesSet) {
+              setAuth(completeUserData);
+              dispatch(setUser(completeUserData));
+
+              // Force a small delay to ensure cookies are set
+              await new Promise((resolve) => setTimeout(resolve, 100));
+
+              // Determine redirect path
+              const redirectPath =
+                userData.roleType === "CUSTOMER"
+                  ? "/dashboard/patients"
+                  : "/dashboard/doctor";
+
+              console.log("Redirecting to:", redirectPath);
+
+              // Use window.location for hard redirect
+              window.location.href = redirectPath;
+              return; // Exit after redirect
+            }
+          } else {
+            setPendingGoogleData({
+              ...authData,
+              access_token: authData.access_token,
+            });
+            setShowRoleModal(true);
+          }
+        } catch (error) {
+          if (error.response?.status === 404) {
+            setPendingGoogleData({
+              ...authData,
+              access_token: authData.access_token,
+            });
+            setShowRoleModal(true);
+          } else {
+            throw error;
+          }
+        }
+      } catch (error) {
+        console.error("Google auth error:", error);
+        toast.error("Failed to complete Google authentication");
+        localStorage.removeItem("authToken");
+        delete axiosInstance.defaults.headers.common["Authorization"];
+      }
+
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  };
+
+  const handleRoleSelection = async (selectedRole) => {
+    if (!pendingGoogleData) return;
+    setIsLoggingIn(true);
+
+    try {
+      // Register new user with selected role
+      const registerResponse = await axiosInstance.post(
+        "/auth/api/users/register",
+        {
+          ...pendingGoogleData,
+          roleType: selectedRole,
+          userType: selectedRole,
+          access_token: pendingGoogleData.access_token, // Ensure token is included
+        }
+      );
+
+      if (registerResponse.status === 200) {
+        const userData = {
+          ...registerResponse.data,
+          access_token: pendingGoogleData.access_token,
+        };
+
+        if (setCookiesAndStorage(userData)) {
           setAuth(userData);
           dispatch(setUser(userData));
-          toast.success("Google sign in successful!");
-          console.log(userData.roleType, "userData.roleType");
+          toast.success("Account created successfully!");
 
-          // Redirect based on user type
           router.push(
-            userData.roleType === "CARE_COORDINATOR"
+            selectedRole === "CARE_COORDINATOR"
               ? "/dashboard/doctor"
               : "/dashboard/patients"
           );
-
-          console.log("running");
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-          toast.error("Failed to get user details");
         }
-
-        // Clean up the URL
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-      } catch (error) {
-        console.error("Error processing Google auth data:", error);
-        toast.error("Failed to complete Google authentication");
       }
+    } catch (error) {
+      console.error("Role selection error:", error.response || error);
+      toast.error("Failed to complete registration");
+      // Clean up on error
+      localStorage.removeItem("authToken");
+      delete axiosInstance.defaults.headers.common["Authorization"];
+    } finally {
+      setIsLoggingIn(false);
+      setShowRoleModal(false);
+      setPendingGoogleData(null);
     }
   };
 
@@ -158,7 +290,14 @@ const Login = () => {
       state: JSON.stringify(state),
     });
 
-    localStorage.removeItem("authToken");
+    // Clear existing auth data
+    localStorage.clear();
+    const cookies = document.cookie.split(";");
+    cookies.forEach((cookie) => {
+      const cookieName = cookie.split("=")[0].trim();
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    });
+
     window.location.href = `${baseUrl}?${params.toString()}`;
   };
 
@@ -167,6 +306,32 @@ const Login = () => {
       handleGoogleRedirect();
     }
   }, []);
+
+  // Form validation and input handling functions remain the same...
+  const validateForm = () => {
+    const { email, password } = formData;
+    const newErrors = {};
+
+    if (!email) newErrors.email = "Email is required";
+    else if (!validateEmail(email)) newErrors.email = "Invalid email address";
+
+    if (!password) newErrors.password = "Password is required";
+    else if (!validatePassword(password)) {
+      newErrors.password =
+        "Password must include at least 8 characters, with uppercase, lowercase, number, and special character.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
 
   return (
     <section className="h-full w-full max-w-[542px]">
@@ -184,10 +349,12 @@ const Login = () => {
             text="Sign in with Google"
             onClick={handleGoogleSignin}
           />
+          <div className="text-center my-4">or</div>
           <form onSubmit={handleLogin}>
+            {/* Form fields remain the same... */}
             <div className="flex flex-col items-center gap-y-8 justify-center">
               {/* Email */}
-              <div className="mt-[23px] w-full xl:mt-[30px]">
+              <div className="w-full">
                 <label htmlFor="email" className="font-medium text-dimGray">
                   Email
                 </label>
@@ -243,6 +410,7 @@ const Login = () => {
             <PrimaryBtn
               type="submit"
               className="w-full !h-[55px] xl:!h-[60px] mt-[23px] xl:mt-[30px]"
+              disabled={isLoggingIn}
             >
               {isLoggingIn ? <SpinnerLoader /> : "Log in"}
             </PrimaryBtn>
@@ -261,6 +429,22 @@ const Login = () => {
           </Link>
         </p>
       </div>
+
+      {/* Role Selection Modal */}
+      <RoleSelectionModal
+        isOpen={showRoleModal}
+        onClose={() => {
+          if (!isLoggingIn) {
+            setShowRoleModal(false);
+            setPendingGoogleData(null);
+            // Clean up stored data
+            localStorage.removeItem("authToken");
+            delete axiosInstance.defaults.headers.common["Authorization"];
+          }
+        }}
+        onRoleSelect={handleRoleSelection}
+        isLoading={isLoggingIn}
+      />
     </section>
   );
 };
