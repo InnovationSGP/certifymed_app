@@ -349,7 +349,6 @@ const Login = () => {
             text="Sign in with Google"
             onClick={handleGoogleSignin}
           />
-          <div className="text-center my-4">or</div>
           <form onSubmit={handleLogin}>
             {/* Form fields remain the same... */}
             <div className="flex flex-col items-center gap-y-8 justify-center">

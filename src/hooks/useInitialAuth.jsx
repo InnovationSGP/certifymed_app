@@ -15,6 +15,13 @@ const useInitialAuth = () => {
       return;
     }
 
+    // Check if we have an auth token
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await axiosInstance.get("/auth/api/users/user");
 
@@ -40,6 +47,10 @@ const useInitialAuth = () => {
       }
     } catch (error) {
       console.error("Error fetching initial user data:", error);
+      // If there's an error with the token, clear it
+      if (error.response?.status === 401) {
+        localStorage.removeItem("authToken");
+      }
     } finally {
       setIsLoading(false);
     }

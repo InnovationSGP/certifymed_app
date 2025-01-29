@@ -1,5 +1,3 @@
-// components/GoogleButton.js
-
 import { Google } from "./AppIcons";
 
 const GoogleButton = ({ text = "Sign up with Google", onClick }) => {
