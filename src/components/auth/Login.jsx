@@ -14,47 +14,6 @@ import GoogleButton from "../common/GoogleButton";
 import { Eyeclose, EyeIcon } from "../common/Icons";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../common/Dialog";
-
-const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
-  return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <div className="flex items-center justify-center mb-8">
-            <CertifyLogo />
-          </div>
-          <DialogTitle className="text-center">
-            Please select your role to continue
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="flex flex-col gap-4 mt-8">
-          <button
-            onClick={() => onRoleSelect("CUSTOMER")}
-            className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100"
-            disabled={isLoading}
-          >
-            {isLoading ? <SpinnerLoader /> : "Continue as a Patient"}
-          </button>
-
-          <button
-            onClick={() => onRoleSelect("CARE_COORDINATOR")}
-            className="w-full h-[55px] xl:h-[60px] flex justify-center items-center text-primary bg-white border border-primary rounded-xl hover:bg-primary hover:text-white transition-colors duration-300 ease-in-out font-medium disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-500"
-            disabled={isLoading}
-          >
-            {isLoading ? <SpinnerLoader /> : "Continue as a Doctor"}
-          </button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -64,8 +23,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showRoleModal, setShowRoleModal] = useState(false);
-  const [pendingGoogleData, setPendingGoogleData] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,98 +58,42 @@ const Login = () => {
     setIsLoggingIn(true);
 
     try {
-      // Show role selection modal before proceeding with login
-      setShowRoleModal(true);
-      setPendingGoogleData({
+      const response = await axiosInstance.post("/auth/api/users", {
         email: formData.email,
         password: formData.password,
       });
+
+      if (response.status === 200) {
+        const data = response.data;
+        localStorage.setItem("authToken", data.token);
+
+        // Get user details
+        const userResponse = await axiosInstance.get("/auth/api/users/user");
+        const userData = userResponse.data;
+
+        setAuth(userData);
+        dispatch(setUser(userData));
+        toast.success("Logged in successfully");
+
+        // Redirect based on user type
+        router.push(
+          userData.roleType === "CARE_COORDINATOR"
+            ? "/dashboard/doctor"
+            : "/dashboard/patients"
+        );
+      }
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "An error occurred during login. Please try again."
       );
       console.error("Login error:", error);
-      setIsLoggingIn(false);
-    }
-  };
-
-  const processAuthData = async (authData) => {
-    try {
-      // If user already has a role, use it directly
-      if (authData.roleType && authData.userType) {
-        setAuth(authData);
-        dispatch(setUser(authData));
-        toast.success("Logged in successfully");
-
-        router.push(
-          authData.roleType === "CARE_COORDINATOR"
-            ? "/dashboard/doctor"
-            : "/dashboard/patients"
-        );
-      } else {
-        // If no role is set, show the role selection modal
-        setPendingGoogleData({ ...authData, googleAuth: true });
-        setShowRoleModal(true);
-      }
-    } catch (error) {
-      console.error("Error processing auth data:", error);
-      toast.error("Failed to complete authentication");
-    }
-  };
-
-  const handleRoleSelection = async (selectedRole) => {
-    if (!pendingGoogleData) return;
-
-    try {
-      setIsLoggingIn(true);
-
-      // For Google login
-      if (pendingGoogleData.googleAuth) {
-        const authData = {
-          ...pendingGoogleData,
-          roleType: selectedRole,
-          userType: selectedRole,
-        };
-
-        setAuth(authData);
-        dispatch(setUser(authData));
-        toast.success("Google sign in successful!");
-      }
-      // For regular login
-      else {
-        const loginData = {
-          ...pendingGoogleData, // contains email and password
-          userType: selectedRole,
-          roleType: selectedRole,
-        };
-
-        const response = await axiosInstance.post("/auth/api/users", loginData);
-
-        if (response.status === 200) {
-          const data = response.data;
-          setAuth(data);
-          dispatch(setUser(data));
-          toast.success("Logged in successfully");
-        }
-      }
-
-      setPendingGoogleData(null);
-      setShowRoleModal(false);
-
-      router.push(
-        selectedRole === "CARE_COORDINATOR"
-          ? "/dashboard/doctor"
-          : "/dashboard/patients"
-      );
-    } catch (error) {
-      console.error("Error processing role selection:", error);
-      toast.error("Failed to complete authentication");
     } finally {
       setIsLoggingIn(false);
     }
   };
-  const handleGoogleRedirect = () => {
+
+  const handleGoogleRedirect = async () => {
     const hash = window.location.hash;
     if (hash && hash.includes("auth=")) {
       try {
@@ -205,9 +106,36 @@ const Login = () => {
           return;
         }
 
-        // Process the auth data - this will check for existing role
-        processAuthData(authData);
+        console.log(authData, "authData");
 
+        // Store the token
+        localStorage.setItem("authToken", authData.token);
+
+        try {
+          // Get user details using the token
+          const userResponse = await axiosInstance.get("/auth/api/users/user");
+          const userData = userResponse.data;
+          console.log(userData, "userData");
+
+          setAuth(userData);
+          dispatch(setUser(userData));
+          toast.success("Google sign in successful!");
+          console.log(userData.roleType, "userData.roleType");
+
+          // Redirect based on user type
+          router.push(
+            userData.roleType === "CARE_COORDINATOR"
+              ? "/dashboard/doctor"
+              : "/dashboard/patients"
+          );
+
+          console.log("running");
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+          toast.error("Failed to get user details");
+        }
+
+        // Clean up the URL
         window.history.replaceState(
           {},
           document.title,
@@ -230,7 +158,7 @@ const Login = () => {
       state: JSON.stringify(state),
     });
 
-    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("authToken");
     window.location.href = `${baseUrl}?${params.toString()}`;
   };
 
@@ -333,18 +261,6 @@ const Login = () => {
           </Link>
         </p>
       </div>
-
-      <RoleSelectionModal
-        isOpen={showRoleModal}
-        onClose={() => {
-          if (!isLoggingIn) {
-            setShowRoleModal(false);
-            setPendingGoogleData(null);
-          }
-        }}
-        onRoleSelect={handleRoleSelection}
-        isLoading={isLoggingIn}
-      />
     </section>
   );
 };
