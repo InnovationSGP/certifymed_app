@@ -146,7 +146,7 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
+        error.response?.data?.error ||
           "An error occurred during login. Please try again."
       );
       console.error("Login error:", error);
