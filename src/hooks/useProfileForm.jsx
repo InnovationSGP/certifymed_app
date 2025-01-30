@@ -1,8 +1,4 @@
-import { setUser, updateUser } from "@/redux/slices/userSlice";
-import axiosInstance from "@/utils/axios";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
 
 const initialFormState = {
   firstName: "",
@@ -12,9 +8,14 @@ const initialFormState = {
   gender: "",
   dob: null,
   countryCode: "+91",
+  countryName: "India",
+  roleType: "CUSTOMER",
+  userType: "CUSTOMER",
+  createdAt: null,
+  updatedAt: null,
 };
 
-export const useProfileForm = () => {
+export function useProfileForm() {
   const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -27,11 +28,25 @@ export const useProfileForm = () => {
       ...prev,
       phone: phoneData.phoneNumber,
       countryCode: phoneData.countryCode,
+      countryName: phoneData.countryName || prev.countryName,
     }));
   };
 
-  const resetForm = (data) => {
-    setFormData(data || initialFormState);
+  const resetForm = (data = null) => {
+    if (data) {
+      // Make sure to preserve all fields when resetting with new data
+      setFormData({
+        ...initialFormState,
+        ...data,
+        roleType: data.roleType || initialFormState.roleType,
+        userType: data.userType || initialFormState.userType,
+        countryName: data.countryName || initialFormState.countryName,
+        createdAt: data.createdAt || initialFormState.createdAt,
+        updatedAt: data.updatedAt || initialFormState.updatedAt,
+      });
+    } else {
+      setFormData(initialFormState);
+    }
     setIsEditing(false);
   };
 
@@ -43,112 +58,4 @@ export const useProfileForm = () => {
     updatePhoneData,
     resetForm,
   };
-};
-
-export const useProfileData = () => {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const parseDateOfBirth = (dateString) => {
-    if (!dateString) return null;
-    try {
-      const date = new Date(dateString);
-      return isNaN(date.getTime()) ? null : date;
-    } catch (error) {
-      console.error("Error parsing date:", error);
-      return null;
-    }
-  };
-
-  const parseProfileData = (profileData) => {
-    const dateOfBirth = parseDateOfBirth(profileData?.dateOfBirth);
-    const phoneNumber = profileData?.phoneNumber?.replace(/\D/g, "") || "";
-    const countryCode = profileData?.countryCode || "+91";
-
-    return {
-      firstName: profileData?.firstName || "",
-      lastName: profileData?.lastName || "",
-      email: profileData?.email || "",
-      phone: phoneNumber,
-      gender: profileData?.gender || "",
-      dob: dateOfBirth,
-      countryCode: countryCode,
-    };
-  };
-
-  const fetchProfile = async () => {
-    // If we already have user data in Redux, use that instead of making another API call
-    if (user.id) {
-      const parsedData = parseProfileData(user);
-      return parsedData;
-    }
-
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.get("/auth/api/users/user");
-
-      if (response.data) {
-        const profileData = response.data;
-        const parsedData = parseProfileData(profileData);
-
-        dispatch(
-          setUser({
-            _id: profileData._id,
-            ...parsedData,
-            countryName: profileData.countryName,
-            createdAt: profileData.createdAt,
-            updatedAt: profileData.updatedAt,
-            roleType: profileData.roleType || "CUSTOMER",
-          })
-        );
-
-        return parsedData;
-      }
-    } catch (error) {
-      console.error("Profile fetch error:", error);
-      toast.error(error?.response?.data?.message || "Error fetching profile");
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const saveProfile = async (formData) => {
-    try {
-      const dataToSend = {
-        ...formData,
-        dateOfBirth:
-          formData.dob instanceof Date ? formData.dob.toISOString() : null,
-        phoneNumber: formData.phone,
-      };
-
-      await axiosInstance.put(`/auth/api/users/${user.id}`, dataToSend);
-
-      dispatch(
-        updateUser({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phoneNumber: formData.phone,
-          countryCode: formData.countryCode,
-          gender: formData.gender,
-          dateOfBirth: formData.dob,
-          updatedAt: new Date().toISOString(),
-        })
-      );
-
-      toast.success("Profile updated successfully");
-      return true;
-    } catch (error) {
-      console.error("Profile update error:", error);
-      toast.error(error?.response?.data?.message || "Update profile failed");
-      return false;
-    }
-  };
-
-  return {
-    isLoading,
-    fetchProfile,
-    saveProfile,
-  };
-};
+}

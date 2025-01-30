@@ -5,7 +5,8 @@ import CustomDatePicker from "@/components/common/CustomDatePicker";
 import CustomSelect from "@/components/common/CustomSelect";
 import PhoneNumberInput from "@/components/common/PhoneNumberInput";
 import PrimaryBtn from "@/components/common/PrimaryBtn";
-import { useProfileData, useProfileForm } from "@/hooks/useProfileForm";
+import { useProfileData } from "@/hooks/useProfileData";
+import { useProfileForm } from "@/hooks/useProfileForm";
 
 const UserProfile = () => {
   const {
@@ -50,6 +51,7 @@ const UserProfile = () => {
 
         <div className="pb-14 lg:pb-6">
           <div className="grid md:grid-cols-2 gap-6 sm:mt-8">
+            {/* First Name */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 First Name
@@ -63,6 +65,7 @@ const UserProfile = () => {
               />
             </div>
 
+            {/* Last Name */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 Last Name
@@ -76,6 +79,7 @@ const UserProfile = () => {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 Email
@@ -88,6 +92,7 @@ const UserProfile = () => {
               />
             </div>
 
+            {/* Phone Number */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 Phone Number
@@ -100,6 +105,7 @@ const UserProfile = () => {
               />
             </div>
 
+            {/* Gender */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 Gender
@@ -115,6 +121,7 @@ const UserProfile = () => {
               />
             </div>
 
+            {/* Date of Birth */}
             <div>
               <label className="block text-[15px] font-medium text-gray-700">
                 Date of Birth
@@ -127,6 +134,7 @@ const UserProfile = () => {
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="mt-8 flex justify-end space-x-4">
             {!isEditing ? (
               <PrimaryBtn onClick={() => setIsEditing(true)}>

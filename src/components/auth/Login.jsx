@@ -130,6 +130,7 @@ const Login = () => {
 
       if (response.status === 200) {
         const userData = response.data;
+        console.log(userData, "userData");
 
         if (setCookiesAndStorage(userData)) {
           setAuth(userData);

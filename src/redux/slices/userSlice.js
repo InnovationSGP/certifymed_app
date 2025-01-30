@@ -1,8 +1,8 @@
-// userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   id: null,
+  _id: null, // Add _id field for compatibility
   email: "",
   firstName: "",
   lastName: "",
@@ -26,23 +26,31 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const userData = action.payload;
-      console.log(userData.access_token);
+      const token = userData.access_token || userData.accessToken || "";
+
+      // Handle both id formats
+      const userId = userData._id || userData.id || null;
+
+      if (token) {
+        localStorage.setItem("authToken", token);
+        document.cookie = `authToken=${token}; path=/; secure; samesite=strict`;
+      }
 
       return {
         ...state,
-        id: userData._id || null,
+        id: userId,
+        _id: userId,
         email: userData.email || "",
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
         roleType: userData.roleType || "CUSTOMER",
         userType: userData.userType || "CUSTOMER",
-        accessToken: userData.access_token,
+        accessToken: token,
         refreshToken: userData.refreshToken || "",
         countryCode: userData.countryCode || "+91",
         countryName: userData.countryName || "India",
         phoneNumber: userData.phoneNumber || "",
         gender: userData.gender || "",
-        // Store dates as strings to avoid serialization issues
         dateOfBirth: userData.dateOfBirth
           ? new Date(userData.dateOfBirth).toISOString()
           : null,
@@ -57,35 +65,35 @@ const userSlice = createSlice({
     },
     updateUser: (state, action) => {
       const updates = action.payload;
+      const dateFields = ["dateOfBirth", "createdAt", "updatedAt"];
+
       Object.keys(updates).forEach((key) => {
-        if (
-          ["dateOfBirth", "createdAt", "updatedAt"].includes(key) &&
-          updates[key]
-        ) {
+        if (dateFields.includes(key) && updates[key]) {
           try {
             state[key] = new Date(updates[key]).toISOString();
           } catch (error) {
             console.error(`Error processing date for ${key}:`, error);
+            state[key] = null;
           }
         } else {
           state[key] = updates[key];
         }
       });
     },
-    clearUser: () => initialState,
+    clearUser: (state) => {
+      localStorage.removeItem("authToken");
+      document.cookie =
+        "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      return initialState;
+    },
   },
 });
 
 export const { setUser, updateUser, clearUser } = userSlice.actions;
 
-// Selectors
+// Enhanced selectors
 export const selectUser = (state) => state.user;
+export const selectUserId = (state) => state.user.id || state.user._id;
 export const selectIsLoggedIn = (state) => state.user.isLoggedIn;
-export const selectUserWithDates = (state) => ({
-  ...state.user,
-  dateOfBirth: state.user.dateOfBirth ? new Date(state.user.dateOfBirth) : null,
-  createdAt: state.user.createdAt ? new Date(state.user.createdAt) : null,
-  updatedAt: state.user.updatedAt ? new Date(state.user.updatedAt) : null,
-});
 
 export default userSlice.reducer;

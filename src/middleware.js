@@ -7,6 +7,7 @@ const routes = {
     "/sign-up/patient",
     "/sign-up/doctor",
     "/reset-password",
+    "/reset-password/authentication-code",
     "/",
   ],
   patientRoutes: ["/dashboard/patients"],
@@ -79,3 +80,5 @@ export const config = {
     "/((?!api|_next|_static|images|favicon.ico|sitemap.xml).*)",
   ],
 };
+
+// http://localhost:8080/auth/api/users/679bd539c58c85e24275285a

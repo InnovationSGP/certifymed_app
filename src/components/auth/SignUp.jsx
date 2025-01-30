@@ -150,7 +150,7 @@ const SignUp = ({ role }) => {
             responseData.role?.role || responseData.roleType || "CUSTOMER",
           userType:
             responseData.role?.userType || responseData.userType || userType,
-          _id: responseData.role?._id || responseData._id,
+          id: responseData.user?._id,
           firstName: responseData.user?.firstName || responseData.firstName,
           lastName: responseData.user?.lastName || responseData.lastName,
           email: responseData.role?.email || responseData.email,

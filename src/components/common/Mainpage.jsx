@@ -6,31 +6,28 @@ import { Toaster } from "react-hot-toast";
 import Loader from "./Loader";
 import useInitialAuth from "@/hooks/useInitialAuth";
 
+const AuthInitializer = ({ onLoadingComplete }) => {
+  const { isLoading } = useInitialAuth();
+
+  useEffect(() => {
+    if (!isLoading) {
+      onLoadingComplete();
+    }
+  }, [isLoading, onLoadingComplete]);
+
+  return null;
+};
+
 const Mainpage = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
-  // Add the auth hook
-  const InitialAuthComponent = () => {
-    const { isLoading } = useInitialAuth();
-
-    useEffect(() => {
-      if (!isLoading) {
-        setLoading(false);
-      }
-    }, [isLoading]);
-
-    return null;
-  };
-
   return (
-    <>
+    <ReduxProvider>
       {loading && <Loader />}
-      <ReduxProvider>
-        <InitialAuthComponent />
-        <PageTransition>{children}</PageTransition>
-        <Toaster />
-      </ReduxProvider>
-    </>
+      <AuthInitializer onLoadingComplete={() => setLoading(false)} />
+      <PageTransition>{children}</PageTransition>
+      <Toaster />
+    </ReduxProvider>
   );
 };
 
