@@ -1,17 +1,20 @@
 "use client";
 import DashboardLayout from "@/components/common/DashboardLayout";
-import DashboardAnalytics from "@/components/dashboard/patients/DashboardAnalytics";
 import DashboardWelcome from "@/components/common/DashboardWelcome";
-import { postnote, appointments } from "@/components/common/Helper";
-import NotesCard from "@/components/dashboard/patients/notes/NotesCard";
+import { appointments, postnote } from "@/components/common/Helper";
 import ListHeading from "@/components/common/ListHeading";
 import RecentAppointments from "@/components/dashboard/patients/appointments/RecentAppointments";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import DashboardAnalytics from "@/components/dashboard/patients/DashboardAnalytics";
+import NotesCard from "@/components/dashboard/patients/notes/NotesCard";
 import { setAppointmentsForPatients } from "@/redux/slices/patientAppointments";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "@/redux/slices/userSlice";
 
 const PatientsDashboardPage = () => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
   useEffect(() => {
     dispatch(
       setAppointmentsForPatients({
@@ -27,11 +30,13 @@ const PatientsDashboardPage = () => {
     (state) => state.patientDashboard.appointmentsHistory
   );
 
+  const userFullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
   return (
     <>
       <DashboardLayout className="overflow-auto">
         <DashboardWelcome
-          heading="Hi, John Mark"
+          heading={`Hi, ${userFullName}`}
           description="Welcome back!"
           emergencycall={true}
           buttontext="Book a Doctor"

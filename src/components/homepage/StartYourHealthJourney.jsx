@@ -1,4 +1,4 @@
-import { TransitionLink } from "@/utlis/TransitionLink";
+import { TransitionLink } from "@/utils/TransitionLink";
 
 const StartYourHealthJourney = () => {
   return (

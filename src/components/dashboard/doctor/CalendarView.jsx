@@ -1,7 +1,7 @@
 import React from "react";
 import CalendarHeader from "./CalendarHeader";
 import TimeSlots from "./TimeSlots";
-import { getThreeDayView } from "@/utlis/dateHelpers";
+import { getThreeDayView } from "@/utils/dateHelpers";
 
 const CalendarView = ({
   currentDate,

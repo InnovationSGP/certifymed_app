@@ -1,6 +1,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getDaysInMonth, getFirstDayOfMonth } from "@/utlis/dateHelpers";
+import { getFirstDayOfMonth } from "@/utils/dateHelpers";
+import { getDaysInMonth } from "date-fns";
 
 const MiniCalendar = ({
   setState,

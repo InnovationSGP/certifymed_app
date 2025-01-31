@@ -1,6 +1,6 @@
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import React from "react";
-import { getDaysInMonth, getFirstDayOfMonth } from "@/utlis/dateHelpers";
+import { getFirstDayOfMonth } from "@/utils/dateHelpers";
+import { getDaysInMonth } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const CalendarModal = ({
   isOpen,

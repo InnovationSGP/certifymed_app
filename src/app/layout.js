@@ -2,6 +2,7 @@ import "./globals.css";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "react-datepicker/dist/react-datepicker.css";
 import Mainpage from "@/components/common/Mainpage";
 
 export const metadata = {

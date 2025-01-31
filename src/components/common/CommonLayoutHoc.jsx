@@ -13,6 +13,7 @@ const CommonLayoutHoc = ({ children, className }) => {
             height={1000}
             className="w-full h-screen object-cover"
             alt="Background Image"
+            priority
           />
         </div>
         <div

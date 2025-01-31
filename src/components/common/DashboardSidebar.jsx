@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import { sidebarlinksfordoctors, sidebarlinksforpatients } from "./Helper";
-import { useTransitionRouteChange } from "@/utlis/useTransitionRouteChange";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 
 const DashboardSidebar = () => {
   const pathname = usePathname();

@@ -1,242 +1,165 @@
 "use client";
+
+import { useEffect } from "react";
 import CustomDatePicker from "@/components/common/CustomDatePicker";
 import CustomSelect from "@/components/common/CustomSelect";
 import PhoneNumberInput from "@/components/common/PhoneNumberInput";
 import PrimaryBtn from "@/components/common/PrimaryBtn";
-import { Camera, UserCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useProfileData } from "@/hooks/useProfileData";
+import { useProfileForm } from "@/hooks/useProfileForm";
 
-const ProfilePage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-  const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Mark",
-    email: "john.mark@example.com",
-    phone: "1234567890",
-    gender: "Male",
-    dob: new Date("1990-01-01"),
-    bloodGroup: "O+",
-    allergies: "None",
-    address: "123 Main Street",
-  });
+const UserProfile = () => {
+  const {
+    formData,
+    isEditing,
+    setIsEditing,
+    updateFormField,
+    updatePhoneData,
+    resetForm,
+  } = useProfileForm();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const { isLoading, fetchProfile, saveProfile } = useProfileData();
+
+  useEffect(() => {
+    const initializeProfile = async () => {
+      const profileData = await fetchProfile();
+      if (profileData) {
+        resetForm(profileData);
+      }
+    };
+
+    initializeProfile();
+  }, []);
+
+  const handleSave = async () => {
+    const success = await saveProfile(formData);
+    if (success) {
+      setIsEditing(false);
     }
   };
 
+  if (isLoading) {
+    return <div className="p-6 lg:p-10">Loading...</div>;
+  }
+
   return (
-    <>
-      <div className="p-6 lg:p-10">
-        <div className="lg:px-[35px] px-6 pt-6 bg-white rounded-xl">
-          <h1 className="section-heading leading-[51px] mb-2">
-            Profile Information
-          </h1>
+    <div className="p-6 lg:p-10 min-h-[calc(100vh-72px)]">
+      <div className="lg:px-[35px] px-6 pt-6 bg-white rounded-xl">
+        <h1 className="section-heading leading-[51px] mb-2">
+          Profile Information
+        </h1>
 
-          <div className="pb-14 lg:pb-6">
-            {/* Profile Image */}
-            <div className="flex justify-center mb-4 sm:mb-8">
-              <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                  {profileImage ? (
-                    <img
-                      src={profileImage}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center w-full h-full bg-gray-50">
-                      <UserCircle2
-                        size={45}
-                        className="text-gray-400"
-                        strokeWidth={1}
-                      />
-                    </div>
-                  )}
-                </div>
-                {isEditing && (
-                  <label
-                    htmlFor="profile-upload"
-                    className="absolute -bottom-1 -right-1 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primary/90 shadow-sm"
-                  >
-                    <Camera className="w-4 h-4" />
-                    <input
-                      id="profile-upload"
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                )}
-              </div>
+        <div className="pb-14 lg:pb-6">
+          <div className="grid md:grid-cols-2 gap-6 sm:mt-8">
+            {/* First Name */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                First Name
+              </label>
+              <input
+                type="text"
+                className="mt-1 input-style disabled:opacity-70"
+                value={formData.firstName}
+                disabled={!isEditing}
+                onChange={(e) => updateFormField("firstName", e.target.value)}
+              />
             </div>
 
-            {/* Form */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-[15px] font-medium text-gray-700">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  className="mt-1 input-style disabled:opacity-70"
-                  value={formData.firstName}
-                  disabled={!isEditing}
-                  onChange={(e) =>
-                    setFormData({ ...formData, firstName: e.target.value })
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="block text-[15px] font-medium text-gray-700">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  className="mt-1 input-style disabled:opacity-70"
-                  value={formData.lastName}
-                  disabled={!isEditing}
-                  onChange={(e) =>
-                    setFormData({ ...formData, lastName: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="relative group">
-                <label className="block text-[15px] font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  className="mt-1 input-style cursor-not-allowed opacity-70"
-                  value={formData.email}
-                  disabled={true}
-                />
-                {isEditing && (
-                  <div className="absolute invisible group-hover:visible bg-gray-800 text-white text-sm rounded px-2 py-1 bottom-[70%] left-1/2 transform -translate-x-1/2 mb-1 whitespace-nowrap">
-                    Email cannot be edited
-                  </div>
-                )}
-              </div>
-
-              <div className="relative group">
-                <label className="block text-[15px] font-medium text-gray-700 mb-1">
-                  Phone Number
-                </label>
-                <PhoneNumberInput
-                  value={formData.phone}
-                  disabled={true}
-                  className="opacity-70 cursor-not-allowed"
-                />
-                {isEditing && (
-                  <div className="absolute invisible group-hover:visible bg-gray-800 text-white text-sm rounded px-2 py-1 bottom-[70%] left-1/2 transform -translate-x-1/2 mb-1 whitespace-nowrap">
-                    Phone number cannot be edited
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[15px] font-medium text-gray-700">
-                  Gender
-                </label>
-                <CustomSelect
-                  options={[
-                    { value: "Male", label: "Male" },
-                    { value: "Female", label: "Female" },
-                  ]}
-                  value={formData.gender}
-                  disabled={!isEditing}
-                  onChange={(value) =>
-                    setFormData({ ...formData, gender: value })
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[15px] font-medium text-gray-700">
-                  Date of Birth
-                </label>
-                <CustomDatePicker
-                  value={formData.dob}
-                  disabled={!isEditing}
-                  onChange={(date) => setFormData({ ...formData, dob: date })}
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-[15px] font-medium text-gray-700">
-                  Blood Group
-                </label>
-                <CustomSelect
-                  options={[
-                    { value: "A+", label: "A+" },
-                    { value: "A-", label: "A-" },
-                    { value: "B+", label: "B+" },
-                    { value: "B-", label: "B-" },
-                    { value: "O+", label: "O+" },
-                    { value: "O-", label: "O-" },
-                    { value: "AB+", label: "AB+" },
-                    { value: "AB-", label: "AB-" },
-                  ]}
-                  value={formData.bloodGroup}
-                  disabled={!isEditing}
-                  onChange={(value) =>
-                    setFormData({ ...formData, bloodGroup: value })
-                  }
-                />
-              </div>
-
-              <div className="md:col-span-1">
-                <label className="mb-1 block text-[15px] font-medium text-gray-700">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  className="input-style disabled:opacity-70"
-                  value={formData.address}
-                  disabled={!isEditing}
-                  onChange={(e) =>
-                    setFormData({ ...formData, address: e.target.value })
-                  }
-                />
-              </div>
+            {/* Last Name */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                Last Name
+              </label>
+              <input
+                type="text"
+                className="mt-1 input-style disabled:opacity-70"
+                value={formData.lastName}
+                disabled={!isEditing}
+                onChange={(e) => updateFormField("lastName", e.target.value)}
+              />
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-8 flex justify-end space-x-4">
-              {!isEditing ? (
-                <PrimaryBtn onClick={() => setIsEditing(true)}>
-                  Edit Profile
-                </PrimaryBtn>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                    onClick={() => setIsEditing(false)}
-                  >
-                    Cancel
-                  </button>
-                  <PrimaryBtn onClick={() => setIsEditing(false)}>
-                    Save Changes
-                  </PrimaryBtn>
-                </>
-              )}
+            {/* Email */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                className="mt-1 input-style opacity-70 cursor-not-allowed"
+                value={formData.email}
+                disabled={true}
+              />
             </div>
+
+            {/* Phone Number */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                Phone Number
+              </label>
+              <PhoneNumberInput
+                value={formData.phone}
+                defaultCountryCode={formData.countryCode}
+                disabled={!isEditing}
+                onChange={updatePhoneData}
+              />
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                Gender
+              </label>
+              <CustomSelect
+                options={[
+                  { value: "Male", label: "Male" },
+                  { value: "Female", label: "Female" },
+                ]}
+                value={formData.gender}
+                disabled={!isEditing}
+                onChange={(value) => updateFormField("gender", value)}
+              />
+            </div>
+
+            {/* Date of Birth */}
+            <div>
+              <label className="block text-[15px] font-medium text-gray-700">
+                Date of Birth
+              </label>
+              <CustomDatePicker
+                value={formData.dob}
+                disabled={!isEditing}
+                onChange={(date) => updateFormField("dob", date)}
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-8 flex justify-end space-x-4">
+            {!isEditing ? (
+              <PrimaryBtn onClick={() => setIsEditing(true)}>
+                Edit Profile
+              </PrimaryBtn>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  onClick={() => {
+                    setIsEditing(false);
+                    resetForm();
+                  }}
+                >
+                  Cancel
+                </button>
+                <PrimaryBtn onClick={handleSave}>Save Changes</PrimaryBtn>
+              </>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default ProfilePage;
+export default UserProfile;

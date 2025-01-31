@@ -6,8 +6,8 @@ import { LogoIcon, MenuIcon } from "./Icons";
 import PrimaryBtn from "./PrimaryBtn";
 import Sidebar from "./SIdebar";
 import { useRouter } from "next/navigation";
-import { TransitionLink } from "@/utlis/TransitionLink";
-import { useTransitionRouteChange } from "@/utlis/useTransitionRouteChange";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 
 const Header = () => {
   const router = useRouter();

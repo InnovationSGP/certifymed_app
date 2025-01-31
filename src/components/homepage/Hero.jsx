@@ -1,13 +1,11 @@
 "use client";
 import Image from "next/image";
-import React from "react";
-import PrimaryBtn from "../common/PrimaryBtn";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import PrimaryBtn from "../common/PrimaryBtn";
 
 const Hero = () => {
   const router = useRouter();
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
   const navigationHandler = () => {
     router.push("/dashboard/doctor");
   };

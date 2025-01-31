@@ -4,23 +4,30 @@ import PageTransition from "@/components/common/PageTransition";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Loader from "./Loader";
+import useInitialAuth from "@/hooks/useInitialAuth";
+
+const AuthInitializer = ({ onLoadingComplete }) => {
+  const { isLoading } = useInitialAuth();
+
+  useEffect(() => {
+    if (!isLoading) {
+      onLoadingComplete();
+    }
+  }, [isLoading, onLoadingComplete]);
+
+  return null;
+};
 
 const Mainpage = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 3000);
-    return () => clearTimeout(timer);
-  }, [loading]);
-
   return (
-    <>
+    <ReduxProvider>
       {loading && <Loader />}
-      <ReduxProvider>
-        <PageTransition>{children}</PageTransition>
-        <Toaster />
-      </ReduxProvider>
-    </>
+      <AuthInitializer onLoadingComplete={() => setLoading(false)} />
+      <PageTransition>{children}</PageTransition>
+      <Toaster />
+    </ReduxProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
-import { generateTimeSlots, getThreeDayView } from "@/utlis/dateHelpers";
 import Image from "next/image";
+import { generateTimeSlots, getThreeDayView } from "@/utils/dateHelpers";
 
 const TimeSlots = ({ appointments, currentDate }) => {
   return (
