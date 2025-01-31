@@ -20,8 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../common/Dialog";
+import { TransitionLink } from "@/utils/TransitionLink";
 
-// Role Selection Modal Component
 const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -272,9 +272,9 @@ const Login = () => {
       <div className="min-w-full mx-auto flex flex-col h-full">
         <div className="grow h-full">
           <div className="flex items-center justify-center my-8 xl:my-[50px]">
-            <Link href="/">
+            <TransitionLink href="/">
               <CertifyLogo />
-            </Link>
+            </TransitionLink>
           </div>
           <p className="text-center text-base md:text-xl font-semibold mb-10 xl:mb-[55px]">
             Welcome back! Login to continue
@@ -347,18 +347,18 @@ const Login = () => {
               {isLoggingIn ? <SpinnerLoader /> : "Log in"}
             </PrimaryBtn>
           </form>
-          <Link
+          <TransitionLink
             href="/reset-password"
             className="text-primary tracking-[-0.32px] font-medium mt-3 block xl:mt-[18px]"
           >
             Forgot password?
-          </Link>
+          </TransitionLink>
         </div>
         <p className="text-center font-medium py-5">
           Don&apos;t have an account yet?{" "}
-          <Link href="/sign-up" className="text-spandexGreen pl-1">
+          <TransitionLink href="/sign-up" className="text-spandexGreen pl-1">
             Sign up
-          </Link>
+          </TransitionLink>
         </p>
       </div>
 

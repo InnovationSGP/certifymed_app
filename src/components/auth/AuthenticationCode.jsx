@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { CertifyLogo } from "../common/AppIcons";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
+import { TransitionLink } from "@/utils/TransitionLink";
 
 const AuthenticationCode = () => {
   const router = useRouter();
@@ -149,9 +150,9 @@ const AuthenticationCode = () => {
     <div className="w-full max-w-[542px] mx-auto">
       {/* Logo */}
       <div className="flex items-center justify-center my-8 lg:mb-[50px] xl:mt-24">
-        <Link href="/">
+        <TransitionLink href="/">
           <CertifyLogo />
-        </Link>
+        </TransitionLink>
       </div>
 
       {/* Header */}
@@ -300,9 +301,9 @@ const AuthenticationCode = () => {
       {/* Footer Link */}
       <p className="text-center font-poppins font-medium py-5 mt-4">
         Remember your password?
-        <Link className="text-spandexGreen pl-1" href="/sign-in">
+        <TransitionLink className="text-spandexGreen pl-1" href="/sign-in">
           Sign in
-        </Link>
+        </TransitionLink>
       </p>
     </div>
   );

@@ -21,6 +21,7 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
+import { TransitionLink } from "@/utils/TransitionLink";
 
 const SignUp = ({ role }) => {
   const router = useRouter();
@@ -274,9 +275,9 @@ const SignUp = ({ role }) => {
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
       <div className="flex items-center justify-center my-9 xl:mt-[110px] xl:mb-[50px]">
-        <Link href="/">
+        <TransitionLink href="/">
           <CertifyLogo />
-        </Link>
+        </TransitionLink>
       </div>
 
       <GoogleButton onClick={handleGoogleSignUp} />
@@ -447,9 +448,9 @@ const SignUp = ({ role }) => {
       {/* Sign In Link */}
       <p className="text-center font-medium mt-[105px] mb-12">
         Already have an account?{" "}
-        <Link href="/login" className="text-spandexGreen">
+        <TransitionLink href="/login" className="text-spandexGreen">
           Sign in
-        </Link>
+        </TransitionLink>
       </p>
     </div>
   );

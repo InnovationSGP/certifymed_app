@@ -1,7 +1,7 @@
 "use client";
 import axiosInstance from "@/utils/axios";
 import { validateEmail } from "@/utils/inputFieldHelpers";
-import Link from "next/link";
+import { TransitionLink } from "@/utils/TransitionLink";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -63,9 +63,9 @@ const ResetPassword = () => {
     <section className="w-full max-w-[542px] mx-auto flex flex-col h-full">
       <div className="grow h-full">
         <div className="flex items-center justify-center my-8 lg:mb-[50px] lg:mt-[110px]">
-          <Link href="/">
+          <TransitionLink href="/">
             <CertifyLogo />
-          </Link>
+          </TransitionLink>
         </div>
 
         <p className="text-center text-base md:text-xl font-semibold mb-10 xl:mb-[55px]">
@@ -107,9 +107,9 @@ const ResetPassword = () => {
       </div>
       <p className="text-center font-poppins font-medium py-5">
         Don&apos;t have an account yet?
-        <Link className="text-spandexGreen pl-1" href="/sign-up">
+        <TransitionLink className="text-spandexGreen pl-1" href="/sign-up">
           Sign up
-        </Link>
+        </TransitionLink>
       </p>
     </section>
   );
