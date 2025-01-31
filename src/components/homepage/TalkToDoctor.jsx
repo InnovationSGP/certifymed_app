@@ -21,7 +21,6 @@ const TalkToDoctor = () => {
             prescriptions directly on your mobile device while on the move.
           </p>
           <PrimaryBtn
-            // onClick={() => router.push("/dashboard/doctor")}
             onClick={() => handleTransition("/sign-up")}
             className="!w-fit"
           >

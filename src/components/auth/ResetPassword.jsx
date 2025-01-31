@@ -2,7 +2,7 @@
 import axiosInstance from "@/utils/axios";
 import { validateEmail } from "@/utils/inputFieldHelpers";
 import { TransitionLink } from "@/utils/TransitionLink";
-import { useRouter } from "next/navigation";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { CertifyLogo } from "../common/AppIcons";
@@ -10,10 +10,11 @@ import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
 
 const ResetPassword = () => {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { handleTransition } = useTransitionRouteChange();
 
   const handleRequestCode = async () => {
     setLoading(true);
@@ -40,7 +41,7 @@ const ResetPassword = () => {
       if (response.status === 200) {
         toast.success("Password reset email sent successfully");
         // Redirect to authentication code page with email parameter
-        router.push(
+        handleTransition(
           `/reset-password/authentication-code?email=${encodeURIComponent(
             email
           )}`
