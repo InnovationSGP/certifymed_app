@@ -1,26 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/userSlice";
-import { setAuth, clearAuth } from "@/utils/auth";
+import { clearAuth, setAuth } from "@/utils/auth";
 import axiosInstance from "@/utils/axios";
 import { validateEmail, validatePassword } from "@/utils/inputFieldHelpers";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { CertifyLogo } from "../common/AppIcons";
-import GoogleButton from "../common/GoogleButton";
-import { Eyeclose, EyeIcon } from "../common/Icons";
-import PrimaryBtn from "../common/PrimaryBtn";
-import SpinnerLoader from "../common/SpinnerLoader";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../common/Dialog";
-import { TransitionLink } from "@/utils/TransitionLink";
+import GoogleButton from "../common/GoogleButton";
+import { Eyeclose, EyeIcon } from "../common/Icons";
+import PrimaryBtn from "../common/PrimaryBtn";
+import SpinnerLoader from "../common/SpinnerLoader";
 
 const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
   return (
@@ -59,7 +58,7 @@ const RoleSelectionModal = ({ isOpen, onClose, onRoleSelect, isLoading }) => {
 
 const Login = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const { handleTransition } = useTransitionRouteChange();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -96,7 +95,7 @@ const Login = () => {
               ? "/dashboard/doctor"
               : "/dashboard/patients";
 
-          router.push(redirectPath);
+          handleTransition(redirectPath);
         } else {
           toast.error("Failed to set authentication data");
         }
@@ -204,7 +203,7 @@ const Login = () => {
 
           await new Promise((resolve) => setTimeout(resolve, 100));
 
-          router.push(
+          handleTransition(
             selectedRole === "CARE_COORDINATOR"
               ? "/dashboard/doctor"
               : "/dashboard/patients"

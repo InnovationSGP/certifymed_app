@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useCallback, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import toast from "react-hot-toast";
 import { setUser } from "@/redux/slices/userSlice";
-import { setAuth, clearAuth } from "@/utils/auth";
+import { clearAuth, setAuth } from "@/utils/auth";
 import axiosInstance from "@/utils/axios";
 import {
   validateEmail,
   validatePassword,
   validatePhone,
 } from "@/utils/inputFieldHelpers";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { CertifyLogo } from "../common/AppIcons";
 import CustomDatePicker from "../common/CustomDatePicker";
 import CustomSelect from "../common/CustomSelect";
@@ -21,10 +20,8 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
-import { TransitionLink } from "@/utils/TransitionLink";
 
 const SignUp = ({ role }) => {
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
