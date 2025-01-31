@@ -130,13 +130,9 @@ const AuthenticationCode = () => {
           }
         );
 
-        toast.success("Password reset successfully");
-
-        // Redirect based on user role
-        if (resetResponse.data.user.roleType === "CARE_COORDINATOR") {
-          router.push("/dashboard/doctor");
-        } else {
-          router.push("/dashboard/patients");
+        if (resetResponse.status === 200) {
+          toast.success("Password reset successfully!");
+          router.push("/login");
         }
       }
     } catch (err) {
