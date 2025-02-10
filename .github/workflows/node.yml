@@ -108,5 +108,9 @@ jobs:
           # Create Docker network if it doesn't exist
           sudo docker network create certifymed-network || true
 
-          sudo docker run -d --name certifymed-frontend -p 3000:3000\ --env-file /home/ubuntu/app.env\ --network certifymed-network ${{ secrets.ECR_URL }}:latest
+          sudo docker run -d --name certifymed-frontend \
+          -p 3000:3000 \
+          --env-file /home/ubuntu/app.env \
+          --network certifymed-network \
+          ${{ secrets.ECR_URL }}:latest
           EOF
