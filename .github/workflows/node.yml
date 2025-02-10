@@ -88,7 +88,8 @@ jobs:
           echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
           echo "[default]" > ~/.aws/config
           echo "region = ${{ secrets.AWS_REGION }}" >> ~/.aws/config
-
+          
+          echo "export NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> ~/.bashrc
           # Login to AWS ECR and pull the latest image
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
           sudo docker pull ${{ secrets.ECR_URL }}:latest
