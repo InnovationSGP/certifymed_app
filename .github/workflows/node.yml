@@ -113,6 +113,6 @@ jobs:
 
           sudo docker run -d --name certifymed-frontend -p 3000:3000 --network certifymed-network ${{ secrets.ECR_URL }}:latest
           sudo docker cp /home/ubuntu/app.env certifymed-frontend:/app/.env
-          sudo docker exec -it certifymed-frontend sh -c "echo 'export \$(grep -v '^#' /app/.env | xargs)' >> /root/.bashrc"
-          sudo docker exec -it certifymed-frontend sh -c "source /root/.bashrc"
+          sudo docker exec certifymed-frontend sh -c "export \$(grep -v '^#' /app/.env | xargs)"
+
           EOF
