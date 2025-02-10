@@ -94,6 +94,9 @@ jobs:
           echo "export NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" | sudo tee -a /etc/environment
           source /etc/environment
 
+          #creating the env file
+          cat /etc/environment | grep -v '^#' > /home/ubuntu/app.env
+
           # Login to AWS ECR and pull the latest image
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
           sudo docker pull ${{ secrets.ECR_URL }}:latest
@@ -105,5 +108,5 @@ jobs:
           # Create Docker network if it doesn't exist
           sudo docker network create certifymed-network || true
 
-          sudo docker run -d --name certifymed-frontend -p 3000:3000 --network certifymed-network ${{ secrets.ECR_URL }}:latest
+          sudo docker run -d --name certifymed-frontend -p 3000:3000 --env-file /home/ubuntu/app.env --network certifymed-network ${{ secrets.ECR_URL }}:latest
           EOF
