@@ -33,24 +33,7 @@ jobs:
       # Step 4: Create .env file dynamically from GitHub secrets
       - name: Create .env file
         run: |
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "MONGO_DEV=${{ secrets.MONGO_DEV }}" >> .env
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-          echo "MONGO_PROD=${{ secrets.MONGO_PROD }}" >> .env
-          echo "SALT=${{ secrets.SALT }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "TOKEN_EXPIRATION=${{ secrets.TOKEN_EXPIRATION }}" >> .env
-          echo "ADMIN_ROLE_PASSKEY=${{ secrets.ADMIN_ROLE_PASSKEY }}" >> .env
-          echo "REDIS_PASS=${{ secrets.REDIS_PASS }}" >> .env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "OTP_EXPIRATION_TIME=${{ secrets.OTP_EXPIRATION_TIME }}" >> .env
-          echo "NODEMAILER_EMAIL=${{ secrets.NODEMAILER_EMAIL }}" >> .env
-          echo "NODEMAILER_EMAIL_PASSWORD=${{ secrets.NODEMAILER_EMAIL_PASSWORD }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env
-
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
 
       # Step 5: Build Docker image using .env file
       - name: Build Docker image
