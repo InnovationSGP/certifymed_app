@@ -1,16 +1,15 @@
-// components/auth/SignUp.js
 "use client";
 
 import { setUser } from "@/redux/slices/userSlice";
-import { setAuth } from "@/utils/auth";
+import { clearAuth, setAuth } from "@/utils/auth";
 import axiosInstance from "@/utils/axios";
 import {
   validateEmail,
   validatePassword,
   validatePhone,
 } from "@/utils/inputFieldHelpers";
-import Link from "next/link";
-import { useCallback, useState, useEffect } from "react";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { CertifyLogo } from "../common/AppIcons";
@@ -21,10 +20,8 @@ import { Eyeclose, EyeIcon } from "../common/Icons";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 import PrimaryBtn from "../common/PrimaryBtn";
 import SpinnerLoader from "../common/SpinnerLoader";
-import { useRouter } from "next/navigation";
 
 const SignUp = ({ role }) => {
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -100,7 +97,6 @@ const SignUp = ({ role }) => {
     } else if (formData.password !== formData.passwordConfirmation) {
       newErrors.passwordConfirmation = "Passwords do not match";
     }
-    // Continuing from previous validateForm function...
 
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = "Phone number is required";
@@ -138,62 +134,43 @@ const SignUp = ({ role }) => {
 
       if (response.status === 200 || response.status === 201) {
         const responseData = response.data;
-        console.log(responseData, "responseData");
 
-        console.log(response, "-----response");
-
-        // Transform the response data to match our expected structure
+        // Transform response data
         const userData = {
           ...responseData,
-          access_token: responseData.user.access_token,
+          access_token: responseData.user?.access_token,
           roleType:
-            responseData.role?.role || responseData.roleType || "CUSTOMER",
+            responseData.role?.role || responseData.roleType || userType,
           userType:
             responseData.role?.userType || responseData.userType || userType,
           id: responseData.user?._id,
           firstName: responseData.user?.firstName || responseData.firstName,
           lastName: responseData.user?.lastName || responseData.lastName,
           email: responseData.role?.email || responseData.email,
-          // Additional user details
           phoneNumber:
-            responseData.user?.phoneNumber ||
-            responseData.phoneNumber ||
-            formData.phoneNumber,
-          countryCode:
-            responseData.user?.countryCode ||
-            responseData.countryCode ||
-            formData.countryCode,
-          countryName:
-            responseData.user?.countryName ||
-            responseData.countryName ||
-            formData.countryName,
-          gender:
-            responseData.user?.gender || responseData.gender || formData.gender,
-          dateOfBirth:
-            responseData.user?.dateOfBirth ||
-            responseData.dateOfBirth ||
-            formData.dateOfBirth,
-          // Additional fields from response
+            responseData.user?.phoneNumber || responseData.phoneNumber,
+          countryCode: responseData.user?.countryCode || formData.countryCode,
+          countryName: responseData.user?.countryName || formData.countryName,
+          gender: responseData.user?.gender || formData.gender,
+          dateOfBirth: responseData.user?.dateOfBirth || formData.dateOfBirth,
           createdAt: responseData.user?.createdAt || responseData.createdAt,
           updatedAt: responseData.user?.updatedAt || responseData.updatedAt,
         };
 
-        console.log(userData, "userData");
+        if (setAuth(userData)) {
+          dispatch(setUser(userData));
+          toast.success("Sign up successful!");
 
-        // Set auth data
-        setAuth(userData);
+          // Add a small delay to ensure cookies are set
+          await new Promise((resolve) => setTimeout(resolve, 100));
 
-        // Update Redux store
-        dispatch(setUser(userData));
-
-        toast.success("Sign up successful!");
-
-        // Redirect based on user type
-        router.push(
-          userData.userType === "CARE_COORDINATOR"
-            ? "/dashboard/doctor"
-            : "/dashboard/patients"
-        );
+          window.location.href =
+            userData.userType === "CARE_COORDINATOR"
+              ? "/dashboard/doctor"
+              : "/dashboard/patients";
+        } else {
+          toast.error("Failed to set authentication data");
+        }
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -205,7 +182,29 @@ const SignUp = ({ role }) => {
     }
   };
 
-  const handleGoogleRedirect = useCallback(() => {
+  const handleGoogleSignUp = useCallback(() => {
+    try {
+      const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
+      const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+      const stateParam = {
+        role: "USER",
+        userType,
+        redirectUrl: window.location.origin + "/auth/callback",
+      };
+
+      // Clear existing auth data
+      clearAuth();
+
+      window.location.href = `${baseUrl}?${new URLSearchParams({
+        state: JSON.stringify(stateParam),
+      }).toString()}`;
+    } catch (error) {
+      console.error("Error initiating Google Sign Up:", error);
+      toast.error("Failed to initiate Google sign up");
+    }
+  }, [role]);
+
+  const handleGoogleRedirect = useCallback(async () => {
     const hash = window.location.hash;
     if (hash && hash.includes("auth=")) {
       try {
@@ -214,88 +213,68 @@ const SignUp = ({ role }) => {
         const authData = JSON.parse(decodedData);
 
         if (!authData) {
-          console.error("No auth data found");
-          return;
+          throw new Error("No auth data found");
         }
 
-        // Set auth data
-        setAuth(authData);
+        // Clear any existing auth data
+        clearAuth();
 
-        // Update Redux store
-        dispatch(
-          setUser({
-            ...authData,
-            isLoggedIn: true,
-          })
-        );
+        // Set new auth data
+        const authSuccess = setAuth(authData);
 
-        toast.success("Google sign in successful!");
+        if (authSuccess) {
+          // Update Redux state
+          dispatch(setUser({ ...authData, isLoggedIn: true }));
 
-        // Clean up URL
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
+          // Update axios headers
+          axiosInstance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${authData.access_token}`;
 
-        // Redirect based on role
-        router.push(
-          authData.roleType === "CARE_COORDINATOR"
-            ? "/dashboard/doctor"
-            : "/dashboard/patients"
-        );
+          toast.success("Google sign in successful!");
+
+          // Clean up URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+
+          // Add a small delay to ensure all state updates are processed
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
+          const redirectPath =
+            authData.roleType === "CARE_COORDINATOR"
+              ? "/dashboard/doctor"
+              : "/dashboard/patients";
+
+          window.location.href = redirectPath;
+        } else {
+          toast.error("Failed to set authentication data");
+        }
       } catch (error) {
         console.error("Error processing Google auth data:", error);
         toast.error("Failed to complete Google authentication");
+        clearAuth();
       }
     }
-  }, [dispatch, router]);
+  }, [dispatch]);
 
-  const handleGoogleSignUp = useCallback(() => {
-    const userType = role === "doctor" ? "CARE_COORDINATOR" : "CUSTOMER";
-    const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
-    const stateParam = {
-      role: "USER",
-      userType,
-      redirectUrl: window.location.origin + "/auth/callback",
-    };
-
-    // Clear existing auth data
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // Clear cookies
-    const cookiesToClear = [
-      "accessToken",
-      "refreshToken",
-      "userData",
-      "userRole",
-      "connect.sid",
-      "jwt",
-    ];
-    cookiesToClear.forEach((cookieName) => {
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-    });
-
-    // Redirect to Google auth
-    window.location.href = `${baseUrl}?${new URLSearchParams({
-      state: JSON.stringify(stateParam),
-    }).toString()}`;
-  }, [role]);
-
-  // Handle Google redirect on component mount
   useEffect(() => {
-    if (window.location.hash) {
-      handleGoogleRedirect();
-    }
+    const handleInitialRedirect = async () => {
+      if (window.location.hash) {
+        await handleGoogleRedirect();
+      }
+    };
+    handleInitialRedirect();
   }, [handleGoogleRedirect]);
 
   return (
     <div className="w-full md:max-w-[542px] mx-auto">
       <div className="flex items-center justify-center my-9 xl:mt-[110px] xl:mb-[50px]">
-        <Link href="/">
+        <TransitionLink href="/">
           <CertifyLogo />
-        </Link>
+        </TransitionLink>
       </div>
 
       <GoogleButton onClick={handleGoogleSignUp} />
@@ -466,9 +445,9 @@ const SignUp = ({ role }) => {
       {/* Sign In Link */}
       <p className="text-center font-medium mt-[105px] mb-12">
         Already have an account?{" "}
-        <Link href="/login" className="text-spandexGreen">
+        <TransitionLink href="/login" className="text-spandexGreen">
           Sign in
-        </Link>
+        </TransitionLink>
       </p>
     </div>
   );

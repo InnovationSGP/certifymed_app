@@ -5,7 +5,6 @@ import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 
 const DashboardSidebar = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const { handleTransition } = useTransitionRouteChange();
   const isDoctorDashboard = pathname.includes("/doctor");
   const sidebarLinks = isDoctorDashboard
@@ -17,7 +16,6 @@ const DashboardSidebar = () => {
       {sidebarLinks &&
         sidebarLinks.map((obj, index) => (
           <button
-            // onClick={() => router.push(obj.url)}
             onClick={() => handleTransition(obj.url)}
             key={index}
             className={`${

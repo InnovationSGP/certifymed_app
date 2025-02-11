@@ -1,11 +1,8 @@
-import React from "react";
-import PrimaryBtn from "../common/PrimaryBtn";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
+import Image from "next/image";
+import PrimaryBtn from "../common/PrimaryBtn";
 
 const TalkToDoctor = () => {
-  const router = useRouter();
   const { handleTransition } = useTransitionRouteChange();
 
   return (
@@ -24,7 +21,6 @@ const TalkToDoctor = () => {
             prescriptions directly on your mobile device while on the move.
           </p>
           <PrimaryBtn
-            // onClick={() => router.push("/dashboard/doctor")}
             onClick={() => handleTransition("/sign-up")}
             className="!w-fit"
           >

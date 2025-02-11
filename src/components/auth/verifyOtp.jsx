@@ -1,18 +1,18 @@
 "use client";
+import axiosInstance from "@/utils/axios";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { CertifyLogo } from "../common/AppIcons";
 import PrimaryBtn from "../common/PrimaryBtn";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import SpinnerLoader from "../common/SpinnerLoader";
-import axiosInstance from "@/utils/axios";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState(""); // Optional: Fetch from state or query params
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
+  const { handleTransition } = useTransitionRouteChange();
 
   const handleVerifyOtp = async () => {
     setLoading(true);
@@ -32,7 +32,7 @@ const OtpVerification = () => {
 
       if (response.status === 200) {
         toast.success("OTP verified successfully");
-        router.push("/reset-password/authentication-code");
+        handleTransition("/reset-password/authentication-code");
       } else {
         toast.error("Invalid OTP. Please try again.");
       }
