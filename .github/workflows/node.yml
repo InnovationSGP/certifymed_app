@@ -1,0 +1,118 @@
+name: Deploy to EC2 via ECR
+
+on:
+  push:
+    branches:
+      - dev 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Configure AWS CLI
+      - name: Configure AWS CLI
+        run: |
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+          echo "[default]" > ~/.aws/config
+          echo "region = ${{ secrets.AWS_REGION }}" >> ~/.aws/config
+
+      # Step 3: Login to ECR
+      - name: Login to ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
+
+      # Step 4: Create .env file dynamically from GitHub secrets
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
+
+      # Step 5: Build Docker image using .env file
+      - name: Build Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.ECR_URL }}:latest
+
+      # Step 6: Cleanup Old Images in ECR
+      - name: Cleanup Old Images in ECR
+        run: |
+          REPOSITORY_NAME=$(echo "${{ secrets.ECR_URL }}" | awk -F/ '{print $2}')
+          aws ecr describe-images --repository-name $REPOSITORY_NAME \
+            --query 'imageDetails[?imageTags[0]!=latest].[imageDigest]' \
+            --output text | while read digest; do
+              aws ecr batch-delete-image --repository-name $REPOSITORY_NAME --image-ids imageDigest=$digest
+            done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      # Step 7: Set up SSH and login to EC2
+      - name: Set up SSH and login to EC2
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          touch ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # Step 8: Deploy to EC2
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          set -e
+          set -x
+
+          # Install AWS CLI if not installed
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+          fi
+
+          # Configure AWS credentials
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+          echo "[default]" > ~/.aws/config
+          echo "region = ${{ secrets.AWS_REGION }}" >> ~/.aws/config
+
+          #adding secrets in environments
+
+          # Add secrets to environment (without 'export')
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" | sudo tee -a /etc/environment
+
+          # Reload environment
+          source /etc/environment
+
+          # Create env file
+          cat /etc/environment | grep -v '^#' >> /home/ubuntu/app.env
+
+          # Login to AWS ECR and pull the latest image
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
+          sudo docker pull ${{ secrets.ECR_URL }}:latest
+
+          # Stop and remove the old container if it exists
+          sudo docker stop certifymed-frontend || true
+          sudo docker rm certifymed-frontend || true
+
+          # Create Docker network if it doesn't exist
+          sudo docker network create certifymed-network || true
+
+          sudo docker run -d --name certifymed-frontend -p 3000:3000 --network certifymed-network ${{ secrets.ECR_URL }}:latest
+          sudo docker cp /home/ubuntu/app.env certifymed-frontend:/app/.env
+          sudo docker exec certifymed-frontend sh -c "export \$(grep -v '^#' /app/.env | xargs)"
+
+          EOF
