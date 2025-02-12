@@ -349,3 +349,8 @@ body::-webkit-scrollbar {
   background-color: #f3f4f6 !important;
   border-radius: 0.25rem !important;
 }
+.css-13cymwt-control {
+  background-color: transparent !important;
+border: none !important;
+width: 100% !important;
+}

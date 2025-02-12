@@ -110,9 +110,7 @@ export const navLinks = [
   { label: "About", href: "#about", isOuter: false },
   { label: "Contact", href: "#contact", isOuter: false },
   { label: "How it works", href: "#how-it-works", isOuter: false },
-  { label: "Doctor", href: "/dashboard/doctor/", isOuter: true },
-  { label: "Patient", href: "/dashboard/patients/", isOuter: true },
-];
+ ];
 
 export const footerLinks = [
   {

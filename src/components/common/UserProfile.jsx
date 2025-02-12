@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import CustomDatePicker from "@/components/common/CustomDatePicker";
 import CustomSelect from "@/components/common/CustomSelect";
 import PhoneNumberInput from "@/components/common/PhoneNumberInput";
 import PrimaryBtn from "@/components/common/PrimaryBtn";
 import { useProfileData } from "@/hooks/useProfileData";
 import { useProfileForm } from "@/hooks/useProfileForm";
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
 
 const UserProfile = () => {
   const {
@@ -19,6 +21,9 @@ const UserProfile = () => {
   } = useProfileForm();
 
   const { isLoading, fetchProfile, saveProfile } = useProfileData();
+  const [selectedState, setSelectedState] = useState(formData.state || "");
+  const [stateOptions, setStateOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
 
   useEffect(() => {
     const initializeProfile = async () => {
@@ -27,9 +32,17 @@ const UserProfile = () => {
         resetForm(profileData);
       }
     };
-
     initializeProfile();
+    setStateOptions(State.getStatesOfCountry("US").map((state) => ({ value: state.isoCode, label: state.name })));
   }, []);
+
+  useEffect(() => {
+    if (selectedState) {
+      setCityOptions(City.getCitiesOfState("US", selectedState).map((city) => ({ value: city.name, label: city.name })));
+    } else {
+      setCityOptions([]);
+    }
+  }, [selectedState]);
 
   const handleSave = async () => {
     const success = await saveProfile(formData);
@@ -133,6 +146,34 @@ const UserProfile = () => {
               />
             </div>
           </div>
+           {/* State */}
+           <div className="flex gap-6 mt-6">
+             <div className="w-full">
+                <label className="block text-[15px] font-medium text-gray-700">State</label>
+                <Select
+                className="w-full flex items-center justify-between px-3 py-[18px] bg-superSilver h-[55px] xl:h-[60px] text-dimGray outline-primary rounded-xl font-medium"
+                  options={stateOptions}
+                  value={stateOptions.find((option) => option.value === formData.state)}
+                  isDisabled={!isEditing}
+                  onChange={(option) => {
+                    setSelectedState(option.value);
+                    updateFormField("state", option.value);
+                    updateFormField("city", ""); // Reset city when state changes
+                  }}
+                />
+              </div>
+              {/* City */}
+              <div className="w-full">
+                <label className="block text-[15px] font-medium text-gray-700">City</label>
+                <Select
+                className="w-full flex items-center justify-between px-3 py-[18px] bg-superSilver h-[55px] xl:h-[60px] text-dimGray outline-primary rounded-xl font-medium"
+                  options={cityOptions}
+                  value={cityOptions.find((option) => option.value === formData.city)}
+                  isDisabled={!isEditing || !selectedState}
+                  onChange={(option) => updateFormField("city", option.value)}
+                />
+              </div>
+           </div>
 
           {/* Action Buttons */}
           <div className="mt-8 flex justify-end space-x-4">
