@@ -56,10 +56,6 @@ const CustomDatePicker = ({
     <div className="w-full">
       {mounted && (
         <>
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/4.11.0/react-datepicker.min.css"
-          />
           <div className="relative w-full">
             <DatePicker
               selected={selectedDate}

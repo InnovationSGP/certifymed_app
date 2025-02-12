@@ -81,4 +81,3 @@ export const config = {
   ],
 };
 
-// http://localhost:8080/auth/api/users/679bd539c58c85e24275285a

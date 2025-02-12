@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useEffect, useState } from "react";
 import { CertifyLogo, DownArrow, UserImage } from "./AppIcons";
 import MenuDropdown from "./MenuDropdown";
-import { useEffect, useState } from "react";
 
 const DashboardNav = () => {
   const [userRole, setUserRole] = useState(null);
@@ -36,9 +36,9 @@ const DashboardNav = () => {
   return (
     <>
       <nav className="bg-white shadow-top-inset-shadow w-full px-5 md:px-[35px] py-[17px] sm:py-[19px] flex justify-between items-center">
-        <Link href="/">
+        <TransitionLink href="/">
           <CertifyLogo />
-        </Link>
+        </TransitionLink>
         <div className="flex items-center gap-x-[19px]">
           {isPatientView && (
             <h5 className="text-sm font-poppins font-medium hidden sm:block">
