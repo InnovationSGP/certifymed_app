@@ -1,0 +1,137 @@
+import { useState } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Card } from './Card';
+import { Button } from './button';
+import { Badge } from './badge';
+
+export default function AppointmentTypes({
+    selectedIdType,
+    setSelectedIdType,
+    tabNumber,
+    setTabNumber
+}) {
+    const [selectedId, setSelectedId] = useState(selectedIdType);
+
+    const appointments = [
+        {
+            id: 1,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        },
+        {
+            id: 2,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        },
+        {
+            id: 3,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        },
+        {
+            id: 4,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        },
+        {
+            id: 5,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        },
+        {
+            id: 6,
+            title: 'Annual GYN Exam',
+            description:
+                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+        }
+    ];
+
+    const handleToggle = (id) => {
+        setSelectedId(selectedId === id ? null : id);
+    };
+
+    return (
+        <div className="w-11/12 mx-auto p-0 md:p-6">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+                How do you want to be seen?
+            </h1>
+
+            <div className="flex items-center gap-2 text-sm mb-6">
+                <button
+                    onClick={() => {
+                        setSelectedId(null), setSelectedIdType(null);
+                    }}
+                    className="text-[#4864FF] hover:underline"
+                >
+                    Appointment
+                </button>
+                <span className="text-gray-400">/</span>
+                <span className="text-gray-600 capitalize">
+                    {selectedIdType}
+                </span>
+            </div>
+
+            <div className="space-y-4">
+                {appointments.map((appointment) => (
+                    <Card
+                        key={appointment.id}
+                        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => handleToggle(appointment.id)}
+                    >
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="font-medium text-gray-900">
+                                        {appointment.title}
+                                    </h3>
+                                    <div className="flex items-center gap-2">
+                                        <Badge
+                                            variant="secondary"
+                                            className="bg-[#4864FF33] text-[#4864FF] hover:bg-purple-100"
+                                        >
+                                            Appointment
+                                        </Badge>
+                                        {selectedId === appointment.id ? (
+                                            <ChevronDown className="h-5 w-5 text-gray-400" />
+                                        ) : (
+                                            <ChevronRight className="h-5 w-5 text-gray-400" />
+                                        )}
+                                    </div>
+                                </div>
+                                {selectedId === appointment.id &&
+                                    appointment.description && (
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-600 mb-4">
+                                                {appointment.description}
+                                            </p>
+                                            <Button
+                                                className="bg-[#293991] hover:bg-[#1d2c7e] text-white"
+                                                onClick={() => {
+                                                    setTabNumber(tabNumber + 1);
+                                                    sessionStorage.setItem(
+                                                        'appointmentData',
+                                                        `
+                                                        ${selectedIdType},
+                                                        ${appointment.title},
+                                                        ${appointment.description}
+                                                        `
+                                                    );
+                                                }}
+                                            >
+                                                View Availabilities
+                                            </Button>
+                                        </div>
+                                    )}
+                            </div>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
+}

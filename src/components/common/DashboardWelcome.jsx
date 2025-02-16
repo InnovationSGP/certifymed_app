@@ -1,11 +1,11 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 const DashboardWelcome = ({
     heading,
     description,
     emergencycall,
-    buttontext,
-    setIsBookAppointment
+    buttontext
 }) => {
     // const [isBookAppointment, setIsBookAppointment] = useState(false);
     return (
@@ -25,14 +25,12 @@ const DashboardWelcome = ({
                 </div>
                 <div className="sm:flex items-center gap-x-[15px] hidden">
                     {buttontext && (
-                        <button
-                            onClick={() => {
-                                setIsBookAppointment(true);
-                            }}
+                        <Link
+                            href={'/dashboard/patients/appointments/book'}
                             className="bg-primary primary-btn"
                         >
-                            {buttontext}
-                        </button>
+                            Book an Appointment
+                        </Link>
                     )}
 
                     {emergencycall && (

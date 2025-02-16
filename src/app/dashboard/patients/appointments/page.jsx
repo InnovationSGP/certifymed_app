@@ -8,7 +8,8 @@ import PatientsHistory from '@/components/common/AppointmentHistoryMobileList';
 import { setAppointmentsForPatients } from '@/redux/slices/patientAppointments';
 import { patientappointments } from '@/components/common/Helper';
 import { useDispatch, useSelector } from 'react-redux';
-import FindProvider from '@/components/dashboard/patients/appointments/book-appointment/page';
+import FindProvider from '@/components/dashboard/patients/appointments/book/page';
+import Link from 'next/link';
 
 const AppoinmentPage = () => {
     const [isBookAppointment, setIsBookAppointment] = useState(false);
@@ -31,24 +32,15 @@ const AppoinmentPage = () => {
 
     return (
         <DashboardLayout className="overflow-auto">
-            {isBookAppointment ? (
-                <FindProvider setIsBookAppointment={setIsBookAppointment} />
-            ) : (
                 <div>
                     <DashboardWelcome
                         heading="Appointments Overview"
                         buttontext="Book an Appointment"
-                        setIsBookAppointment={setIsBookAppointment}
                     />
                     <AppointmentsAnalytics />
-                    <button
-                        onClick={() => {
-                            setIsBookAppointment(true);
-                        }}
-                        className="bg-primary primary-btn mx-auto mt-[39px] sm:hidden"
-                    >
+                    <Link href={"/dashboard/patients/appointments/book"} className="bg-primary primary-btn mx-auto mt-[39px] sm:hidden">
                         Book an Appointment
-                    </button>
+                    </Link>
                     <div className="hidden md:block">
                         <AppointmentList
                             type="Patients"
@@ -57,7 +49,6 @@ const AppoinmentPage = () => {
                     </div>
                     <PatientsHistory />
                 </div>
-            )}
         </DashboardLayout>
     );
 };

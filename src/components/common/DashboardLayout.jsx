@@ -5,7 +5,7 @@ import DashboardNav from "./DashboardNav";
 const DashboardLayout = ({ children, className }) => {
   return (
     <>
-      <main className="flex items-start  w-full bg-whisper h-screen overflow-hidden">
+      <main className="flex items-start w-full bg-whisper h-screen">
         <DashboardSidebar />
         <div className="w-full">
           <DashboardNav />

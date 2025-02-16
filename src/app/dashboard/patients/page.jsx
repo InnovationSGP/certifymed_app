@@ -38,7 +38,7 @@ const PatientsDashboardPage = () => {
         <DashboardWelcome
           heading={`Hi, ${userFullName}`}
           description="Welcome back!"
-          emergencycall={true}
+          emergencycall={false}
           buttontext="Book a Doctor"
         />
         <DashboardAnalytics />
