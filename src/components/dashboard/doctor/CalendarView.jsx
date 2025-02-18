@@ -37,7 +37,7 @@ const CalendarView = ({
 
             {/* Scrollable day headers */}
 
-            <div className="grid grid-cols-3  w-full gap-4">
+            <div className="grid grid-cols-3 w-full gap-4">
               {getThreeDayView(currentDate).map(({ dayName, dayNumber }) => (
                 <div key={dayName} className="text-center">
                   <div className="text-doverGrey mb-1">{dayName}</div>

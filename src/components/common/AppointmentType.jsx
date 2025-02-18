@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Card } from './Card';
-import { Button } from './button';
 import { Badge } from './badge';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function AppointmentTypes({
     selectedIdType,
-    setSelectedIdType,
-    tabNumber,
-    setTabNumber
+    setSelectedIdType
 }) {
     const [selectedId, setSelectedId] = useState(selectedIdType);
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
     const appointments = [
         {
@@ -56,16 +56,16 @@ export default function AppointmentTypes({
     };
 
     return (
-        <div className="w-11/12 mx-auto p-0 md:p-6">
+        <div className="w-11/12 mx-auto h-screen p-0 md:p-6">
             <h1 className="text-2xl font-semibold text-gray-900 mb-2">
                 How do you want to be seen?
             </h1>
 
             <div className="flex items-center gap-2 text-sm mb-6">
                 <button
-                    onClick={() => {
-                        setSelectedId(null), setSelectedIdType(null);
-                    }}
+                    // onClick={() => {
+                    //     setSelectedId(null), setSelectedIdType(null);
+                    // }}
                     className="text-[#4864FF] hover:underline"
                 >
                     Appointment
@@ -103,30 +103,29 @@ export default function AppointmentTypes({
                                         )}
                                     </div>
                                 </div>
-                                {selectedId === appointment.id &&
-                                    appointment.description && (
-                                        <div className="mt-2">
-                                            <p className="text-sm text-gray-600 mb-4">
-                                                {appointment.description}
-                                            </p>
-                                            <Button
-                                                className="bg-[#293991] hover:bg-[#1d2c7e] text-white"
-                                                onClick={() => {
-                                                    setTabNumber(tabNumber + 1);
-                                                    sessionStorage.setItem(
-                                                        'appointmentData',
-                                                        `
-                                                        ${selectedIdType},
-                                                        ${appointment.title},
-                                                        ${appointment.description}
-                                                        `
-                                                    );
-                                                }}
-                                            >
-                                                View Availabilities
-                                            </Button>
-                                        </div>
-                                    )}
+                                <div className="mt-2">
+                                    <p className="text-sm text-gray-600 mb-4">
+                                        {appointment.description}
+                                    </p>
+                                    <button
+                                        className="bg-[#293991] hover:bg-[#1d2c7e] text-white px-10 rounded-[12px] py-4"
+                                        onClick={() => {
+                                            sessionStorage.setItem(
+                                                'appointmentData',
+                                                `
+                                                    ${selectedIdType},
+                                                    ${appointment.title},
+                                                    ${appointment.description}
+                                                    `
+                                            );
+                                            const newParams = new URLSearchParams(searchParams);
+                                            newParams.set('tab', 'payment'.toString());
+                                            router.push(`?${newParams.toString()}`, { scroll: false });
+                                        }}
+                                    >
+                                        View Availabilities
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </Card>

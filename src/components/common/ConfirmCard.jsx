@@ -1,5 +1,4 @@
 'use client';
-import { Button } from '@/components/common/button';
 import {
     Dialog,
     DialogContent,
@@ -21,19 +20,19 @@ export default function BookingConfirmation({
                 setIsShowConfirmCard(false);
             }}
         >
-            <DialogContent className="max-w-3xl  bg-white">
+            <DialogContent className="border md:max-w-3xl bg-white">
                 <DialogHeader>
-                    <Button
+                    <button
                         variant="ghost"
                         size="icon"
                         className="absolute right-4 top-4 h-6 w-6 rounded-full"
                         onClick={() => {
                             setIsShowConfirmCard(false);
                         }}
-                    ></Button>
+                    ></button>
                 </DialogHeader>
                 <div className="flex flex-col items-center text-center">
-                    <div className="relative h-96 w-96">
+                    <div className="relative h-72 md:h-96 w-72 md:w-96">
                         <Image
                             src="/images/confirm-card.png"
                             alt="Booking confirmation illustration"

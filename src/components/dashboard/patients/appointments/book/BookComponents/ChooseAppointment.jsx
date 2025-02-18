@@ -6,7 +6,7 @@ import { Card } from '@/components/common/Card';
 import AppointmentTypes from '@/components/common/AppointmentType';
 
 export default function ChooseAppointment({tabNumber, setTabNumber}) {
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState('video');
     const handleToggle = (type) => {
         setSelected(selected === type ? null : type);
     };

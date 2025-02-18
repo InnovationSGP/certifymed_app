@@ -1,4 +1,3 @@
-import { Button } from "./button"
 import { Input } from "./Input"
 
 export default function PaymentForm() {
@@ -37,9 +36,9 @@ export default function PaymentForm() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full bg-blue-700 hover:bg-blue-800">
+        <button type="submit" className="w-full bg-blue-700 hover:bg-blue-800">
           Submit
-        </Button>
+        </button>
       </form>
     </div>
   )

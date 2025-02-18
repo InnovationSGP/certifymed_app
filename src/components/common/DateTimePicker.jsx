@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import dayjs from 'dayjs';
 
-const HorizontalDatePicker = () => {
+const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
     const [startDate, setStartDate] = useState(dayjs().startOf('day'));
-    const [selectedDate, setSelectedDate] = useState(dayjs().startOf('day'));
     const [dates, setDates] = useState(generateDates(startDate));
     const dateRefs = useRef({});
 

@@ -9,7 +9,7 @@ export const metadata = {
 
 const Book = () => {
   return (
-    <DashboardLayout className={"overflow-scroll"}>
+    <DashboardLayout className={"overflow-auto"}>
       <FindProvider />
     </DashboardLayout>
   );

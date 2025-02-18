@@ -6,7 +6,7 @@ const Stepper = ({ currentStep, onStepClick }) => {
             {steps.map((step, index) => (
                 <div key={step} className="flex items-center">
                     <button
-                        className={`w-[30px] h-[30px] flex items-center justify-center rounded-full cursor-pointer text-bluetitmouse shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] text-sm font-bold
+                        className={`w-[30px] h-[30px] flex items-center justify-center rounded-full cursor-pointer text-[#4864FF] text-sm font-bold
                             ${
                                 currentStep >= step
                                     ? 'border-[1px] border-[#4864FF] bg-[#ffff]'

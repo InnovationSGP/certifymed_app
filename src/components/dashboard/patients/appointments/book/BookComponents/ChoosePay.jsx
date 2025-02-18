@@ -4,13 +4,14 @@ import { useState } from 'react';
 import PaymentForm from '@/components/common/PaymentForm';
 import { Wallet } from 'lucide-react';
 import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/button';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function ChoosePay({ tabNumber, setTabNumber }) {
+export default function ChoosePay() {
     const [selectedMethod, setSelectedMethod] = useState('');
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [isPayOutOfPocket, setIsPayOutOfPocket] = useState(false);
     const [pocketPayDetails, setPocketPayDetails] = useState({
+        type: '',
         firstName: '',
         lastName: '',
         creditCardNumber: 0,
@@ -18,15 +19,31 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
         mm: 0,
         yyyy: 0
     });
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
-    const handlePaymentMethodChange = () => {
+    const handlePaymentMethodChange = (value) => {
         setSelectedMethod(value);
         if (value === 'pocket') {
             setShowPaymentForm(true);
         } else {
             setShowPaymentForm(false);
-            alert('Insurance option clicked');
         }
+    };
+
+    const handleContinue = () => {
+        sessionStorage.setItem('pocketPay', pocketPayDetails);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('tab', 'datetime'.toString());
+        router.push(`?${newParams.toString()}`, { scroll: false });
+    };
+
+    const handleContinueIn = (provider) => {
+        // Remove {} to pass correctly
+        sessionStorage.setItem('insuranceName', provider?.name);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('tab', 'datetime');
+        router.push(`?${newParams.toString()}`, { scroll: false });
     };
 
     const insuranceProviders = [
@@ -52,21 +69,41 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
         return (
             <div className="w-11/12 text-black p-4 px-6 bg-white rounded-xl shadow-md mb-24">
                 <p className="text-2xl font-medium mt-4">Payment Methods</p>
+                <div className="flex flex-col md:flex-row w-full justify-between gap-3 mt-4">
+                    {['Debit Card', 'Credit Card', 'Paypal'].map(
+                        (item, index) => (
+                            <button
+                                key={index}
+                                onClick={(e) => {
+                                    setPocketPayDetails((prevDetails) => ({
+                                        ...prevDetails,
+                                        type: item
+                                    }));
+                                }}
+                                className={`border min-w-56 rounded-lg p-4 flex items-center justify-center ${pocketPayDetails.type === item ? "bg-[#293991] text-white" : "bg-white"} cursor-pointer`}
+                            >
+                                <span
+                                    className={`font-semibold`}
+                                >
+                                    {item}
+                                </span>
+                            </button>
+                        )
+                    )}
+                </div>
                 <div className="flex flex-col my-6 mt-6 gap-4">
-                    <div className="flex w-full justify-between gap-12">
+                    <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-12">
                         <div className="w-full">
                             <label>First name</label>
                             <Input
                                 value={pocketPayDetails.firstName}
                                 placeholder="Enter your name"
                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
-                                onValueChange={(e) => {
-                                    setPocketPayDetails((prevDetails) =>
-                                        prevDetails.map((item) => ({
-                                            ...item,
-                                            firstName: e.target.value
-                                        }))
-                                    );
+                                onChange={(e) => {
+                                    setPocketPayDetails((prevDetails) => ({
+                                        ...prevDetails,
+                                        firstName: e.target.value
+                                    }));
                                 }}
                             />
                         </div>
@@ -74,31 +111,28 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                             <label>Last name</label>
                             <Input
                                 value={pocketPayDetails.lastName}
-                                onValueChange={(e) => {
-                                    setPocketPayDetails((prevDetails) =>
-                                        prevDetails.map((item) => ({
-                                            ...item,
-                                            lastName: e.target.value
-                                        }))
-                                    );
+                                onChange={(e) => {
+                                    setPocketPayDetails((prevDetails) => ({
+                                        ...prevDetails,
+                                        lastName: e.target.value
+                                    }));
                                 }}
                                 placeholder="Enter your last name"
                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                             />
                         </div>
                     </div>
-                    <div className="flex w-full justify-between gap-12">
+                    <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-12">
                         <div className="w-full">
                             <label>Credit Card Number</label>
                             <Input
                                 value={pocketPayDetails.creditCardNumber}
-                                onValueChange={(e) => {
-                                    setPocketPayDetails((prevDetails) =>
-                                        prevDetails.map((item) => ({
-                                            ...item,
-                                            creditCardNumber: e.target.value
-                                        }))
-                                    );
+                                type={'number'}
+                                onChange={(e) => {
+                                    setPocketPayDetails((prevDetails) => ({
+                                        ...prevDetails,
+                                        creditCardNumber: e.target.value
+                                    }));
                                 }}
                                 placeholder="1234"
                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
@@ -109,13 +143,12 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                                 <label>CVV</label>
                                 <Input
                                     value={pocketPayDetails.cvv}
-                                    onValueChange={(e) => {
-                                        setPocketPayDetails((prevDetails) =>
-                                            prevDetails.map((item) => ({
-                                                ...item,
-                                                cvv: e.target.value
-                                            }))
-                                        );
+                                    type={'number'}
+                                    onChange={(e) => {
+                                        setPocketPayDetails((prevDetails) => ({
+                                            ...prevDetails,
+                                            cvv: e.target.value
+                                        }));
                                     }}
                                     placeholder="CVV"
                                     className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
@@ -125,13 +158,12 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                                 <label>MM</label>
                                 <Input
                                     value={pocketPayDetails.mm}
-                                    onValueChange={(e) => {
-                                        setPocketPayDetails((prevDetails) =>
-                                            prevDetails.map((item) => ({
-                                                ...item,
-                                                mm: e.target.value
-                                            }))
-                                        );
+                                    type={'number'}
+                                    onChange={(e) => {
+                                        setPocketPayDetails((prevDetails) => ({
+                                            ...prevDetails,
+                                            mm: e.target.value
+                                        }));
                                     }}
                                     placeholder="MM"
                                     className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
@@ -141,13 +173,12 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                                 <label>YYYY</label>
                                 <Input
                                     value={pocketPayDetails.yyyy}
-                                    onValueChange={(e) => {
-                                        setPocketPayDetails((prevDetails) =>
-                                            prevDetails.map((item) => ({
-                                                ...item,
-                                                yyyy: e.target.value
-                                            }))
-                                        );
+                                    type={'number'}
+                                    onChange={(e) => {
+                                        setPocketPayDetails((prevDetails) => ({
+                                            ...prevDetails,
+                                            yyyy: e.target.value
+                                        }));
                                     }}
                                     placeholder="YYYY"
                                     className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
@@ -156,18 +187,12 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                         </div>
                     </div>
                 </div>
-                <Button
-                    onClick={() => {
-                        setTabNumber(tabNumber + 1),
-                            sessionStorage.setItem(
-                                'pocketPay',
-                                pocketPayDetails
-                            );
-                    }}
-                    className="text-center bg-[#293991] h-[60px] px-40 rounded-[12px] text-white"
+                <button
+                    onClick={handleContinue}
+                    className="text-center bg-[#293991] h-[60px] w-full md:w-min md:px-40 rounded-[12px] text-white"
                 >
                     Submit
-                </Button>
+                </button>
             </div>
         );
     }
@@ -178,10 +203,7 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                 <h2 className="text-xl font-semibold mb-4">
                     How would you like to pay?
                 </h2>
-                <div
-                    value={selectedMethod}
-                    onValueChange={handlePaymentMethodChange}
-                >
+                <div value={selectedMethod} onClick={handlePaymentMethodChange}>
                     <div className="space-y-6">
                         <button
                             onClick={() => {
@@ -202,16 +224,12 @@ export default function ChoosePay({ tabNumber, setTabNumber }) {
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pl-7">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center justify-center">
                                 {insuranceProviders.map((provider, index) => (
                                     <button
-                                        onClick={() => {
-                                            setTabNumber(tabNumber + 1),
-                                                sessionStorage.setItem(
-                                                    'insuranceName',
-                                                    provider.name
-                                                );
-                                        }}
+                                        onClick={() =>
+                                            handleContinueIn(provider)
+                                        } // ✅ Fix: Arrow function to avoid immediate execution
                                         key={index}
                                         className="border rounded-lg p-4 flex items-center justify-center hover:border-blue-500 cursor-pointer"
                                     >

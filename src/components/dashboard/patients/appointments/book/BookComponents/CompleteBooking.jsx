@@ -1,7 +1,6 @@
 'use client';
 import { Minus, Plus } from 'lucide-react';
 import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/button';
 import { useState } from 'react';
 import {
     Select,
@@ -12,12 +11,19 @@ import {
 } from '@/components/common/select';
 import BioCard from '@/components/common/BioCard';
 import BookingConfirmation from '@/components/common/ConfirmCard';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppointment }) {
+export default function CompleteBooking({
+    tabNumber,
+    setTabNumber,
+    setIsBookAppointment
+}) {
     const [showPreferred, setShowPreferred] = useState(false);
     const [showGenderPronouns, setShowGenderPronouns] = useState(false);
     const [showBioCard, setShowBioCard] = useState(false);
     const [isShowConfirmCard, setIsShowConfirmCard] = useState(true);
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
     const profileData = {
         avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
@@ -40,8 +46,14 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
         totalRating: 1758
     };
 
-    if(showBioCard && isShowConfirmCard){
-        return(<BookingConfirmation isOpen={isShowConfirmCard} setIsShowConfirmCard={setIsShowConfirmCard} setIsBookAppointment={setIsBookAppointment}/> )
+    if (showBioCard && isShowConfirmCard) {
+        return (
+            <BookingConfirmation
+                isOpen={isShowConfirmCard}
+                setIsShowConfirmCard={setIsShowConfirmCard}
+                setIsBookAppointment={setIsBookAppointment}
+            />
+        );
     }
 
     return showBioCard && !isShowConfirmCard ? (
@@ -53,8 +65,8 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                     Complete your booking
                 </h2>
                 <div className="space-y-6">
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-end space-x-3 space-y-3 border p-4 rounded-xl">
-                        <div className="flex w-full items-center">
+                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-end space-x-3 space-y-3 md:border md:p-4 rounded-xl">
+                        <div className="flex flex-col md:flex-row w-full items-center">
                             <div className="overflow-hidden rounded-full bg-blue-300">
                                 <img
                                     src={profileData.avatar}
@@ -62,41 +74,48 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                                 />
                             </div>
                             <div className="flex flex-col items-start px-4">
-                                <p className="font-medium text-xl">
+                                <p className="font-medium text-base md:text-xl">
                                     {profileData.userName}
                                 </p>
-                                <p className="text-xl">
+                                <p className="text-base md:text-xl">
                                     {profileData?.selectedDate} -{' '}
                                     {profileData.timings}
                                 </p>
-                                <p className="font-medium text-xl capitalize">
+                                <p className="font-medium text-base md:text-xl capitalize">
                                     {profileData.appointmentType}
                                     {' Appointment '}(
                                     {profileData.appointmentDuration} {'min'})
                                 </p>
                             </div>
                         </div>
-                        <div className="rounded-[28px] bg-[#4864FF29] text-[#4864FF] whitespace-nowrap p-4 px-8">
-                            <button>
-                                Last Provider available at this time
+                        <div className='flex flex-col md:flex-row items-center gap-2 md:gap-12'>
+                            <button
+                                className="text-blue-500 underline whitespace-nowrap"
+                                onClick={() => {
+                                    const newParams = new URLSearchParams(
+                                        searchParams
+                                    );
+                                    newParams.set(
+                                        'tab',
+                                        'doctor-profile'.toString()
+                                    );
+                                    router.push(`?${newParams.toString()}`, {
+                                        scroll: false
+                                    });
+                                }}
+                            >
+                                See Profile
                             </button>
+                            <div className="rounded-[28px] bg-[#4864FF29] text-[#4864FF] md:whitespace-nowrap text-sm md:text-base p-4 px-8">
+                                <button>
+                                    Last Provider available at this time
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <div>
                         <div>
-                            <p className="text-2xl font-medium mt-4">
-                                01 - Patient Information
-                            </p>
-                            <p>
-                                Use the legal name that appears on your photo ID
-                                and your insurance card. Have an account?
-                                <br></br>
-                                <span className="text-[#4864FF] underline">
-                                    Sign in now
-                                </span>{' '}
-                                to save time.
-                            </p>
                             <div className="flex flex-col my-6 mt-6 gap-4">
                                 <div className="w-full">
                                     <label>Name</label>
@@ -128,7 +147,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                         <div>
                             <p className="text-xl my-4">Date of Birth</p>
                             <div className="flex flex-col w-full justify-between gap-4">
-                                <div className="flex justify-between gap-12">
+                                <div className="flex flex-col md:flex-row justify-between gap-2 md:gap-12">
                                     <div className="w-full flex justify-between gap-6">
                                         <div className="w-full">
                                             <label>Month</label>
@@ -204,11 +223,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                         </div>
                         <div>
                             <p className="text-2xl font-medium my-8">
-                                02 - Address
+                                01 - Address
                             </p>
                             <div className="flex flex-col w-full justify-between gap-4">
                                 <div className="grid grid-cols-1 gap-8">
-                                    <div className="w-full flex justify-between gap-6">
+                                    <div className="w-full flex flex-col md:flex-row justify-between gap-6">
                                         <div className="w-full">
                                             <label>Address</label>
                                             <Input
@@ -224,7 +243,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                                             />
                                         </div>
                                     </div>
-                                    <div className="w-full flex justify-between gap-6">
+                                    <div className="w-full flex flex-col md:flex-row justify-between gap-6">
                                         <div className="w-full">
                                             <label>City</label>
                                             <Input
@@ -241,7 +260,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                                         </div>
                                     </div>
 
-                                    <div className="w-full flex justify-between gap-6">
+                                    <div className="w-full flex flex-col md:flex-row justify-between gap-6">
                                         <div className="w-full">
                                             <label>State</label>
                                             <Input
@@ -262,11 +281,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                         </div>
                         <div>
                             <p className="text-2xl font-medium my-8">
-                                03 - Contact Information
+                                02 - Contact Information
                             </p>
                             <div className="flex flex-col w-full justify-between gap-4">
                                 <div className="grid grid-cols-1 gap-8">
-                                    <div className="w-full flex justify-between gap-6">
+                                    <div className="w-full flex flex-col md:flex-row justify-between gap-6">
                                         <div className="w-full">
                                             <label>Phone Number</label>
                                             <Input
@@ -284,7 +303,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                                             />
                                         </div>
                                     </div>
-                                    <div className="w-full flex justify-between gap-6">
+                                    <div className="w-full flex flex-col md:flex-row justify-between gap-6">
                                         <div className="w-full">
                                             <label>
                                                 Emergency Contact Name
@@ -347,10 +366,10 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                         </div>
                         <div className="w-full my-8">
                             <div className="flex items-center gap-4">
-                                <div className="border-2 h-6 w-6 rounded-[4px] border-[#4864FF]">
+                                <div className="border-2 w-6 h-6 rounded-[4px] border-[#4864FF] overflow-hidden">
                                     <Input
                                         type="checkbox"
-                                        className="h-5 w-5 border-none rounded-xl bg-transparent outline-none"
+                                        className="w-full h-full border border-[#4864FF]"
                                     />
                                 </div>
                                 <p className="text-lg">
@@ -369,21 +388,21 @@ export default function CompleteBooking({ tabNumber, setTabNumber, setIsBookAppo
                         </div>
                         <div className="w-full my-4 mb-6">
                             <div className="flex items-center gap-4">
-                                <div className="border-2 h-6 w-6 rounded-[4px] border-[#4864FF]">
+                                <div className="border-2 w-6 h-6 rounded-[4px] border-[#4864FF] overflow-hidden">
                                     <Input
                                         type="checkbox"
-                                        className="h-5 w-5 border-none rounded-xl bg-transparent outline-none"
+                                        className="w-full h-full border border-[#4864FF]"
                                     />
                                 </div>
                                 <p className="text-lg">Consent for Treatment</p>
                             </div>
                         </div>
-                        <Button
+                        <button
                             onClick={() => setShowBioCard(true)}
-                            className="text-center bg-[#293991] h-[60px] px-40 mt-4 rounded-[12px] text-white"
+                            className="text-center bg-[#293991] h-[60px] w-full md:w-min md:px-40 md:whitespace-nowrap mt-4 rounded-[12px] text-white"
                         >
                             Confirm Patient Information
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </div>
