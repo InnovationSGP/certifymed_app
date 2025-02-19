@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Card } from './Card';
@@ -5,9 +6,7 @@ import { Badge } from './badge';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { appointmentsDrop } from './Helper';
 
-export default function AppointmentTypes({
-    selectedIdType,
-}) {
+export default function AppointmentTypes({ selectedIdType }) {
     const [selectedId, setSelectedId] = useState(selectedIdType);
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -23,9 +22,7 @@ export default function AppointmentTypes({
             </h1>
 
             <div className="flex items-center gap-2 text-sm mb-6">
-                <button
-                    className="text-[#4864FF] hover:underline"
-                >
+                <button className="text-[#4864FF] hover:underline">
                     Appointment
                 </button>
                 <span className="text-gray-400">/</span>

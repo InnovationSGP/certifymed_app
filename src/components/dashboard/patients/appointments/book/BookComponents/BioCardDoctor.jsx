@@ -1,3 +1,4 @@
+'use client';
 import { profileData } from '@/components/common/Helper';
 import {
     ArrowLeft,

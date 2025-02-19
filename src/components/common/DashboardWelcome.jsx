@@ -1,3 +1,4 @@
+'use client';
 import { useTransitionRouteChange } from '@/utils/useTransitionRouteChange';
 import Link from 'next/link';
 import React, { useState } from 'react';

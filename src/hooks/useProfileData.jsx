@@ -1,3 +1,4 @@
+'use client';
 import { setUser, updateUser } from "@/redux/slices/userSlice";
 import axiosInstance from "@/utils/axios";
 import { useState } from "react";
