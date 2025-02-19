@@ -10,9 +10,10 @@ import { patientappointments } from '@/components/common/Helper';
 import { useDispatch, useSelector } from 'react-redux';
 import FindProvider from '@/components/dashboard/patients/appointments/book/page';
 import Link from 'next/link';
+import { useTransitionRouteChange } from '@/utils/useTransitionRouteChange';
 
 const AppoinmentPage = () => {
-    const [isBookAppointment, setIsBookAppointment] = useState(false);
+    const { handleTransition } = useTransitionRouteChange();
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -32,23 +33,35 @@ const AppoinmentPage = () => {
 
     return (
         <DashboardLayout className="overflow-auto">
-                <div>
-                    <DashboardWelcome
-                        heading="Appointments Overview"
-                        buttontext="Book an Appointment"
-                    />
-                    <AppointmentsAnalytics />
-                    <Link href={"/dashboard/patients/appointments/book"} className="bg-primary primary-btn mx-auto mt-[39px] sm:hidden">
+            <div>
+                <DashboardWelcome
+                    heading="Appointments Overview"
+                    buttontext="Book an Appointment"
+                />
+                <AppointmentsAnalytics />
+                <button
+                    onClick={() =>
+                        handleTransition(
+                            '/dashboard/patients/appointments/book'
+                        )
+                    }
+                    className='flex mx-auto'
+                >
+                    <Link
+                        href={'/dashboard/patients/appointments/book'}
+                        className="bg-primary primary-btn mx-auto mt-[39px] sm:hidden"
+                    >
                         Book an Appointment
                     </Link>
-                    <div className="hidden md:block">
-                        <AppointmentList
-                            type="Patients"
-                            dataSet={recentAppointments}
-                        />
-                    </div>
-                    <PatientsHistory />
+                </button>
+                <div className="hidden md:block">
+                    <AppointmentList
+                        type="Patients"
+                        dataSet={recentAppointments}
+                    />
                 </div>
+                <PatientsHistory />
+            </div>
         </DashboardLayout>
     );
 };

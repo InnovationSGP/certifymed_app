@@ -12,6 +12,7 @@ import {
 import BioCard from '@/components/common/BioCard';
 import BookingConfirmation from '@/components/common/ConfirmCard';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { profileData } from '@/components/common/Helper';
 
 export default function CompleteBooking({
     tabNumber,
@@ -24,27 +25,6 @@ export default function CompleteBooking({
     const [isShowConfirmCard, setIsShowConfirmCard] = useState(true);
     const searchParams = useSearchParams();
     const router = useRouter();
-
-    const profileData = {
-        avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
-        userName: 'Bhupinder Singh FNK-BN',
-        timings: sessionStorage.getItem('timing') || 'No Timings Available',
-        appointmentType: sessionStorage.getItem('appointmentData')
-            ? sessionStorage.getItem('appointmentData').split(',')[0]
-            : 'N/A',
-        appointmentName: sessionStorage.getItem('appointmentData')
-            ? sessionStorage.getItem('appointmentData').split(',')[1]
-            : 'N/A',
-        appointmentDesc: sessionStorage.getItem('appointmentData')
-            ? sessionStorage.getItem('appointmentData').split(',')[2]
-            : 'N/A',
-        selectedDate: sessionStorage.getItem('selectedDate'),
-        appointmentDuration: 30,
-        desc: 'Acute Care',
-        exp: '13 years of experience',
-        rating: 4.96,
-        totalRating: 1758
-    };
 
     if (showBioCard && isShowConfirmCard) {
         return (
@@ -86,27 +66,30 @@ export default function CompleteBooking({
                                     {' Appointment '}(
                                     {profileData.appointmentDuration} {'min'})
                                 </p>
+                                <button
+                                    className="text-blue-500 underline whitespace-nowrap"
+                                    onClick={() => {
+                                        const newParams = new URLSearchParams(
+                                            searchParams
+                                        );
+                                        newParams.set(
+                                            'tab',
+                                            'doctor-profile'.toString()
+                                        );
+                                        router.push(
+                                            `?${newParams.toString()}`,
+                                            {
+                                                scroll: false
+                                            }
+                                        );
+                                    }}
+                                >
+                                    See Profile
+                                </button>
                             </div>
                         </div>
-                        <div className='flex flex-col md:flex-row items-center gap-2 md:gap-12'>
-                            <button
-                                className="text-blue-500 underline whitespace-nowrap"
-                                onClick={() => {
-                                    const newParams = new URLSearchParams(
-                                        searchParams
-                                    );
-                                    newParams.set(
-                                        'tab',
-                                        'doctor-profile'.toString()
-                                    );
-                                    router.push(`?${newParams.toString()}`, {
-                                        scroll: false
-                                    });
-                                }}
-                            >
-                                See Profile
-                            </button>
-                            <div className="rounded-[28px] bg-[#4864FF29] text-[#4864FF] md:whitespace-nowrap text-sm md:text-base p-4 px-8">
+                        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-12">
+                            <div className="rounded-[28px] bg-[#4864FF29] text-[#4864FF] md:whitespace-nowrap text-xs md:text-lg p-4 px-8">
                                 <button>
                                     Last Provider available at this time
                                 </button>
@@ -128,7 +111,7 @@ export default function CompleteBooking({
                                     onClick={() => {
                                         setShowPreferred(!showPreferred);
                                     }}
-                                    className="flex flex-row items-center gap-2 text-[#4864FF] text-lg"
+                                    className="flex flex-row items-center gap-2 text-[#4864FF] text-xs md:text-lg"
                                 >
                                     {showPreferred ? <Minus /> : <Plus />}
                                     Preferred Name
@@ -203,7 +186,7 @@ export default function CompleteBooking({
                                             !showGenderPronouns
                                         );
                                     }}
-                                    className="flex flex-row items-center gap-2 text-[#4864FF] text-lg"
+                                    className="flex flex-row items-center gap-2 text-[#4864FF] text-xs md:text-lg"
                                 >
                                     {showGenderPronouns ? <Minus /> : <Plus />}
                                     Gender Identity / Prederred Pronouns
@@ -366,10 +349,10 @@ export default function CompleteBooking({
                         </div>
                         <div className="w-full my-8">
                             <div className="flex items-center gap-4">
-                                <div className="border-2 w-6 h-6 rounded-[4px] border-[#4864FF] overflow-hidden">
-                                    <Input
+                                <div className="w-6 h-6 border-2 border-[#4864FF] rounded-md flex items-center justify-center">
+                                    <input
                                         type="checkbox"
-                                        className="w-full h-full border border-[#4864FF]"
+                                        className=" w-full h-full"
                                     />
                                 </div>
                                 <p className="text-lg">
@@ -386,16 +369,18 @@ export default function CompleteBooking({
                                 platform.
                             </p>
                         </div>
-                        <div className="w-full my-4 mb-6">
-                            <div className="flex items-center gap-4">
-                                <div className="border-2 w-6 h-6 rounded-[4px] border-[#4864FF] overflow-hidden">
-                                    <Input
+                        <div className="w-full mb-4 flex items-center gap-3">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <div className="w-6 h-6 border-2 border-[#4864FF] rounded-md flex items-center justify-center">
+                                    <input
                                         type="checkbox"
-                                        className="w-full h-full border border-[#4864FF]"
+                                        className=" w-full h-full"
                                     />
                                 </div>
-                                <p className="text-lg">Consent for Treatment</p>
-                            </div>
+                                <span className="text-lg">
+                                    Consent for Treatment
+                                </span>
+                            </label>
                         </div>
                         <button
                             onClick={() => setShowBioCard(true)}

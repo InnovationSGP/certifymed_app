@@ -1,3 +1,4 @@
+import { useTransitionRouteChange } from '@/utils/useTransitionRouteChange';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -7,7 +8,7 @@ const DashboardWelcome = ({
     emergencycall,
     buttontext
 }) => {
-    // const [isBookAppointment, setIsBookAppointment] = useState(false);
+    const { handleTransition } = useTransitionRouteChange();
     return (
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] sm:mt-10 md:mt-16 gap-[29px] px-5 md:px-[35px]">
@@ -25,12 +26,14 @@ const DashboardWelcome = ({
                 </div>
                 <div className="sm:flex items-center gap-x-[15px] hidden">
                     {buttontext && (
-                        <Link
-                            href={'/dashboard/patients/appointments/book'}
-                            className="bg-primary primary-btn"
-                        >
-                            Book an Appointment
-                        </Link>
+                        <button onClick={() => handleTransition('/dashboard/patients/appointments/book')}>
+                            <Link
+                                href={'/dashboard/patients/appointments/book'}
+                                className="bg-primary primary-btn"
+                            >
+                                Book an Appointment
+                            </Link>
+                        </button>
                     )}
 
                     {emergencycall && (

@@ -3,53 +3,14 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Card } from './Card';
 import { Badge } from './badge';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { appointmentsDrop } from './Helper';
 
 export default function AppointmentTypes({
     selectedIdType,
-    setSelectedIdType
 }) {
     const [selectedId, setSelectedId] = useState(selectedIdType);
     const searchParams = useSearchParams();
     const router = useRouter();
-
-    const appointments = [
-        {
-            id: 1,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        },
-        {
-            id: 2,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        },
-        {
-            id: 3,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        },
-        {
-            id: 4,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        },
-        {
-            id: 5,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        },
-        {
-            id: 6,
-            title: 'Annual GYN Exam',
-            description:
-                'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
-        }
-    ];
 
     const handleToggle = (id) => {
         setSelectedId(selectedId === id ? null : id);
@@ -63,9 +24,6 @@ export default function AppointmentTypes({
 
             <div className="flex items-center gap-2 text-sm mb-6">
                 <button
-                    // onClick={() => {
-                    //     setSelectedId(null), setSelectedIdType(null);
-                    // }}
                     className="text-[#4864FF] hover:underline"
                 >
                     Appointment
@@ -77,7 +35,7 @@ export default function AppointmentTypes({
             </div>
 
             <div className="space-y-4">
-                {appointments.map((appointment) => (
+                {appointmentsDrop.map((appointment) => (
                     <Card
                         key={appointment.id}
                         className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -103,29 +61,40 @@ export default function AppointmentTypes({
                                         )}
                                     </div>
                                 </div>
-                                <div className="mt-2">
-                                    <p className="text-sm text-gray-600 mb-4">
-                                        {appointment.description}
-                                    </p>
-                                    <button
-                                        className="bg-[#293991] hover:bg-[#1d2c7e] text-white px-10 rounded-[12px] py-4"
-                                        onClick={() => {
-                                            sessionStorage.setItem(
-                                                'appointmentData',
-                                                `
+                                {selectedId === appointment.id && (
+                                    <div className="mt-2">
+                                        <p className="text-sm text-gray-600 mb-4">
+                                            {appointment.description}
+                                        </p>
+                                        <button
+                                            className="bg-[#293991] hover:bg-[#1d2c7e] text-white px-10 rounded-[12px] py-4"
+                                            onClick={() => {
+                                                sessionStorage.setItem(
+                                                    'appointmentData',
+                                                    `
                                                     ${selectedIdType},
                                                     ${appointment.title},
                                                     ${appointment.description}
                                                     `
-                                            );
-                                            const newParams = new URLSearchParams(searchParams);
-                                            newParams.set('tab', 'payment'.toString());
-                                            router.push(`?${newParams.toString()}`, { scroll: false });
-                                        }}
-                                    >
-                                        View Availabilities
-                                    </button>
-                                </div>
+                                                );
+                                                const newParams =
+                                                    new URLSearchParams(
+                                                        searchParams
+                                                    );
+                                                newParams.set(
+                                                    'tab',
+                                                    'payment'.toString()
+                                                );
+                                                router.push(
+                                                    `?${newParams.toString()}`,
+                                                    { scroll: false }
+                                                );
+                                            }}
+                                        >
+                                            View Availabilities
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </Card>
