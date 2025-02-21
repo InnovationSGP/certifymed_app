@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Card } from './Card';
 import { Badge } from './badge';
-import { useSearchParams, useRouter } from 'next/navigation';
 import { appointmentsDrop } from './Helper';
+import { TabDownArrowIcon } from './AppIcons';
+import PrimaryBtn from './PrimaryBtn';
 
 export default function AppointmentTypes({ selectedIdType }) {
     const [selectedId, setSelectedId] = useState(selectedIdType);
@@ -16,63 +17,73 @@ export default function AppointmentTypes({ selectedIdType }) {
     };
 
     return (
-        <div className="w-11/12 mx-auto h-screen p-0 md:p-6">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-                How do you want to be seen?
-            </h1>
+        <div className="bg-white pr-2 w-full sm:w-11/12 mx-auto shadow-tab py-3 rounded-[12px]">
+            <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-230px)] p-3 sm:p-4 overflow-auto custom-tabs">
+                <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
+                    How do you want to be seen?
+                </h1>
 
-            <div className="flex items-center gap-2 text-sm mb-6">
-                <button className="text-[#4864FF] hover:underline">
-                    Appointment
-                </button>
-                <span className="text-gray-400">/</span>
-                <span className="text-gray-600 capitalize">
-                    {selectedIdType}
-                </span>
-            </div>
+                <div className="flex items-center gap-2 text-sm mb-6">
+                    <button className="text-bluetitmouse hover:underline text-base font-poppins">
+                        Appointment
+                    </button>
+                    <span className="text-secondary">/</span>
+                    <span className="text-secondary capitalize text-base font-poppins">
+                        {selectedIdType}
+                    </span>
+                </div>
 
-            <div className="space-y-4">
-                {appointmentsDrop.map((appointment) => (
-                    <Card
-                        key={appointment.id}
-                        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                        onClick={() => handleToggle(appointment.id)}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-medium text-gray-900">
-                                        {appointment.title}
-                                    </h3>
-                                    <div className="flex items-center gap-2">
-                                        <Badge
-                                            variant="secondary"
-                                            className="bg-[#4864FF33] text-[#4864FF] hover:bg-purple-100"
-                                        >
-                                            Appointment
-                                        </Badge>
-                                        {selectedId === appointment.id ? (
-                                            <ChevronDown className="h-5 w-5 text-gray-400" />
-                                        ) : (
-                                            <ChevronRight className="h-5 w-5 text-gray-400" />
-                                        )}
+                <div className="space-y-4">
+                    {appointmentsDrop.map((appointment) => (
+                        <Card
+                            key={appointment.id}
+                            className="p-3 sm:p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                            onClick={() => handleToggle(appointment.id)}
+                        >
+                            <div className="flex items-center gap-3 justify-between">
+                                <div className="flex-1">
+                                    <div className="flex gap-2 sm:gap-0 items-center justify-between sm:mb-2">
+                                        <h3 className="text-base font-medium text-gray-900">
+                                            {appointment.title}
+                                        </h3>
+                                        <div className="flex items-center gap-1 sm:gap-2">
+                                            <Badge
+                                                variant="secondary"
+                                                className="bg-transparentBlue text-bluetitmouse !text-xs !font-normal hover:bg-purple-100 rounded-[32px] px-3 py-1 h-[30px]"
+                                            >
+                                                Appointment
+                                            </Badge>
+
+                                            <span
+                                                className={`${
+                                                    selectedId ===
+                                                    appointment.id
+                                                        ? 'rotate-0'
+                                                        : 'rotate-[272deg]'
+                                                } transition-all duration-300 ease-in-out`}
+                                            >
+                                                <TabDownArrowIcon />
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                {selectedId === appointment.id && (
-                                    <div className="mt-2">
-                                        <p className="text-sm text-gray-600 mb-4">
+
+                                    {/* Transition Effect for Content */}
+                                    <div
+                                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                            selectedId === appointment.id
+                                                ? 'max-h-[500px] opacity-100'
+                                                : 'max-h-0 opacity-0'
+                                        }`}
+                                    >
+                                        <p className="!text-sm sm:!text-base paragraph leading-[120%] mb-4">
                                             {appointment.description}
                                         </p>
-                                        <button
-                                            className="bg-[#293991] hover:bg-[#1d2c7e] text-white px-10 rounded-[12px] py-4"
+                                        <PrimaryBtn
+                                            className="h-[52px] md:h-[60px]"
                                             onClick={() => {
                                                 sessionStorage.setItem(
                                                     'appointmentData',
-                                                    `
-                                                    ${selectedIdType},
-                                                    ${appointment.title},
-                                                    ${appointment.description}
-                                                    `
+                                                    `${selectedIdType}, ${appointment.title}, ${appointment.description}`
                                                 );
                                                 const newParams =
                                                     new URLSearchParams(
@@ -89,13 +100,13 @@ export default function AppointmentTypes({ selectedIdType }) {
                                             }}
                                         >
                                             View Availabilities
-                                        </button>
+                                        </PrimaryBtn>
                                     </div>
-                                )}
+                                </div>
                             </div>
-                        </div>
-                    </Card>
-                ))}
+                        </Card>
+                    ))}
+                </div>
             </div>
         </div>
     );

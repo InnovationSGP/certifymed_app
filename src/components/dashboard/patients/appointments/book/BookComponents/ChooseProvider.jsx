@@ -9,6 +9,7 @@ import {
 } from '@/components/common/select';
 import { Avatar, AvatarImage } from '@/components/common/avatar';
 import { useState } from 'react';
+import PrimaryBtn from '@/components/common/PrimaryBtn';
 
 export default function ChooseProvider() {
     const searchParams = useSearchParams();
@@ -27,7 +28,7 @@ export default function ChooseProvider() {
             newParams.set('tab', 'appointment'.toString());
             router.push(`?${newParams.toString()}`, { scroll: false });
         } else {
-            setMainText("Please Select a provider")
+            setMainText('Please Select a provider');
         }
     };
 
@@ -38,7 +39,7 @@ export default function ChooseProvider() {
                 {providers.map((provider, index) => (
                     <Avatar
                         key={index}
-                        className="w-10 h-10 border border-[#293991]"
+                        className="w-10 h-10 border border-primary"
                     >
                         <AvatarImage
                             src={provider}
@@ -65,36 +66,61 @@ export default function ChooseProvider() {
 
             <div className="space-y-4 mt-4">
                 <div className="my-4">
-                    <p className="text-sm font-medium mb-1 pl-1">City</p>
+                    <p className="text-base font-poppins text-dimGray font-medium mb-1 pl-1">
+                        City
+                    </p>
                     <Select
+                        className=""
                         onValueChange={(value) => {
                             setCity(value);
                         }}
                     >
-                        <SelectTrigger className="w-full bg-[#F1F1F1] h-12">
+                        <SelectTrigger className="w-full bg-[#F1F1F1] h-12 cursor-pointer border !outline-none !border-transparent">
                             <SelectValue
                                 className="text-[#606060]"
                                 placeholder={city || 'Select'}
                             />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#F1F1F1] z-20">
-                            <SelectItem value="new-york">New York</SelectItem>
-                            <SelectItem value="los-angeles">
+                        <SelectContent className="bg-[#F1F1F1] z-20 cursor-pointer">
+                            <SelectItem
+                                value="new-york"
+                                className="cursor-pointer hover:text-white hover:bg-primary"
+                            >
+                                New York
+                            </SelectItem>
+                            <SelectItem
+                                value="los-angeles"
+                                className="cursor-pointer hover:text-white hover:bg-primary"
+                            >
                                 Los Angeles
                             </SelectItem>
-                            <SelectItem value="chicago">Chicago</SelectItem>
-                            <SelectItem value="houston">Houston</SelectItem>
-                            <SelectItem value="phoenix">Phoenix</SelectItem>
+                            <SelectItem
+                                value="chicago"
+                                className="cursor-pointer hover:text-white hover:bg-primary"
+                            >
+                                Chicago
+                            </SelectItem>
+                            <SelectItem
+                                value="houston"
+                                className="cursor-pointer hover:text-white hover:bg-primary"
+                            >
+                                Houston
+                            </SelectItem>
+                            <SelectItem
+                                value="phoenix"
+                                className="cursor-pointer hover:text-white hover:bg-primary"
+                            >
+                                Phoenix
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
-
-                <button
+                <PrimaryBtn
                     onClick={handleContinue}
-                    className="w-full h-[60px] rounded-[12px] bg-[#293991] text-white"
+                    className={'w-full h-[52px] md:h-[60px]'}
                 >
                     Continue
-                </button>
+                </PrimaryBtn>
             </div>
         </div>
     );

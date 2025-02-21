@@ -48,7 +48,7 @@ const FindProvider = ({ setIsBookAppointment }) => {
                     currentStep={tabIndex + 1}
                     onStepClick={handleStepClick}
                 />
-                <div className="w-full p-4 h-full mt-12 flex items-center justify-center">
+                <div className="w-full p-4 h-full mt-4 xl:mt-12 flex items-center justify-center">
                     {currentTab === 'provider' && (
                         <ChooseProvider
                             tabNumber={currentTab}

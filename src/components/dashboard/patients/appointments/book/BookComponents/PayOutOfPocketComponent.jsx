@@ -1,9 +1,16 @@
-import { Input } from "@/components/common/Input";
+import { Input } from '@/components/common/Input';
+import PrimaryBtn from '@/components/common/PrimaryBtn';
 
-export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, handleContinue}) {
+export default function PayOutOfPocket({
+    setPocketPayDetails,
+    pocketPayDetails,
+    handleContinue
+}) {
     return (
-        <div className="w-11/12  text-black p-4 px-6 bg-white rounded-xl shadow-md mb-24">
-            <p className="text-2xl font-medium mt-4">Payment Methods</p>
+        <div className="w-11/12  text-black p-4 px-6 bg-white rounded-xl shadow-tab mb-24">
+            <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary mt-4">
+                Payment Methods
+            </p>
             <div className="flex flex-col md:flex-row w-full justify-start gap-3 mt-4">
                 {['Debit Card', 'Credit Card', 'Paypal'].map((item, index) => (
                     <button
@@ -14,9 +21,9 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                 type: item
                             }));
                         }}
-                        className={`border min-w-36 text-sm rounded-lg p-1 flex items-center justify-center ${
+                        className={`border min-w-36 text-sm rounded-lg p-1 hover:bg-primary hover:text-white transition-all duration-200 ease-in-out flex items-center justify-center ${
                             pocketPayDetails.type === item
-                                ? 'bg-[#293991] text-white'
+                                ? 'bg-primary text-white'
                                 : 'bg-white'
                         } cursor-pointer`}
                     >
@@ -27,11 +34,26 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
             <div className="flex flex-col my-6 mt-6 gap-4">
                 <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-12">
                     <div className="w-full">
-                        <label>First name</label>
-                        <Input
+                        <label className="font-medium text-dimGray">
+                            First name
+                        </label>
+                        {/* <Input
                             value={pocketPayDetails.firstName}
                             placeholder="Enter your name"
-                            className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                            className="input-style"
+                            onChange={(e) => {
+                                setPocketPayDetails((prevDetails) => ({
+                                    ...prevDetails,
+                                    firstName: e.target.value
+                                }));
+                            }}
+                        /> */}
+                        <input
+                            name="name"
+                            className={`input-style`}
+                            type="text"
+                            placeholder="Enter your name"
+                            value={pocketPayDetails.firstName}
                             onChange={(e) => {
                                 setPocketPayDetails((prevDetails) => ({
                                     ...prevDetails,
@@ -41,8 +63,12 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                         />
                     </div>
                     <div className="w-full">
-                        <label>Last name</label>
-                        <Input
+                        <label className="font-medium text-dimGray">
+                            Last name
+                        </label>
+                        <input
+                            name="last name"
+                            type="text"
                             value={pocketPayDetails.lastName}
                             onChange={(e) => {
                                 setPocketPayDetails((prevDetails) => ({
@@ -51,14 +77,17 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                 }));
                             }}
                             placeholder="Enter your last name"
-                            className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                            className={`input-style`}
                         />
                     </div>
                 </div>
                 <div className="flex flex-col md:flex-row w-full justify-between gap-2 md:gap-12">
                     <div className="w-full">
-                        <label>Credit Card Number</label>
-                        <Input
+                        <label className="font-medium text-dimGray">
+                            Credit Card Number
+                        </label>
+                        <input
+                            name="card number"
                             value={pocketPayDetails.creditCardNumber}
                             type={'number'}
                             onChange={(e) => {
@@ -68,13 +97,14 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                 }));
                             }}
                             placeholder="1234"
-                            className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                            className={`input-style`}
                         />
                     </div>
                     <div className="w-full flex justify-between gap-6">
                         <div className="w-full">
                             <label>CVV</label>
-                            <Input
+                            <input
+                                name="cvv"
                                 value={pocketPayDetails.cvv}
                                 type={'number'}
                                 onChange={(e) => {
@@ -84,12 +114,15 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                     }));
                                 }}
                                 placeholder="CVV"
-                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                className={`input-style`}
                             />
                         </div>
                         <div className="w-full">
-                            <label>MM</label>
-                            <Input
+                            <label className="font-medium text-dimGray">
+                                MM
+                            </label>
+                            <input
+                                name="mm"
                                 value={pocketPayDetails.mm}
                                 type={'number'}
                                 onChange={(e) => {
@@ -99,12 +132,15 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                     }));
                                 }}
                                 placeholder="MM"
-                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                className={`input-style`}
                             />
                         </div>
                         <div className="w-full">
-                            <label>YYYY</label>
-                            <Input
+                            <label className="font-medium text-dimGray">
+                                YYYY
+                            </label>
+                            <input
+                                name="YYYY"
                                 value={pocketPayDetails.yyyy}
                                 type={'number'}
                                 onChange={(e) => {
@@ -114,18 +150,18 @@ export default function PayOutOfPocket({setPocketPayDetails, pocketPayDetails, h
                                     }));
                                 }}
                                 placeholder="YYYY"
-                                className="h-[60px] input-style rounded-[12px] bg-[#F1F1F1]"
+                                className={`input-style`}
                             />
                         </div>
                     </div>
                 </div>
             </div>
-            <button
+            <PrimaryBtn
                 onClick={handleContinue}
-                className="text-center bg-[#293991] h-[60px] w-full md:w-min md:px-40 rounded-[12px] text-white"
+                className="text-center bg-primary h-[52px] md:h-[60px] w-full md:w-min md:px-40"
             >
                 Submit
-            </button>
+            </PrimaryBtn>
         </div>
     );
 }

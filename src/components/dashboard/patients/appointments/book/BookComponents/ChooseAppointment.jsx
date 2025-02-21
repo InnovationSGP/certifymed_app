@@ -5,7 +5,7 @@ import { ChevronRight, Smartphone, Building2 } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import AppointmentTypes from '@/components/common/AppointmentType';
 
-export default function ChooseAppointment({tabNumber, setTabNumber}) {
+export default function ChooseAppointment({ tabNumber, setTabNumber }) {
     const [selected, setSelected] = useState('video');
     const handleToggle = (type) => {
         setSelected(selected === type ? null : type);
@@ -18,8 +18,8 @@ export default function ChooseAppointment({tabNumber, setTabNumber}) {
             setTabNumber={setTabNumber}
         />
     ) : (
-        <div className="w-11/12 p-0 md:p-6">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+        <div className="w-full sm:w-11/12 p-0 md:p-6">
+            <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
                 How do you want to be seen?
             </h1>
             <h2 className="text-gray-500 mb-6">Appointments</h2>

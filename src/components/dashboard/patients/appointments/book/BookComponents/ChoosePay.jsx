@@ -7,6 +7,7 @@ import { Input } from '@/components/common/Input';
 import { useSearchParams, useRouter } from 'next/navigation';
 import PayOutOfPocket from './PayOutOfPocketComponent';
 import { insuranceProviders } from '@/components/common/Helper';
+import { WalletIcon } from '@/components/common/Icons';
 
 export default function ChoosePay() {
     const [selectedMethod, setSelectedMethod] = useState('');
@@ -55,9 +56,9 @@ export default function ChoosePay() {
             handleContinue={handleContinue}
         />
     ) : (
-        <div className="w-11/12 mx-auto space-y-8 mb-24 shadow-md">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-xl font-semibold mb-4">
+        <div className="w-full sm:w-11/12 mx-auto space-y-8 mb-24">
+            <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-12 md:pt-6">
+                <h2 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-4">
                     How would you like to pay?
                 </h2>
                 <div value={selectedMethod} onClick={handlePaymentMethodChange}>
@@ -66,29 +67,34 @@ export default function ChoosePay() {
                             onClick={() => {
                                 setIsPayOutOfPocket(true);
                             }}
-                            className="flex w-full items-center space-x-3 border p-4 rounded-xl"
+                            className="flex w-full items-center space-x-3 border border-gainsboro p-3 sm:p-4 rounded-xl"
                         >
-                            <div className="p-2 rounded-lg bg-blue-300">
-                                <Wallet className="h-6 w-6 text-blue-700" />
-                            </div>
-                            <p htmlFor="pocket">Pay out of Pocket</p>
+                            <WalletIcon />
+                            <p
+                                className="text-base font-poppins text-secondary"
+                                htmlFor="pocket"
+                            >
+                                Pay out of Pocket
+                            </p>
                         </button>
-
-                        <div className="space-y-4">
+                        <div className="space-y-2 sm:space-y-4">
                             <div className="flex items-center space-x-3">
-                                <label htmlFor="insurance">
+                                <label
+                                    className="text-base font-poppins text-secondary"
+                                    htmlFor="insurance"
+                                >
                                     Use my insurance
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center justify-center">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 items-center justify-center">
                                 {insuranceProviders.map((provider, index) => (
                                     <button
                                         onClick={() =>
                                             handleContinueIn(provider)
                                         } // ✅ Fix: Arrow function to avoid immediate execution
                                         key={index}
-                                        className="border rounded-lg px-4 min-h-[80px] flex items-center justify-center hover:border-blue-500 cursor-pointer"
+                                        className="border border-gainsboro rounded-[12px] px-4 min-h-[70px] sm:min-h-[80px] flex items-center justify-center hover:border-blue-500 cursor-pointer"
                                     >
                                         <img
                                             className={`${
