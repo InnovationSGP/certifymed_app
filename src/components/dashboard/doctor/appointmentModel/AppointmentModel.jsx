@@ -32,11 +32,11 @@ export default function AppointmentModel({ setShowModal }) {
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50 h-screen overflow-auto"
+            className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50 h-screen overflow-auto hide-scrollbar"
             onClick={() => setShowModal(false)}
         >
             <div
-                className="max-w-[98%] xl:max-w-[1129px] mx-auto space-y-5 sm:space-y-12 bg-white rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
+                className="max-w-[98%] xl:max-w-[1129px] mx-auto h-[95vh] sm:h-fit overflow-auto hide-scrollbar space-y-5 sm:space-y-12 bg-white rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center gap-2">
@@ -52,7 +52,7 @@ export default function AppointmentModel({ setShowModal }) {
                 </div>
 
                 <div>
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center space-x-3  sm:space-y-3 rounded-xl">
+                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center sm:space-x-3  sm:space-y-3 rounded-xl">
                         <div className="flex flex-col gap-3 lg:flex-row w-full items-center">
                             <div className="overflow-hidden rounded-full bg-blue-300">
                                 <img
@@ -65,31 +65,46 @@ export default function AppointmentModel({ setShowModal }) {
                                     {profileData.userName}
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 md:gap-6 sm:items-center">
-                                    <p className="text-base flex items-center gap-2">
-                                        <div className="px-[5px] py-[5px] rounded-full bg-gray-600">
-                                            <Phone className="h-4 w-4 text-white" />
-                                        </div>
+                                    <a
+                                        href="tel:+62 837 4839 4882"
+                                        className="text-base text-[#7A7A7A] flex items-center gap-2"
+                                    >
+                                        <img
+                                            className="max-w-[24px] w-full opacity-60"
+                                            src="/images/svg/email-icon.svg"
+                                            alt="email icon"
+                                        />
                                         {profileData.phoneNumber}
-                                    </p>
-                                    <p className="text-base flex items-center gap-2">
-                                        <div className="px-[5px] py-[5px] rounded-full bg-gray-600">
-                                            <Mail className="h-4 w-4 text-white" />
-                                        </div>
+                                    </a>
+                                    <a
+                                        href="mailto:jeamaxniioio28@mail.com"
+                                        className="text-base text-[#7A7A7A] flex items-center gap-2"
+                                    >
+                                        <img
+                                            className="max-w-[24px] w-full opacity-60"
+                                            src="/images/svg/phone-icon.svg"
+                                            alt="phone icon"
+                                        />
+
                                         {profileData.email}
-                                    </p>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-center md:justify-start w-full md:w-fit whitespace-nowrap gap-8">
-                            <div className="flex flex-col gap-3">
-                                <p>Date of birth</p>
-                                <p className="text-lg text-left font-[500]">
+                        <div className="flex justify-center md:justify-start w-full md:w-fit whitespace-nowrap gap-8 mt-4 sm:mt-0">
+                            <div className="flex flex-col gap-2 sm:gap-3">
+                                <p className="text-base text-secondary">
+                                    Date of birth
+                                </p>
+                                <p className="text-base sm:text-lg text-left font-medium text-secondary">
                                     {profileData.dob}
                                 </p>
                             </div>
-                            <div className="flex flex-col gap-3">
-                                <p>Gender</p>
-                                <p className="text-lg text-left font-[500]">
+                            <div className="flex flex-col gap-2 sm:gap-3">
+                                <p className="text-base text-secondary">
+                                    Gender
+                                </p>
+                                <p className="text-base sm:text-lg text-left font-medium text-secondary">
                                     {profileData.gender}
                                 </p>
                             </div>
@@ -98,32 +113,54 @@ export default function AppointmentModel({ setShowModal }) {
 
                     <div className="mt-5">
                         <div className="bg-gray-100/90 px-4 py-3 rounded-xl">
-                            <p className="text-sm">Reason</p>
-                            <p className="text-sm mt-3 capitalize">
+                            <p className="text-sm sm:text-base text-secondary">
+                                Reason
+                            </p>
+                            <p className="text-base sm:text-lg text-secondary mt-3 capitalize">
                                 {profileData.reason}
                             </p>
                         </div>
                         <div>
-                            <p className="text-sm mt-4">Booking Information</p>
-                            <div className="flex justify-between my-4">
+                            <p className="text-base text-secondary mt-4">
+                                Booking Information
+                            </p>
+                            <div className="flex flex-wrap gap-3 justify-between my-4">
                                 <div>
-                                    <p>Appointment Type</p>
-                                    <p>Video (30 Min)</p>
+                                    <p className="text-base text-secondary">
+                                        Appointment Type
+                                    </p>
+                                    <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
+                                        Video (30 Min)
+                                    </p>
                                 </div>
                                 <div>
-                                    <p>Appointment Date</p>
-                                    <p>10/02/2025</p>
+                                    <p className="text-base text-secondary">
+                                        Appointment Date
+                                    </p>
+                                    <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
+                                        10/02/2025
+                                    </p>
                                 </div>
                                 <div>
-                                    <p>Appointment ID</p>
-                                    <p>#0029324828</p>
+                                    <p className="text-base text-secondary">
+                                        Appointment ID
+                                    </p>
+                                    <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
+                                        #0029324828
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex gap-5">
-                                <button className="min-w-[60px] px-8 py-3 border border-gray-300 text-gray-600 rounded-xl">
+                            <div className="flex flex-col md:flex-row gap-3 md:gap-5">
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium"
+                                >
                                     Cancel Appointment
                                 </button>
-                                <button className="px-16 py-3 border border-[#4864FF] text-[#4864FF] rounded-xl">
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="px-16 py-3 max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out"
+                                >
                                     re-schedule
                                 </button>
                             </div>
