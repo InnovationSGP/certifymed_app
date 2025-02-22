@@ -3,6 +3,7 @@ import HorizontalDatePicker from '@/components/common/DateTimePicker';
 import dayjs from 'dayjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TimingProviders } from '@/components/common/Helper';
+import PrimaryBtn from '@/components/common/PrimaryBtn';
 
 const ChooseDateTime = () => {
     const storedDate = sessionStorage.getItem('selectedDate');
@@ -28,33 +29,33 @@ const ChooseDateTime = () => {
     };
 
     return (
-        <div className="w-11/12 mb-24">
+        <div className="w-full md:w-11/12 mb-14 md:mb-24">
             <HorizontalDatePicker
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
             />
-            <div className="gap-4 p-7 my-10 rounded-xl bg-white shadow-lg">
+            <div className="gap-4 p-3 sm:p-5 md:p-7 my-10 rounded-xl bg-white shadow-tab">
                 {TimingProviders.map((provider, index) => (
-                    <div key={index} className="flex flex-col py-2">
-                        <p className="font-medium text-2xl">{provider.shift}</p>
-                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 py-3">
+                    <div key={index} className="flex flex-col sm:py-2">
+                        <p className="font-semibold text-secondary text-lg sm:text-xl lg:text-2xl">
+                            {provider.shift}
+                        </p>
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-5 py-3">
                             {provider.data.map(({ time, count }, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => handleTimeSelect(time)}
-                                    className={`border rounded-lg p-4 flex items-center justify-between w-full cursor-pointer transition-all
+                                    className={`border rounded-[5px] p-3 sm:p-4 flex items-center justify-between w-full cursor-pointer transition-all
                                         ${
                                             selectedTime === time
-                                                ? 'bg-[#4864FF] text-white border-[#4864FF]'
-                                                : 'text-[#4864FF] border-[#4864FF]'
+                                                ? 'bg-bluetitmouse text-white border-bluetitmouse'
+                                                : 'text-bluetitmouse border-bluetitmouse'
                                         }`}
                                 >
-                                    <span
-                                        className={`font-semibold`}
-                                    >
+                                    <span className={`font-semibold`}>
                                         {time}
                                     </span>
-                                    <span className="p-1 px-3 shadow-md rounded-full border">
+                                    <span className="sm:p-1 sm:px-3 justify-center items-center shadow-tab rounded-full border min-w-8 min-h-8 flex text-sm font-medium">
                                         {count}
                                     </span>
                                 </button>
@@ -63,8 +64,8 @@ const ChooseDateTime = () => {
                     </div>
                 ))}
                 <div>
-                    <button
-                        className="bg-[#293991] hover:bg-[#1d2c7e] text-white px-10 rounded-[12px] h-[60px]"
+                    <PrimaryBtn
+                        className="h-[52px] md:h-[60px] mt-3 md:mt-0"
                         onClick={() => {
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('tab', 'final'.toString());
@@ -75,7 +76,7 @@ const ChooseDateTime = () => {
                     >
                         {selectedDate.format('dddd MMMM D, YYYY')} -{' '}
                         {selectedTime}
-                    </button>
+                    </PrimaryBtn>
                 </div>
             </div>
         </div>

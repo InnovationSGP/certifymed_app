@@ -18,7 +18,7 @@ export default function AppointmentTypes({ selectedIdType }) {
 
     return (
         <div className="bg-white pr-2 w-full sm:w-11/12 mx-auto shadow-tab py-3 rounded-[12px]">
-            <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-230px)] p-3 sm:p-4 overflow-auto custom-tabs">
+            <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-238px)] p-3 sm:p-4 overflow-auto custom-tabs">
                 <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
                     How do you want to be seen?
                 </h1>

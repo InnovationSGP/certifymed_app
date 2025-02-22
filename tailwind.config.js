@@ -11,7 +11,8 @@ module.exports = {
                 custom: '0px 4px 24px 0px #00000033',
                 'top-inset-shadow': '0px -1px 0px 0px #DFE5F1 inset',
                 dark: '0px 4px 24px 0px rgba(0, 0, 0, 0.20)',
-                tab: '0px 0px 23.1px  0px rgba(0, 0, 0, 0.12)'
+                tab: '0px 0px 23.1px  0px rgba(0, 0, 0, 0.12)',
+                steps: '0px 0px 4px 0px rgba(0, 0, 0, 0.25)'
             },
             screens: {
                 xxl: '1920px'

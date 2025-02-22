@@ -43,7 +43,7 @@ const FindProvider = ({ setIsBookAppointment }) => {
 
     return (
         <section className="w-full overflow-hidden">
-            <div className="mt-6 justify-center items-start flex flex-col">
+            <div className="mt-6 justify-center items-start flex flex-col overflow-hidden">
                 <Stepper
                     currentStep={tabIndex + 1}
                     onStepClick={handleStepClick}

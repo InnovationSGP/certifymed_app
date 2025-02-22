@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import dayjs from 'dayjs';
+import { HorizontalDatePickerArrow } from './Icons';
 
-const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
+const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
     const [startDate, setStartDate] = useState(dayjs().startOf('day'));
     const [dates, setDates] = useState(generateDates(startDate));
     const dateRefs = useRef({});
@@ -14,9 +15,9 @@ const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
 
     // Load saved date from sessionStorage on mount
     useEffect(() => {
-        const savedDate = sessionStorage.getItem("selectedDate");
+        const savedDate = sessionStorage.getItem('selectedDate');
         if (savedDate) {
-            const parsedDate = dayjs(savedDate, "dddd, MMM D, YYYY");
+            const parsedDate = dayjs(savedDate, 'dddd, MMM D, YYYY');
             setSelectedDate(parsedDate);
             setStartDate(parsedDate);
             setDates(generateDates(parsedDate));
@@ -24,8 +25,8 @@ const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
     }, []);
 
     const saveDateToSession = (date) => {
-        const formattedDate = date.format("dddd, MMM D, YYYY");
-        sessionStorage.setItem("selectedDate", formattedDate);
+        const formattedDate = date.format('dddd, MMM D, YYYY');
+        sessionStorage.setItem('selectedDate', formattedDate);
     };
 
     const handleNext = () => {
@@ -48,41 +49,47 @@ const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
             dateRefs.current[date.format('YYYY-MM-DD')].scrollIntoView({
                 behavior: 'smooth',
                 inline: 'center',
-                block: 'nearest',
+                block: 'nearest'
             });
         }
     };
 
     return (
-        <div className="flex items-center space-x-4 p-4 justify-center">
+        <div className="flex items-center md:space-x-4 md:p-4 justify-center">
             {/* Left Arrow */}
-            <button
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition"
-                onClick={handlePrevious}
-            >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <button className="p-1 group rotate-180" onClick={handlePrevious}>
+                <HorizontalDatePickerArrow />
             </button>
 
             {/* Date List */}
-            <div className="flex space-x-4 gap-3 overflow-hidden">
+            <div className="flex md:space-x-4 gap-3 overflow-auto">
                 {dates.map((date) => {
                     const isSelected = date.isSame(selectedDate, 'day');
 
                     return (
                         <motion.button
                             key={date.format('YYYY-MM-DD')}
-                            ref={(el) => (dateRefs.current[date.format('YYYY-MM-DD')] = el)}
+                            ref={(el) =>
+                                (dateRefs.current[date.format('YYYY-MM-DD')] =
+                                    el)
+                            }
                             onClick={() => handleDateChange(date)}
-                            className={`flex flex-col items-center py-4 px-4 h-full w-16 rounded-lg border ${
+                            className={`flex flex-col items-center py-5 px-4 h-full min-w-20 rounded-[12px] border ${
                                 isSelected
-                                    ? 'bg-[#4864FF] text-white border-[#4864FF]'
-                                    : 'bg-white border-gray-300'
+                                    ? 'bg-bluetitmouse text-white border-bluetitmouse'
+                                    : 'bg-white border-gainsboro'
                             } transition`}
                         >
                             <span className="text-sm font-medium">
                                 {date.format('ddd')}
                             </span>
-                            <span className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-[#4864FF]'}`}>
+                            <span
+                                className={`text-lg md:text-2xl font-bold ${
+                                    isSelected
+                                        ? 'text-white'
+                                        : 'text-bluetitmouse'
+                                }`}
+                            >
                                 {date.format('DD')}
                             </span>
                         </motion.button>
@@ -91,11 +98,8 @@ const HorizontalDatePicker = ({selectedDate, setSelectedDate}) => {
             </div>
 
             {/* Right Arrow */}
-            <button
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition"
-                onClick={handleNext}
-            >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+            <button className="p-1 group" onClick={handleNext}>
+                <HorizontalDatePickerArrow />
             </button>
         </div>
     );

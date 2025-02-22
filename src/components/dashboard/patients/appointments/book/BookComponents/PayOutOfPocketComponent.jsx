@@ -7,8 +7,8 @@ export default function PayOutOfPocket({
     handleContinue
 }) {
     return (
-        <div className="w-11/12  text-black p-4 px-6 bg-white rounded-xl shadow-tab mb-24">
-            <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary mt-4">
+        <div className="w-full md:w-11/12  text-black p-4 px-4 sm:px-6 bg-white rounded-xl shadow-tab mb-24">
+            <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary sm:mt-4">
                 Payment Methods
             </p>
             <div className="flex flex-col md:flex-row w-full justify-start gap-3 mt-4">
@@ -89,7 +89,7 @@ export default function PayOutOfPocket({
                         <input
                             name="card number"
                             value={pocketPayDetails.creditCardNumber}
-                            type={'number'}
+                            type="number"
                             onChange={(e) => {
                                 setPocketPayDetails((prevDetails) => ({
                                     ...prevDetails,
@@ -100,13 +100,13 @@ export default function PayOutOfPocket({
                             className={`input-style`}
                         />
                     </div>
-                    <div className="w-full flex justify-between gap-6">
+                    <div className="w-full flex justify-between gap-2 sm:gap-6">
                         <div className="w-full">
                             <label>CVV</label>
                             <input
                                 name="cvv"
                                 value={pocketPayDetails.cvv}
-                                type={'number'}
+                                type="number"
                                 onChange={(e) => {
                                     setPocketPayDetails((prevDetails) => ({
                                         ...prevDetails,
@@ -124,7 +124,7 @@ export default function PayOutOfPocket({
                             <input
                                 name="mm"
                                 value={pocketPayDetails.mm}
-                                type={'number'}
+                                type="number"
                                 onChange={(e) => {
                                     setPocketPayDetails((prevDetails) => ({
                                         ...prevDetails,
@@ -142,7 +142,7 @@ export default function PayOutOfPocket({
                             <input
                                 name="YYYY"
                                 value={pocketPayDetails.yyyy}
-                                type={'number'}
+                                type="number"
                                 onChange={(e) => {
                                     setPocketPayDetails((prevDetails) => ({
                                         ...prevDetails,

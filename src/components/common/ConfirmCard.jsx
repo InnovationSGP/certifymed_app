@@ -8,11 +8,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function BookingConfirmation({
-    isOpen,
-    setIsShowConfirmCard,
-    setIsBookAppointment
-}) {
+export default function BookingConfirmation({ isOpen, setIsShowConfirmCard }) {
     return (
         <Dialog
             open={isOpen}
@@ -41,15 +37,16 @@ export default function BookingConfirmation({
                             priority
                         />
                     </div>
-                    <DialogTitle className="text-2xl font-bold tracking-tight">
+                    <DialogTitle className="text-xl md:text-2xl lg:text-[32px] text-secondary font-semibold">
                         Booking Confirmed!
                     </DialogTitle>
-                    <p className="mt-4 text-muted-foreground">
+                    <p className="mt-4 text-lg md:text-xl text-secondary">
                         Your appointment has been successfully booked.<br></br>
                         You will receive a confirmation email and SMS shortly.
                     </p>
-                    <Link href={"/dashboard/patients/appointments/"}
-                        className="mt-8 py-6 w-full rounded-xl max-w-xs bg-[#293991] text-white hover:bg-[#25358f]"
+                    <Link
+                        href={'/dashboard/patients/appointments/'}
+                        className="mt-8 rounded-xl text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-8 sm:max-w-[389px] w-full hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-[52px] flex justify-center items-center"
                     >
                         <span>Back to Homepage</span>
                     </Link>

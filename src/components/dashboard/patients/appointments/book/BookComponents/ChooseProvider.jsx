@@ -75,7 +75,7 @@ export default function ChooseProvider() {
                             setCity(value);
                         }}
                     >
-                        <SelectTrigger className="w-full bg-[#F1F1F1] h-12 cursor-pointer border !outline-none !border-transparent">
+                        <SelectTrigger className="w-full bg-[#F1F1F1] cursor-pointer border !outline-none !border-transparent">
                             <SelectValue
                                 className="text-[#606060]"
                                 placeholder={city || 'Select'}

@@ -7,7 +7,8 @@ import {
     Mail,
     MessageCircle,
     Phone,
-    Ticket
+    Ticket,
+    X
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -31,30 +32,39 @@ export default function AppointmentModel({ setShowModal }) {
 
     return (
         <div
-            className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50"
+            className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50 h-screen overflow-auto"
             onClick={() => setShowModal(false)}
         >
             <div
-                className="w-8/12 mx-auto space-y-12 mb-24 bg-white rounded-lg shadow-lg border p-6"
+                className="max-w-[98%] xl:max-w-[1129px] mx-auto space-y-5 sm:space-y-12 bg-white rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h2 className="text-xl font-semibold">
-                    Application Information
-                </h2>
+                <div className="flex justify-between items-center gap-2">
+                    <h2 className="text-xl font-semibold">
+                        Application Information
+                    </h2>
+                    <button
+                        onClick={() => setShowModal(false)}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+
                 <div>
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center space-x-3 space-y-3 rounded-xl">
-                        <div className="flex w-full items-center">
+                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center space-x-3  sm:space-y-3 rounded-xl">
+                        <div className="flex flex-col gap-3 lg:flex-row w-full items-center">
                             <div className="overflow-hidden rounded-full bg-blue-300">
                                 <img
                                     src={profileData.avatar}
                                     className="h-24 w-24 object-cover text-blue-700"
                                 />
                             </div>
-                            <div className="flex flex-col items-start px-4 gap-3">
+                            <div className="flex flex-col items-start md:px-4 gap-3">
                                 <p className="font-medium text-xl">
                                     {profileData.userName}
                                 </p>
-                                <div className="flex flex-row gap-6 items-center">
+                                <div className="flex flex-col sm:flex-row gap-4 md:gap-6 sm:items-center">
                                     <p className="text-base flex items-center gap-2">
                                         <div className="px-[5px] py-[5px] rounded-full bg-gray-600">
                                             <Phone className="h-4 w-4 text-white" />
@@ -70,7 +80,7 @@ export default function AppointmentModel({ setShowModal }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex whitespace-nowrap gap-8">
+                        <div className="flex justify-center md:justify-start w-full md:w-fit whitespace-nowrap gap-8">
                             <div className="flex flex-col gap-3">
                                 <p>Date of birth</p>
                                 <p className="text-lg text-left font-[500]">
@@ -109,7 +119,7 @@ export default function AppointmentModel({ setShowModal }) {
                                     <p>#0029324828</p>
                                 </div>
                             </div>
-                            <div className='flex gap-5'>
+                            <div className="flex gap-5">
                                 <button className="min-w-[60px] px-8 py-3 border border-gray-300 text-gray-600 rounded-xl">
                                     Cancel Appointment
                                 </button>
