@@ -67,7 +67,7 @@ export default function AppointmentModel({ setShowModal }) {
                                 <div className="flex flex-col sm:flex-row gap-4 md:gap-6 sm:items-center">
                                     <a
                                         href="tel:+62 837 4839 4882"
-                                        className="text-base text-[#7A7A7A] flex items-center gap-2"
+                                        className="text-base text-steel flex items-center gap-2"
                                     >
                                         <img
                                             className="max-w-[24px] w-full opacity-60"
@@ -78,7 +78,7 @@ export default function AppointmentModel({ setShowModal }) {
                                     </a>
                                     <a
                                         href="mailto:jeamaxniioio28@mail.com"
-                                        className="text-base text-[#7A7A7A] flex items-center gap-2"
+                                        className="text-base text-steel flex items-center gap-2"
                                     >
                                         <img
                                             className="max-w-[24px] w-full opacity-60"
@@ -153,13 +153,13 @@ export default function AppointmentModel({ setShowModal }) {
                             <div className="flex flex-col md:flex-row gap-3 md:gap-5">
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium"
+                                    className="sm:max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium"
                                 >
                                     Cancel Appointment
                                 </button>
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="px-16 py-3 max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out"
+                                    className="px-16 py-3 sm:max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out"
                                 >
                                     re-schedule
                                 </button>

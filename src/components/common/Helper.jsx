@@ -646,6 +646,7 @@ export const appointmentsDrop = [
 export const TimingProviders = [
     {
         shift: 'Morning',
+        shiftTime: '(12:30 am to 3:30 am)',
         data: [
             { time: '8:30 am', count: 4 },
             { time: '9:30 am', count: 2 },
@@ -656,6 +657,7 @@ export const TimingProviders = [
     },
     {
         shift: 'Afternoon',
+        shiftTime: '(12:30  to 3:30)',
         data: [
             { time: '12:30 pm', count: 2 },
             { time: '01:30 pm', count: 3 },
@@ -666,6 +668,7 @@ export const TimingProviders = [
     },
     {
         shift: 'Evening',
+        shiftTime: '(6:30 pm to 11:40 pm)',
         data: [
             { time: '06:30 pm', count: 2 },
             { time: '07:30 pm', count: 4 },

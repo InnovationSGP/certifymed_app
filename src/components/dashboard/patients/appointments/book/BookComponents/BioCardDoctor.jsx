@@ -69,7 +69,7 @@ export default function BioCardDoctor() {
                 <p className="mt-4">{profileData.moreDesc}</p>
                 <button
                     onClick={() => setIsBioShow(true)}
-                    className="flex items-center justify-center rounded-xl bg-[#4864FF29] transition-all duration-200 ease-in-out hover:bg-[#4863ff1c] text-[#4864FF] whitespace-nowrap p-4 px-8 mt-8 text-center"
+                    className="flex items-center justify-center rounded-xl bg-[#4864FF29] transition-all duration-200 ease-in-out hover:bg-[#4863ff1c] text-bluetitmouse whitespace-nowrap p-4 px-8 mt-8 text-center"
                 >
                     <p className="flex items-center justify-center gap-4">
                         BIO
@@ -86,7 +86,7 @@ export default function BioCardDoctor() {
             <div
                 className={`${
                     isBioShow ? 'translate-x-0' : 'translate-x-full'
-                } fixed right-0 opacity-100    transition-transform duration-300 transform z-50 overflow-auto  xl:max-w-[549px] w-full h-screen xl:h-[88%] top-0 xl:top-12 p-4 sm:p-6 bg-white custom-tabs`}
+                } fixed right-0 opacity-100    transition-transform duration-300 transform z-50 overflow-auto  md:max-w-[549px] w-full h-screen xl:h-[88%] top-0 xl:top-12 p-4 sm:p-6 bg-white custom-tabs`}
             >
                 <div className="flex flex-col w-full justify-center">
                     <div className="flex flex-row items-start justify-between">

@@ -54,7 +54,8 @@ module.exports = {
                 lightred: '#EB5757',
                 lightOverlay: 'rgba(246, 247, 249, 0.60)',
                 transparentBlue: '#DAE0FF',
-                gainsboro: '#DCDCDC'
+                gainsboro: '#DCDCDC',
+                steel: '#7A7A7A'
             },
             fontFamily: {
                 poppins: ['Poppins', 'sans-serif']

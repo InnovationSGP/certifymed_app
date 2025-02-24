@@ -37,9 +37,14 @@ const ChooseDateTime = () => {
             <div className="gap-4 p-3 sm:p-5 md:p-7 my-10 rounded-xl bg-white shadow-tab">
                 {TimingProviders.map((provider, index) => (
                     <div key={index} className="flex flex-col sm:py-2">
-                        <p className="font-semibold text-secondary text-lg sm:text-xl lg:text-2xl">
-                            {provider.shift}
-                        </p>
+                        <div className="flex justify-between items-center gap-3">
+                            <h3 className="font-semibold text-secondary text-lg sm:text-xl lg:text-2xl">
+                                {provider.shift}
+                            </h3>
+                            <p className="text-sm font-medium text-industrialAge">
+                                {provider.shiftTime}
+                            </p>
+                        </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-5 py-3">
                             {provider.data.map(({ time, count }, idx) => (
                                 <button
@@ -64,8 +69,8 @@ const ChooseDateTime = () => {
                     </div>
                 ))}
                 <div>
-                    <PrimaryBtn
-                        className="h-[52px] md:h-[60px] mt-3 md:mt-0"
+                    <button
+                        className="rounded-xl w-full sm:w-fit text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-14"
                         onClick={() => {
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('tab', 'final'.toString());
@@ -76,7 +81,7 @@ const ChooseDateTime = () => {
                     >
                         {selectedDate.format('dddd MMMM D, YYYY')} -{' '}
                         {selectedTime}
-                    </PrimaryBtn>
+                    </button>
                 </div>
             </div>
         </div>

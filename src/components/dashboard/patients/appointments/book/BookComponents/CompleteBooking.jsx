@@ -99,7 +99,7 @@ export default function CompleteBooking({
                     <div>
                         <div className="flex flex-col my-4 sm:my-6 mt-6 gap-3 sm:gap-4">
                             <div className="w-full">
-                                <label className="text-base font-poppins text-secondary">
+                                <label className="text-base font-poppins text-dimGray font-medium">
                                     Name
                                 </label>
                                 <Input placeholder="Enter your name" />
@@ -133,19 +133,28 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Month
                                             </label>
-                                            <Input placeholder="MM" />
+                                            <Input
+                                                placeholder="MM"
+                                                className="placeholder:!text-center text-center"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Day
                                             </label>
-                                            <Input placeholder="DD" />
+                                            <Input
+                                                placeholder="DD"
+                                                className="placeholder:!text-center text-center"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 YYYY
                                             </label>
-                                            <Input placeholder="YYYY" />
+                                            <Input
+                                                placeholder="YYYY"
+                                                className="placeholder:!text-center text-center"
+                                            />
                                         </div>
                                     </div>
                                     <div className="w-full">

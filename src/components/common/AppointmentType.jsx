@@ -42,7 +42,9 @@ export default function AppointmentTypes({ selectedIdType }) {
                         >
                             <div className="flex items-center gap-3 justify-between">
                                 <div className="flex-1">
-                                    <div className="flex gap-2 sm:gap-0 items-center justify-between sm:mb-2">
+                                    <div
+                                        className={`flex gap-2 sm:gap-0 items-center justify-between `}
+                                    >
                                         <h3 className="text-base font-medium text-gray-900">
                                             {appointment.title}
                                         </h3>
@@ -71,7 +73,7 @@ export default function AppointmentTypes({ selectedIdType }) {
                                     <div
                                         className={`overflow-hidden transition-all duration-300 ease-in-out ${
                                             selectedId === appointment.id
-                                                ? 'max-h-[500px] opacity-100'
+                                                ? 'max-h-[500px] opacity-100 pt-3'
                                                 : 'max-h-0 opacity-0'
                                         }`}
                                     >
