@@ -62,7 +62,7 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
             </button>
 
             {/* Date List */}
-            <div className="flex md:space-x-4 gap-3 overflow-auto">
+            <div className="flex md:space-x-4 gap-3 overflow-auto hide-scrollbar">
                 {dates.map((date) => {
                     const isSelected = date.isSame(selectedDate, 'day');
 

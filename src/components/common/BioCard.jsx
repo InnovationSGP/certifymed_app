@@ -24,7 +24,7 @@ export default function BioCard() {
                 </h2>
                 <div>
                     <p className="text-sm text-secondary">Select Provider</p>
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center space-y-4 border border-gainsboro p-4 rounded-xl">
+                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-center space-y-4 border border-gainsboro p-4 sm:p-5 rounded-xl">
                         <div className="flex flex-col md:flex-row w-full items-center">
                             <div className="overflow-hidden rounded-full bg-blue-300">
                                 <img
@@ -151,7 +151,7 @@ export default function BioCard() {
                         <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary">
                             {profileData.userName}
                         </p>
-                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start md:items-center">
                             <p className="text-base text-secondary flex items-center gap-1">
                                 <CareIcon />
                                 {profileData.desc}

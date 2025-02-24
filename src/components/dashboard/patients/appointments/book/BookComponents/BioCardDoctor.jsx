@@ -104,7 +104,7 @@ export default function BioCardDoctor() {
                         <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary">
                             {profileData.userName}
                         </p>
-                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start md:items-center">
                             <p className="text-base text-secondary flex items-center gap-1">
                                 <CareIcon />
                                 {profileData.desc}

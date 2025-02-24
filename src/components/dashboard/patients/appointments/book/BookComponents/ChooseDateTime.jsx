@@ -36,7 +36,12 @@ const ChooseDateTime = () => {
             />
             <div className="gap-4 p-3 sm:p-5 md:p-7 my-10 rounded-xl bg-white shadow-tab">
                 {TimingProviders.map((provider, index) => (
-                    <div key={index} className="flex flex-col sm:py-2">
+                    <div
+                        key={index}
+                        className={`${
+                            index === 0 ? 'sm:pt-0 pb-2' : 'sm:py-2'
+                        } flex flex-col `}
+                    >
                         <div className="flex justify-between items-center gap-3">
                             <h3 className="font-semibold text-secondary text-lg sm:text-xl lg:text-2xl">
                                 {provider.shift}
@@ -57,7 +62,9 @@ const ChooseDateTime = () => {
                                                 : 'text-bluetitmouse border-bluetitmouse'
                                         }`}
                                 >
-                                    <span className={`font-semibold`}>
+                                    <span
+                                        className={`text-sm sm:text-base  font-semibold`}
+                                    >
                                         {time}
                                     </span>
                                     <span className="sm:p-1 sm:px-3 justify-center items-center shadow-tab rounded-full border min-w-8 min-h-8 flex text-sm font-medium">
@@ -70,7 +77,7 @@ const ChooseDateTime = () => {
                 ))}
                 <div>
                     <button
-                        className="rounded-xl w-full sm:w-fit text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-14"
+                        className="rounded-xl w-full sm:w-fit text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-20"
                         onClick={() => {
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('tab', 'final'.toString());

@@ -20,13 +20,13 @@ const Stepper = ({ currentStep, onStepClick }) => {
                             }
                         }}
                     >
-                        <span className="font-poppins font-medium text-[14px] leading-[24px] tracking-[-0.02em]">
+                        <span className="font-poppins font-medium text-xs sm:text-sm leading-[24px] tracking-[-0.02em]">
                             0{step}
                         </span>
                     </button>
                     {index !== steps.length - 1 && (
                         <div
-                            className={`max-w-[156px] w-[10vw] h-[2px] opacity-[0.5] ${
+                            className={`max-w-[156px] w-[5vw] sm:w-[10vw] h-[2px] opacity-[0.5] ${
                                 currentStep > step
                                     ? 'bg-bluetitmouse ' // Completed line
                                     : 'bg-gray-300' // Upcoming line

@@ -40,7 +40,7 @@ export default function AppointmentModel({ setShowModal }) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center gap-2">
-                    <h2 className="text-xl font-semibold">
+                    <h2 className="text-lg md:text-xl font-semibold">
                         Application Information
                     </h2>
                     <button
@@ -112,11 +112,11 @@ export default function AppointmentModel({ setShowModal }) {
                     </div>
 
                     <div className="mt-5">
-                        <div className="bg-gray-100/90 px-4 py-3 rounded-xl">
+                        <div className="bg-gray-100/90 px-3 sm:px-4 py-3 rounded-xl">
                             <p className="text-sm sm:text-base text-secondary">
                                 Reason
                             </p>
-                            <p className="text-base sm:text-lg text-secondary mt-3 capitalize">
+                            <p className="text-sm sm:text-base md:text-lg text-secondary mt-3 capitalize">
                                 {profileData.reason}
                             </p>
                         </div>

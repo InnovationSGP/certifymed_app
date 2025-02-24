@@ -33,7 +33,7 @@ export default function ChooseProvider() {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto p-6 bg-white rounded-2xl shadow-lg mb-24">
+        <div className="w-full max-w-[593px] mx-auto p-6 bg-white rounded-2xl shadow-lg mb-24">
             {/* Avatar group */}
             <div className="flex justify-center -space-x-4 mb-6">
                 {providers.map((provider, index) => (
@@ -66,7 +66,7 @@ export default function ChooseProvider() {
 
             <div className="space-y-4 mt-4">
                 <div className="my-4">
-                    <p className="text-base font-poppins text-dimGray font-medium mb-1 pl-1">
+                    <p className="text-base font-poppins text-dimGray font-medium  mb-1 pl-1">
                         City
                     </p>
                     <Select

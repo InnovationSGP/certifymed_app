@@ -18,7 +18,7 @@ export default function AppointmentTypes({ selectedIdType }) {
 
     return (
         <div className="bg-white pr-2 w-full sm:w-11/12 mx-auto shadow-tab py-3 rounded-[12px]">
-            <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-238px)] p-3 sm:p-4 overflow-auto custom-tabs">
+            <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-238px)] p-3 sm:px-6 sm:py-3 overflow-auto custom-tabs">
                 <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
                     How do you want to be seen?
                 </h1>
@@ -37,7 +37,7 @@ export default function AppointmentTypes({ selectedIdType }) {
                     {appointmentsDrop.map((appointment) => (
                         <Card
                             key={appointment.id}
-                            className="p-3 sm:p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                            className="p-3 sm:pl-4 sm:py-4 sm:pr-12 cursor-pointer hover:bg-gray-50 transition-colors"
                             onClick={() => handleToggle(appointment.id)}
                         >
                             <div className="flex items-center gap-3 justify-between">

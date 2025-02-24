@@ -57,7 +57,7 @@ export default function ChoosePay() {
         />
     ) : (
         <div className="w-full sm:w-11/12 mx-auto space-y-8 mb-24">
-            <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-12 md:pt-6">
+            <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-14 md:pt-6">
                 <h2 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-4">
                     How would you like to pay?
                 </h2>
@@ -67,7 +67,7 @@ export default function ChoosePay() {
                             onClick={() => {
                                 setIsPayOutOfPocket(true);
                             }}
-                            className="flex w-full items-center space-x-3 border border-gainsboro p-3 sm:p-4 rounded-xl"
+                            className="flex w-full items-center space-x-3 border border-gainsboro p-3 sm:px-6 sm:py-[15px] rounded-xl"
                         >
                             <WalletIcon />
                             <p
@@ -87,7 +87,7 @@ export default function ChoosePay() {
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 items-center justify-center">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-x-6 sm:gap-y-4 items-center justify-center">
                                 {insuranceProviders.map((provider, index) => (
                                     <button
                                         onClick={() =>

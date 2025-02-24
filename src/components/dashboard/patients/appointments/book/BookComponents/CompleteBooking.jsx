@@ -40,18 +40,18 @@ export default function CompleteBooking({
     return showBioCard && !isShowConfirmCard ? (
         <BioCard tabNumber={tabNumber} setTabNumber={setTabNumber} />
     ) : (
-        <div className="w-full md:w-11/12 mx-auto space-y-12 mb-24">
+        <div className="w-full md:max-w-[1129px] mx-auto space-y-12 mb-24">
             <div className="bg-white rounded-xl shadow-tab p-3 sm:p-4 md:p-6">
                 <h2 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-4">
                     Complete your booking
                 </h2>
                 <div className="space-y-6">
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-end sm:space-x-3 space-y-3 md:border border-gainsboro md:p-4 rounded-xl">
+                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-end sm:space-x-3 space-y-3 md:border border-gainsboro md:p-5 rounded-xl">
                         <div className="flex flex-col md:flex-row w-full items-center">
                             <div className="overflow-hidden rounded-full bg-blue-300 mb-3 sm:mb-0">
                                 <img
                                     src={profileData.avatar}
-                                    className="h-24 w-24 object-cover text-blue-700"
+                                    className="h-24 w-24 object-cover"
                                 />
                             </div>
                             <div className="flex flex-col items-start px-4">
@@ -90,7 +90,7 @@ export default function CompleteBooking({
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row items-center gap-2 md:gap-12 w-full sm:w-fit">
-                            <button className="w-full sm:w-fit rounded-[28px] bg-[#4864FF29] hover:bg-[#4863ff18] transition-all duration-200 ease-in-out text-bluetitmouse md:whitespace-nowrap text-xs md:text-base p-4 px-8">
+                            <button className="w-full sm:w-fit rounded-[28px] bg-[#4864FF29] hover:bg-[#4863ff18] transition-all duration-200 ease-in-out text-bluetitmouse md:whitespace-nowrap text-xs md:text-base p-4 px-4 sm:px-8">
                                 Last Provider available at this time
                             </button>
                         </div>
@@ -127,33 +127,33 @@ export default function CompleteBooking({
                                 Date of Birth
                             </p>
                             <div className="flex flex-col w-full justify-between gap-4">
-                                <div className="flex flex-col md:flex-row justify-between gap-3 md:gap-9">
-                                    <div className="w-full flex justify-between gap-2 sm:gap-5">
-                                        <div className="w-full">
+                                <div className="flex flex-col md:flex-row justify-between gap-3">
+                                    <div className="w-full flex justify-start gap-2 sm:gap-5">
+                                        <div className="w-full md:max-w-[157px]">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Month
                                             </label>
                                             <Input
                                                 placeholder="MM"
-                                                className="placeholder:!text-center text-center"
+                                                className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
-                                        <div className="w-full">
+                                        <div className="w-full md:max-w-[157px]">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Day
                                             </label>
                                             <Input
                                                 placeholder="DD"
-                                                className="placeholder:!text-center text-center"
+                                                className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
-                                        <div className="w-full">
+                                        <div className="w-full md:max-w-[157px]">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 YYYY
                                             </label>
                                             <Input
                                                 placeholder="YYYY"
-                                                className="placeholder:!text-center text-center"
+                                                className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
                                     </div>
@@ -189,7 +189,7 @@ export default function CompleteBooking({
                                             !showGenderPronouns
                                         );
                                     }}
-                                    className="flex flex-row items-center gap-2 text-bluetitmouse text-sm md:text-base"
+                                    className="flex flex-row items-center gap-2 text-bluetitmouse text-xs sm:text-sm md:text-base"
                                 >
                                     {showGenderPronouns ? <Minus /> : <Plus />}
                                     Gender Identity / Prederred Pronouns
@@ -257,7 +257,7 @@ export default function CompleteBooking({
                             </div>
                         </div>
                         <div className="mb-5">
-                            <p className="text-2xl font-medium mt-6 mb-4">
+                            <p className="text-lg sm:text-xl font-medium mt-6 mb-4">
                                 02 - Contact Information
                             </p>
                             <div className="flex flex-col w-full justify-between gap-4">
@@ -336,14 +336,14 @@ export default function CompleteBooking({
                                 <div className="flex items-center justify-center agreecheckbox">
                                     <input
                                         type="checkbox"
-                                        className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-6 min-h-6"
+                                        className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
                                 </div>
                                 <p className="text-base font-poppins text-black">
                                     HIPAA / Privacy Policy
                                 </p>
                             </div>
-                            <p className="text-sm sm:ext-base font-poppins text-black opacity-[0.8] ml-[33px] sm:ml-10 pt-1">
+                            <p className="text-xs sm:text-sm md:text-base font-poppins text-black opacity-[0.8] ml-[33px] sm:ml-10 pt-1">
                                 I confirm that I have read and agree to the
                                 [Privacy Policy] and [Terms of Service],
                                 including all HIPAA (or applicable local health
@@ -358,7 +358,7 @@ export default function CompleteBooking({
                                 <div className="agreecheckbox flex items-center justify-center">
                                     <input
                                         type="checkbox"
-                                        className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-6 min-h-6"
+                                        className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
                                 </div>
                                 <p className="text-base font-poppins text-black">

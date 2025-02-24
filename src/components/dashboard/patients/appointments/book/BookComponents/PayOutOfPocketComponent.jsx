@@ -6,6 +6,8 @@ export default function PayOutOfPocket({
     pocketPayDetails,
     handleContinue
 }) {
+    console.log(handleContinue);
+
     return (
         <div className="w-full md:w-11/12  text-black p-4 px-4 sm:px-6 bg-white rounded-xl shadow-tab mb-24">
             <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary sm:mt-4">
