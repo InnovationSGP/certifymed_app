@@ -74,7 +74,7 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
                                     el)
                             }
                             onClick={() => handleDateChange(date)}
-                            className={`flex flex-col items-center py-5 px-4 h-full min-w-20 rounded-[12px] border ${
+                            className={`flex flex-col items-center py-4 sm:py-5 px-3 sm:px-4 h-full min-w-16 sm:min-w-20 rounded-[12px] border ${
                                 isSelected
                                     ? 'bg-bluetitmouse text-white border-bluetitmouse'
                                     : 'bg-white border-gainsboro'

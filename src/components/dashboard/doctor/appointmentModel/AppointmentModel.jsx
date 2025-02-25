@@ -36,7 +36,7 @@ export default function AppointmentModel({ setShowModal }) {
             onClick={() => setShowModal(false)}
         >
             <div
-                className="max-w-[98%] xl:max-w-[1129px] mx-auto h-[95vh] sm:h-fit overflow-auto hide-scrollbar space-y-5 sm:space-y-12 bg-white rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
+                className="sm:max-w-[98%] xl:max-w-[1129px] mx-auto h-[100vh] sm:h-fit overflow-auto hide-scrollbar space-y-5 sm:space-y-12 bg-white sm:rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center gap-2">
@@ -47,7 +47,7 @@ export default function AppointmentModel({ setShowModal }) {
                         onClick={() => setShowModal(false)}
                         className="text-gray-500 hover:text-gray-700"
                     >
-                        <X className="w-6 h-6" />
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
 

@@ -23,7 +23,7 @@ export default function PayOutOfPocket({
                                 type: item
                             }));
                         }}
-                        className={`border min-w-36 text-sm rounded-lg p-1 hover:bg-primary hover:text-white transition-all duration-200 ease-in-out flex items-center justify-center ${
+                        className={`border min-w-36 text-sm rounded-lg h-[55px] xl:h-[60px] hover:bg-primary hover:text-white transition-all duration-200 ease-in-out flex items-center justify-center ${
                             pocketPayDetails.type === item
                                 ? 'bg-primary text-white'
                                 : 'bg-white'

@@ -26,7 +26,7 @@ const Stepper = ({ currentStep, onStepClick }) => {
                     </button>
                     {index !== steps.length - 1 && (
                         <div
-                            className={`max-w-[156px] w-[5vw] sm:w-[10vw] h-[2px] opacity-[0.5] ${
+                            className={`max-w-[156px] w-[8vw] sm:w-[10vw] h-[2px] opacity-[0.5] ${
                                 currentStep > step
                                     ? 'bg-bluetitmouse ' // Completed line
                                     : 'bg-gray-300' // Upcoming line

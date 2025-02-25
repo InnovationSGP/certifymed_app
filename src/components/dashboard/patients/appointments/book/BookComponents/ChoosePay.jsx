@@ -56,7 +56,7 @@ export default function ChoosePay() {
             handleContinue={handleContinue}
         />
     ) : (
-        <div className="w-full sm:w-11/12 mx-auto space-y-8 mb-24">
+        <div className="w-full sm:w-11/12 mx-auto space-y-8 mb-20 sm:mb-24">
             <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-14 md:pt-6">
                 <h2 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-4">
                     How would you like to pay?
@@ -67,7 +67,7 @@ export default function ChoosePay() {
                             onClick={() => {
                                 setIsPayOutOfPocket(true);
                             }}
-                            className="flex w-full items-center space-x-3 border border-gainsboro p-3 sm:px-6 sm:py-[15px] rounded-xl"
+                            className="flex w-full items-center space-x-3 border border-gainsboro p-2 sm:px-6 sm:py-[15px] rounded-xl"
                         >
                             <WalletIcon />
                             <p
@@ -94,7 +94,7 @@ export default function ChoosePay() {
                                             handleContinueIn(provider)
                                         } // ✅ Fix: Arrow function to avoid immediate execution
                                         key={index}
-                                        className="border border-gainsboro rounded-[12px] px-4 min-h-[70px] sm:min-h-[80px] flex items-center justify-center hover:border-blue-500 cursor-pointer"
+                                        className="border border-gainsboro rounded-[12px] px-4 min-h-[60px] sm:min-h-[80px] flex items-center justify-center hover:border-blue-500 cursor-pointer"
                                     >
                                         <img
                                             className={`${

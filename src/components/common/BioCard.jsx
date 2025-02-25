@@ -4,7 +4,8 @@ import {
     Calendar,
     Cross,
     Heart,
-    MessageCircle
+    MessageCircle,
+    X
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -133,7 +134,7 @@ export default function BioCard() {
             <div
                 className={`${
                     isBioShow ? 'translate-x-0' : 'translate-x-full'
-                } fixed right-0 opacity-100    transition-transform duration-300 transform z-50 overflow-auto  md:max-w-[549px] w-full h-screen xl:h-[88%] top-0 xl:top-12 p-4 sm:p-6 bg-white custom-tabs`}
+                } fixed right-0 opacity-100    transition-transform duration-300 transform z-50 overflow-auto  md:max-w-[549px] w-full h-screen top-0  p-4 sm:p-6 bg-white custom-tabs`}
             >
                 <div className="flex flex-col w-full justify-center">
                     <div className="flex flex-row items-start justify-between">
@@ -143,8 +144,12 @@ export default function BioCard() {
                                 className="h-24 w-24 object-cover text-blue-700"
                             />
                         </div>
-                        <button onClick={() => setIsBioShow(false)}>
-                            <CrossIcon />
+
+                        <button
+                            onClick={() => setIsBioShow(false)}
+                            className="text-gray-500 hover:text-gray-700"
+                        >
+                            <X className="w-5 h-5" />
                         </button>
                     </div>
                     <div className="flex flex-col items-start space-y-4 mt-4">

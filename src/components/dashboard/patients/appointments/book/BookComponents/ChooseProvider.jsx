@@ -10,6 +10,7 @@ import {
 import { Avatar, AvatarImage } from '@/components/common/avatar';
 import { useState } from 'react';
 import PrimaryBtn from '@/components/common/PrimaryBtn';
+import CustomSearchAbleSelect from './CustomSearchAbleSelect';
 
 export default function ChooseProvider() {
     const searchParams = useSearchParams();
@@ -33,7 +34,7 @@ export default function ChooseProvider() {
     };
 
     return (
-        <div className="w-full max-w-[593px] mx-auto p-6 bg-white rounded-2xl shadow-lg mb-24">
+        <div className="w-full max-w-[593px] mx-auto p-4 sm:p-6 bg-white rounded-2xl shadow-lg mb-24">
             {/* Avatar group */}
             <div className="flex justify-center -space-x-4 mb-6">
                 {providers.map((provider, index) => (
@@ -69,51 +70,7 @@ export default function ChooseProvider() {
                     <p className="text-base font-poppins text-dimGray font-medium  mb-1 pl-1">
                         City
                     </p>
-                    <Select
-                        className=""
-                        onValueChange={(value) => {
-                            setCity(value);
-                        }}
-                    >
-                        <SelectTrigger className="w-full bg-[#F1F1F1] cursor-pointer border !outline-none !border-transparent">
-                            <SelectValue
-                                className="text-[#606060]"
-                                placeholder={city || 'Select'}
-                            />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#F1F1F1] z-20 cursor-pointer">
-                            <SelectItem
-                                value="new-york"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                New York
-                            </SelectItem>
-                            <SelectItem
-                                value="los-angeles"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Los Angeles
-                            </SelectItem>
-                            <SelectItem
-                                value="chicago"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Chicago
-                            </SelectItem>
-                            <SelectItem
-                                value="houston"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Houston
-                            </SelectItem>
-                            <SelectItem
-                                value="phoenix"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Phoenix
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <CustomSearchAbleSelect setCity={setCity} city={city} />
                 </div>
                 <PrimaryBtn
                     onClick={handleContinue}
