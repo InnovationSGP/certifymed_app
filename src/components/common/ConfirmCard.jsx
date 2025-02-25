@@ -46,7 +46,7 @@ export default function BookingConfirmation({ isOpen, setIsShowConfirmCard }) {
                     </p>
                     <Link
                         href={'/dashboard/patients/appointments/'}
-                        className="mt-8 rounded-xl text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-8 sm:max-w-[389px] w-full hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-[52px] flex justify-center items-center"
+                        className="mt-8 rounded-xl text-[15px] sm:text-base bg-primary font-medium text-white py-3 px-8 sm:max-w-[389px] w-full hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-[55px] xl:h-[60px] flex justify-center items-center"
                     >
                         <span>Back to Homepage</span>
                     </Link>

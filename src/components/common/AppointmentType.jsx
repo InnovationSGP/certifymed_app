@@ -81,7 +81,7 @@ export default function AppointmentTypes({ selectedIdType }) {
                                             {appointment.description}
                                         </p>
                                         <PrimaryBtn
-                                            className="h-[52px] md:h-[60px]"
+                                            className="!h-[55px] md:!h-[60px]"
                                             onClick={() => {
                                                 sessionStorage.setItem(
                                                     'appointmentData',

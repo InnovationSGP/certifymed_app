@@ -77,7 +77,7 @@ const ChooseDateTime = () => {
                 ))}
                 <div>
                     <button
-                        className="rounded-xl w-full sm:w-fit text-sm sm:text-base bg-primary font-medium text-white py-4 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-20"
+                        className="rounded-xl w-full sm:w-fit text-sm sm:text-base bg-primary font-medium text-white py-5 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-20"
                         onClick={() => {
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('tab', 'final'.toString());

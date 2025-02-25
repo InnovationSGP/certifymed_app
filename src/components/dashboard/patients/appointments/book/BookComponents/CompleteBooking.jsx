@@ -368,7 +368,7 @@ export default function CompleteBooking({
                         </div>
                         <PrimaryBtn
                             onClick={() => setShowBioCard(true)}
-                            className="h-[52px] md:h-[60px] w-full md:max-w-[389px] mt-6"
+                            className="!h-[55px] md:!h-[60px] w-full md:max-w-[389px] mt-6"
                         >
                             Confirm Patient Information
                         </PrimaryBtn>

@@ -160,7 +160,7 @@ export default function PayOutOfPocket({
             </div>
             <PrimaryBtn
                 onClick={handleContinue}
-                className="text-center bg-primary h-[52px] md:h-[60px] w-full md:w-min md:px-40"
+                className="text-center bg-primary !h-[55px] md:!h-[60px] w-full md:w-min md:px-40"
             >
                 Submit
             </PrimaryBtn>

@@ -179,7 +179,7 @@ export default function BioCard() {
                     </p>
                     <button
                         onClick={() => setIsBioShow(false)}
-                        className="flex items-center justify-center rounded-xl transition-all duration-200 ease-in-out bg-[#4864FF29] hover:bg-[#4863ff1c] text-bluetitmouse whitespace-nowrap p-4 h-[52px] md:h-[60px] px-8 mt-8 text-center"
+                        className="flex items-center justify-center rounded-xl transition-all duration-200 ease-in-out bg-[#4864FF29] hover:bg-[#4863ff1c] text-bluetitmouse whitespace-nowrap p-4 h-[55px] md:h-[60px] px-8 mt-8 text-center"
                     >
                         <p className="flex items-center justify-center gap-4">
                             <BadgeCheck />

@@ -74,7 +74,7 @@ export default function ChooseProvider() {
                 </div>
                 <PrimaryBtn
                     onClick={handleContinue}
-                    className={'w-full h-[52px] md:h-[60px]'}
+                    className={'w-full !h-[55px] md:!h-[60px]'}
                 >
                     Continue
                 </PrimaryBtn>

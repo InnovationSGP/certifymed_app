@@ -153,13 +153,13 @@ export default function AppointmentModel({ setShowModal }) {
                             <div className="flex flex-col md:flex-row gap-3 md:gap-5">
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="sm:max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium"
+                                    className="sm:max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium h-[55px] xl:h-[60px]"
                                 >
                                     Cancel Appointment
                                 </button>
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="px-16 py-3 sm:max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out"
+                                    className="px-16 py-3 sm:max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out h-[55px] xl:h-[60px]"
                                 >
                                     re-schedule
                                 </button>
