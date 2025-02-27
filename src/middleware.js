@@ -38,7 +38,7 @@ export function middleware(request) {
   if (accessToken && routes.publicRoutes.includes(pathname)) {
     return NextResponse.redirect(
       new URL(
-        userRole === "CUSTOMER" ? "/dashboard/patients" : "/dashboard/doctor",
+        userRole === "USER" ? "/dashboard/patients" : "/dashboard/doctor",
         request.url
       )
     );
@@ -52,7 +52,7 @@ export function middleware(request) {
 
   // Role-based access control
   if (accessToken && userRole) {
-    if (userRole === "CUSTOMER" && pathname.startsWith("/dashboard/doctor")) {
+    if (userRole === "USER" && pathname.startsWith("/dashboard/doctor")) {
       return NextResponse.redirect(new URL("/dashboard/patients", request.url));
     }
 

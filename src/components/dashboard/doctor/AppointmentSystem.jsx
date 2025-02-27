@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 "use client";
 import { useState } from "react";
 import CalendarView from "./CalendarView";
@@ -98,6 +99,70 @@ const AppointmentSystem = () => {
     setAppointments((prev) => [
       ...prev,
       { id: Date.now(), ...appointmentData },
+=======
+'use client';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import CalendarView from './CalendarView';
+import CalendarModal from './CalenderModal';
+import MiniCalendar from './MiniCalendar';
+import ScheduleModal from './ScheduleModal';
+
+const AppointmentSystem = ({ data }) => {
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showCalendarModal, setShowCalendarModal] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [appointments, setAppointments] = useState([
+        {
+            id: 1,
+            title: 'Medical Consultation',
+            startTime: '11:00',
+            endTime: '11:30',
+            date: '2024-11-26',
+            participants: 2
+        },
+        {
+            id: 2,
+            title: 'Medical Consultation',
+            startTime: '11:00',
+            endTime: '11:30',
+            date: '2024-10-31',
+            participants: 4
+        },
+        {
+            id: 3,
+            title: 'Test Consultation',
+            startTime: '11:00',
+            endTime: '11:30',
+            date: '2024-11-01',
+            participants: 4
+        },
+        {
+            id: 4,
+            title: 'Test Consultation',
+            startTime: '12:00',
+            endTime: '1:30',
+            date: '2024-11-02',
+            participants: 2
+        },
+        {
+            id: 5,
+            title: 'Test Consultation',
+            startTime: '12:00',
+            endTime: '1:30',
+            date: '2024-11-03',
+            participants: 2
+        },
+        {
+            id: 6,
+            title: 'Test Consultation',
+            startTime: '9:00',
+            endTime: '10:00',
+            date: '2024-11-04',
+            participants: 2
+        }
+>>>>>>> Stashed changes
     ]);
     setShowScheduleModal(false);
   };
@@ -133,6 +198,7 @@ const AppointmentSystem = () => {
         />
       )}
 
+<<<<<<< Updated upstream
       {/* Calendar Modal */}
       {showCalendarModal && (
         <CalendarModal
@@ -146,6 +212,69 @@ const AppointmentSystem = () => {
       )}
     </>
   );
+=======
+    const handleDayNavigation = (direction) => {
+        setCurrentDate((prev) => {
+            const newDate = new Date(prev);
+            newDate.setDate(prev.getDate() + (direction === 'next' ? 1 : -1));
+            return newDate;
+        });
+    };
+
+    // Appointment handlers
+    const handleSaveAppointment = (appointmentData) => {
+        setAppointments((prev) => [
+            ...prev,
+            { id: Date.now(), ...appointmentData }
+        ]);
+        setShowScheduleModal(false);
+    };
+
+    return (
+        <>
+            <div className="h-full gap-5 px-4 bg-white xl:flex xl:pl-7">
+                {/* Calendar View */}
+                <CalendarView
+                    setState={() => setShowScheduleModal(true)}
+                    currentDate={currentDate}
+                    appointments={appointments}
+                    onNavigate={handleDayNavigation}
+                    onToggleCalendar={toggleCalendarModal}
+                />
+
+                {/* Mini Calendar */}
+                <MiniCalendar
+                    setState={() => setShowScheduleModal(true)}
+                    currentDate={currentDate}
+                    selectedDate={selectedDate}
+                    onDateSelect={handleDateSelect}
+                    onMonthChange={handleMonthChange}
+                />
+            </div>
+
+            {/* Schedule Modal */}
+            {showScheduleModal && (
+                <ScheduleModal
+                    selectedDate={selectedDate}
+                    onClose={() => setShowScheduleModal(false)}
+                    onSave={handleSaveAppointment}
+                />
+            )}
+
+            {/* Calendar Modal */}
+            {showCalendarModal && (
+                <CalendarModal
+                    isOpen={showCalendarModal}
+                    onClose={() => setShowCalendarModal(false)}
+                    currentDate={currentDate}
+                    selectedDate={selectedDate}
+                    onDateSelect={handleDateSelect}
+                    onMonthChange={handleMonthChange}
+                />
+            )}
+        </>
+    );
+>>>>>>> Stashed changes
 };
 
 export default AppointmentSystem;

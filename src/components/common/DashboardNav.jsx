@@ -12,7 +12,7 @@ const DashboardNav = () => {
     // Fetch the user role from cookies
     const cookies = document.cookie
       .split("; ")
-      .find((row) => row.startsWith("userRole="));
+      .find((row) => row.startsWith("userType="));
     const role = cookies ? cookies.split("=")[1] : null;
     setUserRole(role);
   }, []);
@@ -41,7 +41,7 @@ const DashboardNav = () => {
         </TransitionLink>
         <div className="flex items-center gap-x-[19px]">
           {isPatientView && (
-            <h5 className="text-sm font-poppins font-medium hidden sm:block">
+            <h5 className="hidden text-sm font-medium font-poppins sm:block">
               Balance: ₦20,000
             </h5>
           )}

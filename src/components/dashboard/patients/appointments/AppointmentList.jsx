@@ -2,8 +2,13 @@
 import React from "react";
 import RecentAppointmentsListItem from "./RecentAppointmentsListItem";
 import ListHeading from "@/components/common/ListHeading";
+import { useSelector } from "react-redux";
 
-const AppointmentList = ({ type, dataSet, listType }) => {
+const AppointmentList = ({ type, listType }) => {
+  const recentAppointments = useSelector(
+    (state) => state.patientDashboard.appointmentsHistory
+);
+console.log('recentAppointments', recentAppointments)
   return (
     <>
       <div className="px-5 md:px-[35px] mt-[35px] mb-20 xl:mb-[30px]">
@@ -22,7 +27,7 @@ const AppointmentList = ({ type, dataSet, listType }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {dataSet?.map((appointment, index) => (
+              {recentAppointments?.map((appointment, index) => (
                 <RecentAppointmentsListItem
                   type={type}
                   appointment={appointment}

@@ -568,6 +568,7 @@ export const postnote = [
     prescription: "1 Prescription",
   },
 
+<<<<<<< Updated upstream
   {
     heading: "Medical Consultation Summary",
     description:
@@ -580,4 +581,183 @@ export const postnote = [
       "Following our consultation on February 28, 2024, I have diagnosed John Doe with hypertension and prescribed",
     prescription: "1 Prescription",
   },
+=======
+    {
+        heading: 'Medical Consultation Summary',
+        description:
+            'Following our consultation on February 28, 2024, I have diagnosed John Doe with hypertension and prescribed',
+        prescription: '1 Prescription'
+    },
+    {
+        heading: 'Medical Consultation Summary',
+        description:
+            'Following our consultation on February 28, 2024, I have diagnosed John Doe with hypertension and prescribed',
+        prescription: '1 Prescription'
+    }
+];
+export const profileData = {
+    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
+    userName: 'Bhupinder Singh FNK-BN',
+    timings: typeof window !== 'undefined' ? sessionStorage.getItem('timing') || 'No Timings Available' : 'No Timings Available',
+    appointmentType: typeof window !== 'undefined' && sessionStorage.getItem('appointmentData')
+        ? sessionStorage.getItem('appointmentData').split(',')[0]
+        : 'N/A',
+    appointmentName: typeof window !== 'undefined' && sessionStorage.getItem('appointmentData')
+        ? sessionStorage.getItem('appointmentData').split(',')[1]
+        : 'N/A',
+    appointmentDesc: typeof window !== 'undefined' && sessionStorage.getItem('appointmentData')
+        ? sessionStorage.getItem('appointmentData').split(',')[2]
+        : 'N/A',
+    selectedDate: typeof window !== 'undefined' ? sessionStorage.getItem('selectedDate') : null,
+    appointmentDuration: 30,
+    desc: 'Acute Care',
+    exp: '13 years of experience',
+    rating: 4.96,
+    totalRating: 1758,
+    moreDesc:
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores pariatur mollitia voluptas nesciunt? Non deleniti totam enim magnam pariatur officiis animi, quaerat, ea doloremque a placeat. Ratione, perferendis? Aut explicabo delectus quo officia molestias doloremque laboriosam, fugit consectetur rem voluptates velit ut facere minus non sit nemo. Blanditiis nesciunt modi pariatur, vero alias reiciendis numquam reprehenderit est commodi. Ipsa illo rerum eius aspernatur deleniti, veniam quas quisquam harum voluptatibus aliquid et ullam, dicta ad quaerat laudantium quam magnam corporis quae laborum nesciunt eaque, ducimus fuga? Quaerat ut blanditiis harum laborum animi tempora veritatis saepe quae qui, aut corporis tempore. Deleniti maxime, autem.'
+};
+
+export const appointmentsDrop = [
+    {
+        id: 1,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    },
+    {
+        id: 2,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    },
+    {
+        id: 3,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    },
+    {
+        id: 4,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    },
+    {
+        id: 5,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    },
+    {
+        id: 6,
+        title: 'Annual GYN Exam',
+        description:
+            'Discuss reproductive and sexual health and receive a breast exam, pelvic exam and pap smear'
+    }
+];
+
+export const TimingProviders = [
+    {
+        shift: 'Morning',
+        shiftTime: '(12:30 am to 3:30 am)',
+        data: [
+            { time: '8:30 am', count: 4 },
+            { time: '9:30 am', count: 2 },
+            { time: '10:30 am', count: 1 },
+            { time: '11:30 am', count: 5 },
+            { time: '12:00 pm', count: 8 }
+        ]
+    },
+    {
+        shift: 'Afternoon',
+        shiftTime: '(12:30  to 3:30)',
+        data: [
+            { time: '12:30 pm', count: 2 },
+            { time: '01:30 pm', count: 3 },
+            { time: '02:30 pm', count: 5 },
+            { time: '03:30 pm', count: 1 },
+            { time: '04:30 pm', count: 6 }
+        ]
+    },
+    {
+        shift: 'Evening',
+        shiftTime: '(6:30 pm to 11:40 pm)',
+        data: [
+            { time: '06:30 pm', count: 2 },
+            { time: '07:30 pm', count: 4 },
+            { time: '08:30 pm', count: 5 },
+            { time: '09:30 pm', count: 9 },
+            { time: '10:30 pm', count: 4 },
+            { time: '11:30 pm', count: 1 }
+        ]
+    }
+];
+
+export const insuranceProviders = [
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    },
+    {
+        name: 'Aetna',
+        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+    },
+    {
+        name: 'Anthem',
+        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+    }
+>>>>>>> Stashed changes
 ];
