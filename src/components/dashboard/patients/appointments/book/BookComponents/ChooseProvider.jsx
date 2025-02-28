@@ -8,7 +8,6 @@ import { debounce } from '@/utils/debounce';
 import { Ban, CheckIcon, LoaderCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRef, useState } from 'react';
-import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
 export default function ChooseProvider() {

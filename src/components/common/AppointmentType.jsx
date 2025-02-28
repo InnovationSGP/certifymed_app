@@ -1,21 +1,33 @@
 'use client';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Card } from './Card';
-import { Badge } from './badge';
-import { appointmentsDrop } from './Helper';
+import { useSelector } from 'react-redux';
 import { TabDownArrowIcon } from './AppIcons';
+import { Badge } from './badge';
+import { Card } from './Card';
 import PrimaryBtn from './PrimaryBtn';
 
-export default function AppointmentTypes({ selectedIdType }) {
+export default function AppointmentTypes({
+    selectedIdType,
+    setSelectedIdType
+}) {
     const [selectedId, setSelectedId] = useState(selectedIdType);
     const searchParams = useSearchParams();
-    const router = useRouter();
 
+    const router = useRouter();
+    const doctors = useSelector((state) => state.patientsDoctor.data);
     const handleToggle = (id) => {
         setSelectedId(selectedId === id ? null : id);
     };
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', 'payment'.toString());
 
+    function handleAppointment(data) {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('appointmentData', JSON.stringify(data));
+            router.push(`?${newParams.toString()}`, { scroll: false });
+        }
+    }
     return (
         <div className="bg-white pr-2 w-full sm:w-11/12 mx-auto shadow-tab py-3 rounded-[12px]">
             <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-238px)] p-3 sm:px-6 sm:py-3 overflow-auto custom-tabs">
@@ -23,30 +35,31 @@ export default function AppointmentTypes({ selectedIdType }) {
                     How do you want to be seen?
                 </h1>
 
-                <div className="flex items-center gap-2 text-sm mb-6">
-                    <button className="text-bluetitmouse hover:underline text-base font-poppins">
+                <div className="flex items-center gap-2 mb-6 text-sm">
+                    <button
+                        onClick={() => setSelectedIdType(null)}
+                        className="text-base text-bluetitmouse hover:underline font-poppins"
+                    >
                         Appointment
                     </button>
                     <span className="text-secondary">/</span>
-                    <span className="text-secondary capitalize text-base font-poppins">
+                    <span className="text-base capitalize text-secondary font-poppins">
                         {selectedIdType}
                     </span>
                 </div>
 
                 <div className="space-y-4">
-                    {appointmentsDrop.map((appointment) => (
+                    {doctors.map((appointment) => (
                         <Card
-                            key={appointment.id}
-                            className="p-3 sm:pl-4 sm:py-4 sm:pr-12 cursor-pointer hover:bg-gray-50 transition-colors"
-                            onClick={() => handleToggle(appointment.id)}
+                            key={appointment._id}
+                            className="p-3 transition-colors cursor-pointer sm:p-4 hover:bg-gray-50"
+                            onClick={() => handleToggle(appointment._id)}
                         >
-                            <div className="flex items-center gap-3 justify-between">
+                            <div className="flex items-center justify-between gap-3">
                                 <div className="flex-1">
-                                    <div
-                                        className={`flex gap-2 sm:gap-0 items-center justify-between `}
-                                    >
+                                    <div className="flex items-center justify-between gap-2 sm:gap-0 sm:mb-2">
                                         <h3 className="text-base font-medium text-gray-900">
-                                            {appointment.title}
+                                            {appointment.specialization}
                                         </h3>
                                         <div className="flex items-center gap-1 sm:gap-2">
                                             <Badge
@@ -59,7 +72,7 @@ export default function AppointmentTypes({ selectedIdType }) {
                                             <span
                                                 className={`${
                                                     selectedId ===
-                                                    appointment.id
+                                                    appointment._id
                                                         ? 'rotate-0'
                                                         : 'rotate-[272deg]'
                                                 } transition-all duration-300 ease-in-out`}
@@ -72,34 +85,19 @@ export default function AppointmentTypes({ selectedIdType }) {
                                     {/* Transition Effect for Content */}
                                     <div
                                         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                            selectedId === appointment.id
-                                                ? 'max-h-[500px] opacity-100 pt-3'
+                                            selectedId === appointment._id
+                                                ? 'max-h-[500px] opacity-100'
                                                 : 'max-h-0 opacity-0'
                                         }`}
                                     >
                                         <p className="!text-sm sm:!text-base paragraph leading-[120%] mb-4">
-                                            {appointment.description}
+                                            {appointment.email}
                                         </p>
                                         <PrimaryBtn
-                                            className="!h-[55px] md:!h-[60px]"
-                                            onClick={() => {
-                                                sessionStorage.setItem(
-                                                    'appointmentData',
-                                                    `${selectedIdType}, ${appointment.title}, ${appointment.description}`
-                                                );
-                                                const newParams =
-                                                    new URLSearchParams(
-                                                        searchParams
-                                                    );
-                                                newParams.set(
-                                                    'tab',
-                                                    'payment'.toString()
-                                                );
-                                                router.push(
-                                                    `?${newParams.toString()}`,
-                                                    { scroll: false }
-                                                );
-                                            }}
+                                            className="h-[52px] md:h-[60px]"
+                                            onClick={() =>
+                                                handleAppointment(appointment)
+                                            }
                                         >
                                             View Availabilities
                                         </PrimaryBtn>

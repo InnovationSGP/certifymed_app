@@ -1,29 +1,21 @@
 'use client';
-
-import { useState } from 'react';
-import PaymentForm from '@/components/common/PaymentForm';
-import { Wallet } from 'lucide-react';
-import { Input } from '@/components/common/Input';
-import { useSearchParams, useRouter } from 'next/navigation';
-import PayOutOfPocket from './PayOutOfPocketComponent';
 import { insuranceProviders } from '@/components/common/Helper';
 import { WalletIcon } from '@/components/common/Icons';
+import PaymentForm from '@/components/common/PaymentForm';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import PayOutOfPocket from './PayOutOfPocketComponent';
 
 export default function ChoosePay() {
     const [selectedMethod, setSelectedMethod] = useState('');
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [isPayOutOfPocket, setIsPayOutOfPocket] = useState(false);
-    const [pocketPayDetails, setPocketPayDetails] = useState({
-        type: '',
-        firstName: '',
-        lastName: '',
-        creditCardNumber: 0,
-        cvv: 0,
-        mm: 0,
-        yyyy: 0
-    });
+    const amount = 150;
     const searchParams = useSearchParams();
     const router = useRouter();
+
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', 'datetime'.toString());
 
     const handlePaymentMethodChange = (value) => {
         setSelectedMethod(value);
@@ -34,40 +26,49 @@ export default function ChoosePay() {
         }
     };
 
-    const handleContinue = () => {
-        sessionStorage.setItem('pocketPay', pocketPayDetails);
-        const newParams = new URLSearchParams(searchParams);
-        newParams.set('tab', 'datetime'.toString());
-        router.push(`?${newParams.toString()}`, { scroll: false });
+    const handleContinue = (data) => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem(
+                'paymentData',
+                JSON.stringify({ ...data, amount })
+            );
+            router.push(`?${newParams.toString()}`, { scroll: false });
+        }
     };
 
-    const handleContinueIn = (provider) => {
-        // Remove {} to pass correctly
-        sessionStorage.setItem('insuranceName', provider?.name);
-        const newParams = new URLSearchParams(searchParams);
-        newParams.set('tab', 'datetime');
-        router.push(`?${newParams.toString()}`, { scroll: false });
+    const handleContinueIn = () => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem(
+                'paymentData',
+                JSON.stringify({
+                    paymentMethod: 'Insurance',
+                    amount
+                })
+            );
+            router.push(`?${newParams.toString()}`, { scroll: false });
+        }
     };
 
     return isPayOutOfPocket ? (
-        <PayOutOfPocket
-            pocketPayDetails={pocketPayDetails}
-            setPocketPayDetails={setPocketPayDetails}
-            handleContinue={handleContinue}
-        />
+        <PayOutOfPocket addPayment={handleContinue} />
     ) : (
-        <div className="w-full sm:w-11/12 mx-auto space-y-8 mb-20 sm:mb-24">
-            <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-14 md:pt-6">
-                <h2 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-4">
-                    How would you like to pay?
-                </h2>
+        <div className="w-full mx-auto mb-24 space-y-8 sm:w-11/12">
+            <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-12 md:pt-6">
+                <div className="flex justify-between items-center mb-4 ">
+                    <h2 className="text-lg font-semibold sm:text-xl font-poppins text-secondary inline">
+                        How would you like to pay?
+                    </h2>
+                    <span className="text-right block font-semibold">
+                        Amount ₹ {amount}
+                    </span>
+                </div>
                 <div value={selectedMethod} onClick={handlePaymentMethodChange}>
                     <div className="space-y-6">
                         <button
                             onClick={() => {
                                 setIsPayOutOfPocket(true);
                             }}
-                            className="flex w-full items-center space-x-3 border border-gainsboro p-2 sm:px-6 sm:py-[15px] rounded-xl"
+                            className="flex items-center w-full p-3 space-x-3 border border-gainsboro sm:p-4 rounded-xl"
                         >
                             <WalletIcon />
                             <p
@@ -87,7 +88,7 @@ export default function ChoosePay() {
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-x-6 sm:gap-y-4 items-center justify-center">
+                            <div className="grid items-center justify-center grid-cols-2 gap-3 md:grid-cols-4 sm:gap-4">
                                 {insuranceProviders.map((provider, index) => (
                                     <button
                                         onClick={() =>
@@ -111,7 +112,6 @@ export default function ChoosePay() {
                     </div>
                 </div>
             </div>
-
             {showPaymentForm && <PaymentForm />}
         </div>
     );
