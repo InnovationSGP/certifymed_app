@@ -1,16 +1,16 @@
 'use client';
-import AppointmentTypes from '@/components/common/AppointmentType';
-import { Card } from '@/components/common/Card';
-import { Building2, ChevronDown, ChevronRight, Smartphone } from 'lucide-react';
+
 import { useState } from 'react';
+import { ChevronRight, Smartphone, Building2 } from 'lucide-react';
+import { Card } from '@/components/common/Card';
+import AppointmentTypes from '@/components/common/AppointmentType';
 
 export default function ChooseAppointment({ tabNumber, setTabNumber }) {
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState('video');
     const handleToggle = (type) => {
-        setSelected(type);
-        sessionStorage.setItem('appointmentType', type);
+        setSelected(selected === type ? null : type);
     };
-    return selected ? (
+    return selected !== null ? (
         <AppointmentTypes
             selectedIdType={selected}
             setSelectedIdType={setSelected}
@@ -18,20 +18,21 @@ export default function ChooseAppointment({ tabNumber, setTabNumber }) {
             setTabNumber={setTabNumber}
         />
     ) : (
-        <div className="w-full p-0 sm:w-11/12 md:p-6">
-            <h1 className="mb-2 text-lg font-semibold sm:text-xl font-poppins text-secondary">
+        <div className="w-full sm:w-11/12 p-0 md:p-6">
+            <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
                 How do you want to be seen?
             </h1>
-            <h2 className="mb-6 text-gray-500">Appointments</h2>
+            <h2 className="text-gray-500 mb-6">Appointments</h2>
+
             <div className="space-y-4">
                 <Card
-                    className="p-4 transition-colors cursor-pointer hover:bg-gray-50"
+                    className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => handleToggle('video')}
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                            <div className="flex items-center justify-center w-12 h-12 mr-4 rounded-lg bg-blue-50">
-                                <Smartphone className="w-6 h-6 text-blue-500" />
+                            <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
+                                <Smartphone className="h-6 w-6 text-blue-500" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="font-medium text-gray-900">
@@ -43,21 +44,21 @@ export default function ChooseAppointment({ tabNumber, setTabNumber }) {
                             </div>
                         </div>
                         {selected === 'video' ? (
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                            <ChevronDown className="h-5 w-5 text-gray-400" />
                         ) : (
-                            <ChevronRight className="w-5 h-5 text-gray-400" />
+                            <ChevronRight className="h-5 w-5 text-gray-400" />
                         )}
                     </div>
                 </Card>
 
                 <Card
-                    className="p-4 transition-colors cursor-pointer hover:bg-gray-50"
+                    className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => handleToggle('in-person')}
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                            <div className="flex items-center justify-center w-12 h-12 mr-4 rounded-lg bg-blue-50">
-                                <Building2 className="w-6 h-6 text-blue-500" />
+                            <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
+                                <Building2 className="h-6 w-6 text-blue-500" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="font-medium text-gray-900">
@@ -69,9 +70,9 @@ export default function ChooseAppointment({ tabNumber, setTabNumber }) {
                             </div>
                         </div>
                         {selected === 'in-person' ? (
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                            <ChevronDown className="h-5 w-5 text-gray-400" />
                         ) : (
-                            <ChevronRight className="w-5 h-5 text-gray-400" />
+                            <ChevronRight className="h-5 w-5 text-gray-400" />
                         )}
                     </div>
                 </Card>
