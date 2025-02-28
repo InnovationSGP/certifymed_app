@@ -1,15 +1,10 @@
 'use client';
 import { Avatar, AvatarImage } from '@/components/common/avatar';
+import { Input } from '@/components/common/Input';
 import PrimaryBtn from '@/components/common/PrimaryBtn';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@/components/common/select';
+import { debounce } from '@/utils/debounce';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function ChooseProvider({ city, setCity, isDoctor }) {
     const searchParams = useSearchParams();
@@ -30,6 +25,11 @@ export default function ChooseProvider({ city, setCity, isDoctor }) {
             setMainText('Please Select a provider');
         }
     };
+    const debouncedSetCity = useRef(
+        debounce((value) => {
+            setCity(value);
+        }, 500) // 500ms debounce delay
+    ).current;
 
     return (
         <div className="w-full max-w-md p-6 mx-auto mb-24 bg-white shadow-lg rounded-2xl">
@@ -68,57 +68,11 @@ export default function ChooseProvider({ city, setCity, isDoctor }) {
                     <p className="pl-1 mb-1 text-base font-medium font-poppins text-dimGray">
                         City
                     </p>
-                    <Select
-                        className=""
-                        onValueChange={(value) => {
-                            setCity(value);
-                        }}
-                    >
-                        <SelectTrigger className="w-full bg-[#F1F1F1] h-12 cursor-pointer border !outline-none !border-transparent">
-                            <SelectValue
-                                className="text-[#606060]"
-                                placeholder={city || 'Select'}
-                            />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#F1F1F1] z-20 cursor-pointer">
-                            <SelectItem
-                                value="new-york"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                New York
-                            </SelectItem>
-                            <SelectItem
-                                value="los-angeles"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Los Angeles
-                            </SelectItem>
-                            <SelectItem
-                                value="chicago"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Chicago
-                            </SelectItem>
-                            <SelectItem
-                                value="houston"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Houston
-                            </SelectItem>
-                            <SelectItem
-                                value="phoenix"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Phoenix
-                            </SelectItem>
-                            <SelectItem
-                                value="hisar"
-                                className="cursor-pointer hover:text-white hover:bg-primary"
-                            >
-                                Hisar
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <Input
+                        type="text"
+                        placeholder="Enter your city"
+                        onChange={(e) => debouncedSetCity(e.target.value)}
+                    />
                 </div>
                 <PrimaryBtn
                     disabled={!isDoctor}

@@ -50,6 +50,8 @@ const FindProvider = ({ setIsBookAppointment }) => {
             if (city) {
                 const data = await searchDoctor(city);
                 if (data.count !== 0) {
+                    console.log(data);
+                    toast.success('Doctors found for this city');
                     setDoctors(true);
                     dispatch(setSearchDoctors(data));
                 } else {
