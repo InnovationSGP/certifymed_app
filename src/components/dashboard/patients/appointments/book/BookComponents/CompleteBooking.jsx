@@ -1,7 +1,8 @@
 'use client';
-import { Minus, Plus } from 'lucide-react';
+import BioCard from '@/components/common/BioCard';
+import BookingConfirmation from '@/components/common/ConfirmCard';
 import { Input } from '@/components/common/Input';
-import { useState } from 'react';
+import PrimaryBtn from '@/components/common/PrimaryBtn';
 import {
     Select,
     SelectContent,
@@ -9,23 +10,172 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/common/select';
-import BioCard from '@/components/common/BioCard';
-import BookingConfirmation from '@/components/common/ConfirmCard';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { profileData } from '@/components/common/Helper';
-import PrimaryBtn from '@/components/common/PrimaryBtn';
+import { useProfileData } from '@/hooks/useProfileData';
+import { useProfileForm } from '@/hooks/useProfileForm';
+import { createAppointment } from '@/services/AppointmentService';
+import { checkFormData } from '@/utils/bookingHelper';
+import { calculateEndTime } from '@/utils/dateHelpers';
+import { LoaderCircle, Minus, Plus } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+const DoctorInfo = dynamic(() => import('./DoctorInfo'), {
+    ssr: false,
+    loading: () => <div>Loading...</div>
+});
 
-export default function CompleteBooking({
-    tabNumber,
-    setTabNumber,
-    setIsBookAppointment
-}) {
+export default function CompleteBooking({ tabNumber, setTabNumber }) {
+    const userData = useSelector((state) => state.user);
+    const formRef = useRef(null);
     const [showPreferred, setShowPreferred] = useState(false);
+    const [selectedDoctor, setselectedDoctor] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const [paymentData, setPaymentData] = useState(null);
     const [showGenderPronouns, setShowGenderPronouns] = useState(false);
     const [showBioCard, setShowBioCard] = useState(false);
     const [isShowConfirmCard, setIsShowConfirmCard] = useState(true);
-    const searchParams = useSearchParams();
-    const router = useRouter();
+    const [loading, setloading] = useState(false);
+    const { saveProfile } = useProfileData();
+    const [dateOfBirth, setDateOfBirth] = useState({
+        day: '',
+        month: '',
+        year: ''
+    });
+    const { formData, updateFormField, resetForm } = useProfileForm();
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        const result = checkFormData(formData, userData);
+        if (result === true) {
+            setloading(true);
+            const bookingData = new FormData(formRef.current);
+            // Convert FormData to a plain object
+            const formValues = {};
+            bookingData.forEach((value, key) => {
+                if (value.trim() === '') return;
+                formValues[key] = value;
+            });
+            try {
+                const { paymentMethod, amount, currency } = paymentData;
+                const parsedData = {
+                    physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
+                    careCoordinator: `Dr Wilson`,
+                    videoOn: true,
+                    visitReason:
+                        formValues.visitReason || 'Having pain in the chest',
+                    visitCoordinates: '',
+                    visitDescription: formValues.visitDescription || '',
+                    doctorAssign: selectedDoctor._id,
+                    visitDate: selectedDate,
+                    startTime: selectedTime,
+                    endTime: calculateEndTime(selectedTime),
+                    payment: {
+                        paymentMethod,
+                        amount,
+                        currency
+                    }
+                };
+                const response = await createAppointment(parsedData);
+                if (response.success) {
+                    toast.success('Appointment created successfully!');
+                    // setShowBioCard(true);
+                } else {
+                    toast.error('Something went wrong. Please try again.');
+                }
+            } catch (error) {
+                toast.error('Something went wrong. Please try again.');
+            } finally {
+                setloading(false);
+            }
+        } else {
+            setloading(true);
+            try {
+                const combinedDate = `${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}`;
+                const updateUser = await saveProfile({
+                    ...formData,
+                    dateOfBirth: combinedDate
+                });
+                if (!updateUser) {
+                    return toast.error(
+                        'Something went wrong. Please try again.'
+                    );
+                }
+                const inputData = new FormData(formRef.current);
+                // Convert FormData to a plain object
+                const formValues = {};
+                inputData.forEach((value, key) => {
+                    if (value.trim() === '') return;
+                    formValues[key] = value;
+                });
+                const { paymentMethod, amount, currency } = paymentData;
+                const parsedData = {
+                    physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
+                    careCoordinator: `Dr Wilson`,
+                    videoOn: true,
+                    visitReason:
+                        formValues.visitReason || 'Having pain in the chest',
+                    visitCoordinates: '',
+                    visitDescription: formValues.visitDescription,
+                    doctorAssign: selectedDoctor._id,
+                    visitDate: selectedDate,
+                    startTime: selectedTime,
+                    endTime: calculateEndTime(selectedTime),
+                    payment: {
+                        paymentMethod,
+                        amount,
+                        currency
+                    }
+                };
+                const response = await createAppointment(parsedData);
+                if (response.success) {
+                    toast.success('Appointment created successfully!');
+                    setShowBioCard(true);
+                } else {
+                    toast.error('Something went wrong. Please try again.');
+                }
+            } catch (error) {
+                toast.error('Something went wrong. Please try again.');
+            } finally {
+                setloading(false);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setselectedDoctor(
+                JSON.parse(sessionStorage.getItem('appointmentData'))
+            );
+            setSelectedDate(sessionStorage.getItem('selectedDate'));
+            setSelectedTime(sessionStorage.getItem('timing'));
+            setPaymentData(JSON.parse(sessionStorage.getItem('paymentData')));
+        }
+    }, []);
+
+    function initialDateAndTIme(date) {
+        const dateOfBirth = new Date(date);
+        const initialYear = dateOfBirth.getUTCFullYear();
+        const initialMonth = String(dateOfBirth.getUTCMonth() + 1).padStart(
+            2,
+            '0'
+        ); // Months are 0-indexed
+        const initialDay = String(dateOfBirth.getUTCDate()).padStart(2, '0');
+
+        setDateOfBirth({
+            day: initialDay,
+            month: initialMonth,
+            year: initialYear
+        });
+    }
+
+    useEffect(() => {
+        if (userData) {
+            resetForm(userData);
+            initialDateAndTIme(userData.dateOfBirth);
+        }
+    }, [userData]);
 
     if (showBioCard && isShowConfirmCard) {
         return (
@@ -45,63 +195,40 @@ export default function CompleteBooking({
                     Complete your booking
                 </h2>
                 <div className="space-y-6">
-                    <div className="flex flex-col lg:flex-row w-full items-start lg:items-end sm:space-x-3 space-y-3 md:border border-gainsboro md:p-5 rounded-xl">
-                        <div className="flex flex-col md:flex-row w-full items-center">
-                            <div className="overflow-hidden rounded-full bg-blue-300 mb-3 sm:mb-0">
-                                <img
-                                    src={profileData.avatar}
-                                    className="h-24 w-24 object-cover"
-                                />
-                            </div>
-                            <div className="flex flex-col items-start px-4">
-                                <p className="text-lg sm:text-xl font-poppins font-medium text-secondary text-center sm:text-start w-full">
-                                    {profileData.userName}
-                                </p>
-                                <p className="text-base text-secondary py-1 text-center sm:text-start w-full">
-                                    {profileData?.selectedDate} -{' '}
-                                    {profileData.timings}
-                                </p>
-                                <p className="font-medium text-base md:text-lg text-secondary capitalize text-center sm:text-start w-full">
-                                    {profileData.appointmentType}
-                                    {' Appointment '}(
-                                    {profileData.appointmentDuration} {'min'})
-                                </p>
-                                <button
-                                    className="text-bluetitmouse underline hover:no-underline whitespace-nowrap w-full sm:w-fit"
-                                    onClick={() => {
-                                        const newParams = new URLSearchParams(
-                                            searchParams
-                                        );
-                                        newParams.set(
-                                            'tab',
-                                            'doctor-profile'.toString()
-                                        );
-                                        router.push(
-                                            `?${newParams.toString()}`,
-                                            {
-                                                scroll: false
-                                            }
-                                        );
-                                    }}
-                                >
-                                    See Profile
-                                </button>
-                            </div>
-                        </div>
-                        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-12 w-full sm:w-fit">
-                            <button className="w-full sm:w-fit rounded-[28px] bg-[#4864FF29] hover:bg-[#4863ff18] transition-all duration-200 ease-in-out text-bluetitmouse md:whitespace-nowrap text-xs md:text-base p-4 px-4 sm:px-8">
-                                Last Provider available at this time
-                            </button>
-                        </div>
-                    </div>
-
-                    <div>
+                    <DoctorInfo />
+                    <form onSubmit={handleSubmit} ref={formRef}>
                         <div className="flex flex-col my-4 sm:my-6 mt-6 gap-3 sm:gap-4">
-                            <div className="w-full">
-                                <label className="text-base font-poppins text-dimGray font-medium">
-                                    Name
-                                </label>
-                                <Input placeholder="Enter your name" />
+                            <div className="flex flex-col gap-6 justify-between w-full md:flex-row">
+                                <div className="w-full">
+                                    <label>First Name</label>
+                                    <Input
+                                        name="firstName"
+                                        defaultValue={formData.firstName}
+                                        onChange={(e) => {
+                                            updateFormField(
+                                                'firstName',
+                                                e.target.value
+                                            );
+                                        }}
+                                        placeholder="Enter your first name"
+                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                    />
+                                </div>
+                                <div className="w-full">
+                                    <label>Last Name</label>
+                                    <Input
+                                        name="lastName"
+                                        onChange={(e) => {
+                                            updateFormField(
+                                                'lastName',
+                                                e.target.value
+                                            );
+                                        }}
+                                        defaultValue={formData.lastName}
+                                        placeholder="Enter your last name"
+                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                    />
+                                </div>
                             </div>
                             <button
                                 onClick={() => {
@@ -134,6 +261,14 @@ export default function CompleteBooking({
                                             </label>
                                             <Input
                                                 placeholder="MM"
+                                                type="number"
+                                                defaultValue={dateOfBirth.month}
+                                                onChange={(e) =>
+                                                    setDateOfBirth({
+                                                        ...dateOfBirth,
+                                                        month: e.target.value
+                                                    })
+                                                }
                                                 className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
@@ -143,6 +278,14 @@ export default function CompleteBooking({
                                             </label>
                                             <Input
                                                 placeholder="DD"
+                                                type="number"
+                                                onChange={(e) =>
+                                                    setDateOfBirth({
+                                                        ...dateOfBirth,
+                                                        day: e.target.value
+                                                    })
+                                                }
+                                                defaultValue={dateOfBirth.day}
                                                 className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
@@ -152,6 +295,14 @@ export default function CompleteBooking({
                                             </label>
                                             <Input
                                                 placeholder="YYYY"
+                                                type="number"
+                                                onChange={(e) =>
+                                                    setDateOfBirth({
+                                                        ...dateOfBirth,
+                                                        year: e.target.value
+                                                    })
+                                                }
+                                                defaultValue={dateOfBirth.year}
                                                 className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
@@ -161,18 +312,20 @@ export default function CompleteBooking({
                                             Sex assigned at birth
                                         </p>
                                         <Select
-                                        // onValueChange={(value) =>
-                                        //     setCity(value)
-                                        // }
+                                            onValueChange={(e) => {
+                                                updateFormField('gender', e);
+                                            }}
+                                            value={formData.gender}
+                                            name="gender"
                                         >
                                             <SelectTrigger className="w-full bg-superSilver cursor-pointer border !outline-none !border-transparent">
                                                 <SelectValue placeholder="Select" />
                                             </SelectTrigger>
                                             <SelectContent className="bg-superSilver z-20 cursor-pointer">
-                                                <SelectItem value="male">
+                                                <SelectItem value="Male">
                                                     Male
                                                 </SelectItem>
-                                                <SelectItem value="female">
+                                                <SelectItem value="Female">
                                                     female
                                                 </SelectItem>
                                                 <SelectItem value="not-applicable">
@@ -214,7 +367,18 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Address
                                             </label>
-                                            <Input placeholder="Enter your address" />
+                                            <Input
+                                                name="address"
+                                                defaultValue={formData.address}
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'address',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your address"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
@@ -228,13 +392,35 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 City
                                             </label>
-                                            <Input placeholder="Enter your city" />
+                                            <Input
+                                                name="city"
+                                                defaultValue={formData.city}
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'city',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your city"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Postal Code
                                             </label>
-                                            <Input placeholder="Enter your postal code" />
+                                            <Input
+                                                name="zipCode"
+                                                defaultValue={formData.zipcode}
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'zipcode',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your zip code"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                     </div>
 
@@ -243,13 +429,37 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 State
                                             </label>
-                                            <Input placeholder="Enter your state" />
+                                            <Input
+                                                name="state"
+                                                defaultValue={formData.state}
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'state',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your state"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Country / Region
                                             </label>
-                                            <Input placeholder="Enter your country / region" />
+                                            <Input
+                                                name="country"
+                                                defaultValue={
+                                                    formData.countryName
+                                                }
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'countryName',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your country / region"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -266,13 +476,39 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Phone Number
                                             </label>
-                                            <Input placeholder="1234567890" />
+                                            <Input
+                                                name="phoneNumber"
+                                                defaultValue={
+                                                    formData.phoneNumber
+                                                }
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'phoneNumber',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="1234567890"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Emergency Contact Information
                                             </label>
-                                            <Input placeholder="Enter emergency contact information" />
+                                            <Input
+                                                name="emergencyContactPhoneNumber"
+                                                defaultValue={
+                                                    formData.emergencyContactPhoneNumber
+                                                }
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'emergencyContactPhoneNumber',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your emergency contact phone"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
                                     </div>
                                     <div className="w-full flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
@@ -280,7 +516,20 @@ export default function CompleteBooking({
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Emergency Contact Name
                                             </label>
-                                            <Input placeholder="Enter your emergency contact name" />
+                                            <Input
+                                                name="emergencyContactName"
+                                                defaultValue={
+                                                    formData.emergencyContactName
+                                                }
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'emergencyContactName',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter emergency contact name"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
 
                                         <div className="w-full">
@@ -288,27 +537,34 @@ export default function CompleteBooking({
                                                 Emergency Contact Relationship
                                             </p>
                                             <Select
-                                            // onValueChange={(value) =>
-                                            //     setCity(value)
-                                            // }
+                                                value={
+                                                    formData.emergencyContactRelationship
+                                                }
+                                                onValueChange={(value) =>
+                                                    updateFormField(
+                                                        'emergencyContactRelationship',
+                                                        value
+                                                    )
+                                                }
+                                                name="relationship"
                                             >
                                                 <SelectTrigger className="w-full bg-superSilver cursor-pointer border !outline-none !border-transparent">
                                                     <SelectValue placeholder="Select" />
                                                 </SelectTrigger>
-                                                <SelectContent className="bg-superSilver z-20 cursor-pointer">
-                                                    <SelectItem value="father">
+                                                <SelectContent className="bg-[#ffffff] z-20">
+                                                    <SelectItem value="Father">
                                                         Father
                                                     </SelectItem>
-                                                    <SelectItem value="mother">
+                                                    <SelectItem value="Mother">
                                                         Mother
                                                     </SelectItem>
-                                                    <SelectItem value="sister">
+                                                    <SelectItem value="Sister">
                                                         Sister
                                                     </SelectItem>
-                                                    <SelectItem value="brother">
+                                                    <SelectItem value="Brother">
                                                         Brother
                                                     </SelectItem>
-                                                    <SelectItem value="friend">
+                                                    <SelectItem value="Friend">
                                                         Friend
                                                     </SelectItem>
                                                     <SelectItem value="Girlfriend">
@@ -319,14 +575,27 @@ export default function CompleteBooking({
                                         </div>
                                     </div>
 
-                                    <div className="w-full flex justify-betweengap-4 sm:gap-6">
+                                    {/* <div className="w-full flex justify-betweengap-4 sm:gap-6">
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Emergency Contact Phone Number
                                             </label>
-                                            <Input placeholder="Enter your emergency contact phone number" />
+                                            <Input
+                                                name="emergencyContactPhoneNumber"
+                                                defaultValue={
+                                                    formData.emergencyContactPhoneNumber
+                                                }
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'emergencyContactPhoneNumber',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your emergency contact phone"
+                                                className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                            />
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -334,6 +603,7 @@ export default function CompleteBooking({
                             <div className="flex items-center  gap-2 sm:gap-4">
                                 <div className="flex items-center justify-center agreecheckbox">
                                     <input
+                                        required
                                         type="checkbox"
                                         className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
@@ -356,6 +626,7 @@ export default function CompleteBooking({
                             <label className="flex items-center gap-2 sm:gap-4 cursor-pointer">
                                 <div className="agreecheckbox flex items-center justify-center">
                                     <input
+                                        required
                                         type="checkbox"
                                         className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
@@ -366,12 +637,17 @@ export default function CompleteBooking({
                             </label>
                         </div>
                         <PrimaryBtn
-                            onClick={() => setShowBioCard(true)}
-                            className="!h-[55px] md:!h-[60px] w-full md:max-w-[389px] mt-6"
+                            disabled={loading}
+                            onClick={handleSubmit}
+                            className="!h-[55px] md:!h-[60px] w-full md:max-w-[389px] mt-6 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-primary"
                         >
-                            Confirm Patient Information
+                            {loading ? (
+                                <LoaderCircle className="animate-spin" />
+                            ) : (
+                                'Confirm Patient Information'
+                            )}
                         </PrimaryBtn>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

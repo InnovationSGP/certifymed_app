@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
 import HorizontalDatePicker from '@/components/common/DateTimePicker';
+import { TimingProviders } from '@/components/common/Helper';
 import dayjs from 'dayjs';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { TimingProviders } from '@/components/common/Helper';
-import PrimaryBtn from '@/components/common/PrimaryBtn';
+import { useEffect, useState } from 'react';
 
 const ChooseDateTime = () => {
     const storedDate = sessionStorage.getItem('selectedDate');
@@ -17,15 +16,19 @@ const ChooseDateTime = () => {
         storedDate ? dayjs(storedDate) : dayjs().startOf('day')
     );
     useEffect(() => {
-        sessionStorage.setItem(
-            'selectedDate',
-            selectedDate.format('YYYY-MM-DD')
-        );
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem(
+                'selectedDate',
+                selectedDate.format('YYYY-MM-DD')
+            );
+        }
     }, [selectedDate]);
 
     const handleTimeSelect = (time) => {
-        sessionStorage.setItem('timing', time);
-        setSelectedTime(time);
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('timing', time);
+            setSelectedTime(time);
+        }
     };
 
     return (

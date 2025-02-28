@@ -1,83 +1,87 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
+// Define routes for public, patient, and doctor access
 const routes = {
-  publicRoutes: [
-    "/login",
-    "/sign-up",
-    "/sign-up/patient",
-    "/sign-up/doctor",
-    "/reset-password",
-    "/reset-password/authentication-code",
-    "/",
-  ],
-  patientRoutes: ["/dashboard/patients"],
-  doctorRoutes: ["/dashboard/doctor"],
+    publicRoutes: [
+        '/login',
+        '/sign-up',
+        '/sign-up/patient',
+        '/sign-up/doctor',
+        '/reset-password',
+        '/reset-password/authentication-code',
+        '/'
+    ],
+    patientRoutes: ['/dashboard/patients'], // Only accessible by CUSTOMER
+    doctorRoutes: ['/dashboard/doctor'] // Only accessible by CARE_COORDINATOR
 };
 
-// Add paths that should always bypass middleware
+// Paths that should always bypass middleware (public assets, API routes, etc.)
 const publicPaths = [
-  "/images/", // public images
-  "/_next/", // next.js resources
-  "/api/", // API routes
-  "/favicon.ico", // favicon
-  "/static/", // static files
+    '/images/', // Public images
+    '/_next/', // Next.js internal resources
+    '/api/', // API routes
+    '/favicon.ico', // Favicon
+    '/static/' // Static files
 ];
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
+    const { pathname } = request.nextUrl;
 
-  // Check if the path should bypass middleware
-  if (publicPaths.some((path) => pathname.startsWith(path))) {
+    // Check if the path should bypass middleware (public paths)
+    if (publicPaths.some((path) => pathname.startsWith(path))) {
+        return NextResponse.next();
+    }
+
+    // Retrieve access token and user role from cookies
+    const accessToken = request.cookies.get('jwt')?.value;
+    const userRole = request.cookies.get('userRole')?.value;
+
+    // Redirect authenticated users away from public routes
+    if (accessToken && routes.publicRoutes.includes(pathname)) {
+        return NextResponse.redirect(
+            new URL(
+                userRole === 'CUSTOMER'
+                    ? '/dashboard/patients'
+                    : '/dashboard/doctor',
+                request.url
+            )
+        );
+    }
+
+    // Redirect unauthenticated users away from protected routes
+    const isProtectedRoute = !routes.publicRoutes.includes(pathname);
+    if (!accessToken && isProtectedRoute) {
+        const loginUrl = new URL('/login', request.url);
+        return NextResponse.redirect(loginUrl);
+    }
+
+    // Role-based access control
+    if (accessToken && userRole) {
+        // CUSTOMER cannot access doctor routes
+        if (
+            userRole === 'CUSTOMER' &&
+            routes.doctorRoutes.some((route) => pathname.startsWith(route))
+        ) {
+            return NextResponse.redirect(
+                new URL('/dashboard/patients', request.url)
+            );
+        }
+
+        // CARE_COORDINATOR cannot access patient routes
+        if (
+            userRole === 'CARE_COORDINATOR' &&
+            routes.patientRoutes.some((route) => pathname.startsWith(route))
+        ) {
+            return NextResponse.redirect(
+                new URL('/dashboard/doctor', request.url)
+            );
+        }
+    }
+
+    // Allow access to the requested route
     return NextResponse.next();
-  }
-
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const userRole = request.cookies.get("userRole")?.value;
-
-  // Handle authentication and redirection
-  if (accessToken && routes.publicRoutes.includes(pathname)) {
-    return NextResponse.redirect(
-      new URL(
-        userRole === "CUSTOMER" ? "/dashboard/patients" : "/dashboard/doctor",
-        request.url
-      )
-    );
-  }
-
-  const isProtectedRoute = !routes.publicRoutes.includes(pathname);
-  if (!accessToken && isProtectedRoute) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Role-based access control
-  if (accessToken && userRole) {
-    if (userRole === "CUSTOMER" && pathname.startsWith("/dashboard/doctor")) {
-      return NextResponse.redirect(new URL("/dashboard/patients", request.url));
-    }
-
-    if (
-      userRole === "CARE_COORDINATOR" &&
-      pathname.startsWith("/dashboard/patients")
-    ) {
-      return NextResponse.redirect(new URL("/dashboard/doctor", request.url));
-    }
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * 1. /api/ routes
-     * 2. /_next/ (Next.js internals)
-     * 3. /_static (inside /public)
-     * 4. /images
-     * 5. /favicon.ico, /sitemap.xml (static files)
-     */
-    "/((?!api|_next|_static|images|favicon.ico|sitemap.xml).*)",
-  ],
+    matcher: ['/((?!api|_next|_static|images|favicon.ico|sitemap.xml).*)']
 };
-

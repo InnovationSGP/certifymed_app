@@ -33,7 +33,7 @@ const FindProvider = () => {
         const newParams = new URLSearchParams(searchParams.toString());
         newParams.set('tab', validTabs[step - 1]);
         router.replace(`?${newParams.toString()}`);
-    };  
+    };
     return (
         <section className="w-full overflow-hidden">
             <div className="flex flex-col items-start justify-center mt-6">
@@ -70,7 +70,6 @@ const FindProvider = () => {
                         <CompleteBooking
                             tabNumber={currentTab}
                             setTabNumber={handleStepClick}
-                            setIsBookAppointment={setIsBookAppointment}
                         />
                     )}
                     {currentTab === 'doctor-profile' && <BioCardDoctor />}

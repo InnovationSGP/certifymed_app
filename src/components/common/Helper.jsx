@@ -580,21 +580,24 @@ export const postnote = [
         prescription: '1 Prescription'
     }
 ];
-
+let selectedDoctor;
+let selectedDate;
+let selectedTiming;
+if (typeof window !== 'undefined') {
+    selectedDoctor = JSON.parse(sessionStorage.getItem('appointmentData'));
+    selectedDate = sessionStorage.getItem('selectedDate');
+    selectedTiming = sessionStorage.getItem('timing');
+}
 export const profileData = {
-    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
-    userName: 'Bhupinder Singh FNK-BN',
-    timings: sessionStorage.getItem('timing') || 'No Timings Available',
-    appointmentType: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[0]
-        : 'N/A',
-    appointmentName: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[1]
-        : 'N/A',
-    appointmentDesc: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[2]
-        : 'N/A',
-    selectedDate: sessionStorage.getItem('selectedDate'),
+    avatar:
+        'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww' ||
+        selectedDoctor?.image,
+    userName:
+        `${selectedDoctor?.firstName} ${selectedDoctor?.lastName}` ||
+        'Dr. Name',
+    timings: selectedTiming,
+    appointmentType: 'Video',
+    selectedDate,
     appointmentDuration: 30,
     desc: 'Acute Care',
     exp: '13 years of experience',
