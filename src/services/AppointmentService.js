@@ -27,3 +27,13 @@ export const createAppointment = async (data) => {
     const response = reponse.data;
     return response;
 };
+
+export const getAppointmentsDoctor = async (token) => {
+    const reponse = await axios(`${API_BASE_URL}/doctor`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    const data = reponse.data;
+    return data;
+};

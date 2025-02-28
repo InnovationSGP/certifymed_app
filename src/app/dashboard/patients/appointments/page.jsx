@@ -23,9 +23,12 @@ const AppoinmentPage = async () => {
                     heading="Appointments Overview"
                     buttontext="Book an Appointment"
                 />
-                <AppointmentsAnalytics data={appointments || []} />
+                <AppointmentsAnalytics data={appointments.data || []} />
                 <div className="hidden md:block">
-                    <AppointmentList type="Patients" />
+                    <AppointmentList
+                        type="Patients"
+                        dataSet={appointments.data || []}
+                    />
                 </div>
                 <PatientsHistory />
             </div>

@@ -1,66 +1,84 @@
 'use client';
-import { useState } from 'react';
+import { patientsapoinmenthistory } from '@/components/common/Helper';
+import { setDoctorUpcomingAppointments } from '@/redux/slices/doctorUpcomingAppointmentsSlice';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CalendarView from './CalendarView';
+import CalendarModal from './CalenderModal';
 import MiniCalendar from './MiniCalendar';
 import ScheduleModal from './ScheduleModal';
-import CalendarModal from './CalenderModal';
-import { useSelector } from 'react-redux';
 
-const AppointmentSystem = () => {
+const AppointmentSystem = ({ data }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showCalendarModal, setShowCalendarModal] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
-    const [appointments, setAppointments] = useState([
-        {
-            id: 1,
+    const array = data.map((item) => {
+        return {
+            id: item._id,
             title: 'Medical Consultation',
-            startTime: '11:00',
-            endTime: '11:30',
-            date: '2024-11-26',
-            participants: 2
-        },
-        {
-            id: 2,
-            title: 'Medical Consultation',
-            startTime: '11:00',
-            endTime: '11:30',
-            date: '2024-10-31',
-            participants: 4
-        },
-        {
-            id: 3,
-            title: 'Test Consultation',
-            startTime: '11:00',
-            endTime: '11:30',
-            date: '2024-11-01',
-            participants: 4
-        },
-        {
-            id: 4,
-            title: 'Test Consultation',
-            startTime: '12:00',
-            endTime: '1:30',
-            date: '2024-11-02',
-            participants: 2
-        },
-        {
-            id: 5,
-            title: 'Test Consultation',
-            startTime: '12:00',
-            endTime: '1:30',
-            date: '2024-11-03',
-            participants: 2
-        },
-        {
-            id: 6,
-            title: 'Test Consultation',
-            startTime: '9:00',
-            endTime: '10:00',
-            date: '2024-11-04',
-            participants: 2
-        }
-    ]);
+            startTime: item.startTime,
+            endTime: item.endTime,
+            date: item.visitDate,
+            participants: 1
+        };
+    });
+    const [appointments, setAppointments] = useState(array || []);
+    // const [appointments, setAppointments] = useState([
+    //     {
+    //         id: 1,
+    //         title: 'Medical Consultation',
+    //         startTime: '11:00',
+    //         endTime: '11:30',
+    //         date: '2024-11-26',
+    //         participants: 2
+    //     },
+    //     {
+    //         id: 2,
+    //         title: 'Medical Consultation',
+    //         startTime: '11:00',
+    //         endTime: '11:30',
+    //         date: '2024-10-31',
+    //         participants: 4
+    //     },
+    //     {
+    //         id: 3,
+    //         title: 'Test Consultation',
+    //         startTime: '11:00',
+    //         endTime: '11:30',
+    //         date: '2024-11-01',
+    //         participants: 4
+    //     },
+    //     {
+    //         id: 4,
+    //         title: 'Test Consultation',
+    //         startTime: '12:00',
+    //         endTime: '1:30',
+    //         date: '2024-11-02',
+    //         participants: 2
+    //     },
+    //     {
+    //         id: 5,
+    //         title: 'Test Consultation',
+    //         startTime: '12:00',
+    //         endTime: '1:30',
+    //         date: '2024-11-03',
+    //         participants: 2
+    //     },
+    //     {
+    //         id: 6,
+    //         title: 'Test Consultation',
+    //         startTime: '9:00',
+    //         endTime: '10:00',
+    //         date: '2024-11-04',
+    //         participants: 2
+    //     }
+    // ]);
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(setDoctorUpcomingAppointments(patientsapoinmenthistory));
+    }, [dispatch]);
 
     const upcomingAppointments = useSelector(
         (state) => state.doctorUpcomingAppointments.upcomingAppointments
@@ -71,8 +89,8 @@ const AppointmentSystem = () => {
     // Date selection handlers
     const handleDateSelect = (day) => {
         const newDate = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
+            currentDate.getUTCFullYear(),
+            currentDate.getUTCMonth(),
             day
         );
         setSelectedDate(newDate);

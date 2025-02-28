@@ -26,7 +26,7 @@ const RecentAppointmentsListItem = ({ appointment, type, listType }) => {
 
   return (
     <tr>
-      <td className="table-heading !font-normal xl:!pr-0">{appointment.id}</td>
+      <td className="table-heading !font-normal xl:!pr-0">{appointment?._id?.slice(3, 10) || "N/A"}</td>
       <td className="pl-[22px] py-3 flex items-center space-x-2 text-sm text-mainblack">
         <Image
           width={24}
@@ -38,13 +38,13 @@ const RecentAppointmentsListItem = ({ appointment, type, listType }) => {
         <span>{appointment.doctor}</span>
       </td>
       <td className="table-heading !font-normal xl:!pr-0">
-        {appointment.date}
+        {appointment?.visitDate}
       </td>
       <td className="table-heading !font-normal xl:!pr-0">
-        {appointment.mode}
+        {appointment?.videoOn ? "Video" : "N/A"}
       </td>
       <td className="table-heading !font-normal xl:!pr-0">
-        {appointment.status}
+        {appointment?.visitStatus}
       </td>
       <td className="table-heading !font-normal xl:!pr-0">
         <MenuDropdown
