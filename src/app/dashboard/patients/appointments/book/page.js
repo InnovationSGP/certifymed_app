@@ -1,5 +1,6 @@
 import DashboardLayout from '@/components/common/DashboardLayout';
 import FindProvider from '@/components/dashboard/patients/appointments/book/page';
+import { Suspense } from 'react';
 
 export const metadata = {
     title: 'CertifyMed - Find Provider',
@@ -10,7 +11,9 @@ export const metadata = {
 const Book = () => {
     return (
         <DashboardLayout className={'overflow-auto'}>
-            <FindProvider />
+            <Suspense fallback={<div>Loading...</div>}>
+                <FindProvider />
+            </Suspense>
         </DashboardLayout>
     );
 };

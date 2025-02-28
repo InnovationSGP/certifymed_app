@@ -32,7 +32,6 @@ export default function CompleteBooking({
             <BookingConfirmation
                 isOpen={isShowConfirmCard}
                 setIsShowConfirmCard={setIsShowConfirmCard}
-                setIsBookAppointment={setIsBookAppointment}
             />
         );
     }

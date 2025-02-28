@@ -1,18 +1,16 @@
 'use client';
-import { useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
 import Stepper from '@/components/common/Stepper';
-import ChooseProvider from '@/components/dashboard/patients/appointments/book/BookComponents/ChooseProvider';
 import ChooseAppointment from '@/components/dashboard/patients/appointments/book/BookComponents/ChooseAppointment';
-import ChoosePay from '@/components/dashboard/patients/appointments/book/BookComponents/ChoosePay';
 import ChooseDateTime from '@/components/dashboard/patients/appointments/book/BookComponents/ChooseDateTime';
+import ChoosePay from '@/components/dashboard/patients/appointments/book/BookComponents/ChoosePay';
+import ChooseProvider from '@/components/dashboard/patients/appointments/book/BookComponents/ChooseProvider';
 import CompleteBooking from '@/components/dashboard/patients/appointments/book/BookComponents/CompleteBooking';
+import { useRouter, useSearchParams } from 'next/navigation';
 import BioCardDoctor from './BookComponents/BioCardDoctor';
 
-const FindProvider = ({ setIsBookAppointment }) => {
+const FindProvider = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-
     // Define valid tabs
     const validTabs = [
         'provider',
@@ -29,26 +27,21 @@ const FindProvider = ({ setIsBookAppointment }) => {
     // Ensure valid tab
     const tabIndex = validTabs.indexOf(tab);
     const currentTab = tabIndex !== -1 ? validTabs[tabIndex] : 'provider';
-
-    console.log(tab, currentTab);
-
     // Update URL when step is clicked
     const handleStepClick = (step) => {
         // if (!validTabs.includes(step) || step === currentTab) return; // Prevent invalid clicks
-
         const newParams = new URLSearchParams(searchParams.toString());
         newParams.set('tab', validTabs[step - 1]);
         router.replace(`?${newParams.toString()}`);
-    };
-
+    };  
     return (
         <section className="w-full overflow-hidden">
-            <div className="mt-6 justify-center items-start flex flex-col overflow-hidden ">
+            <div className="flex flex-col items-start justify-center mt-6">
                 <Stepper
                     currentStep={tabIndex + 1}
                     onStepClick={handleStepClick}
                 />
-                <div className="w-full p-5 h-full mt-4 xl:mt-12 flex items-center justify-center">
+                <div className="flex items-center justify-center w-full h-full p-4 mt-4 xl:mt-12">
                     {currentTab === 'provider' && (
                         <ChooseProvider
                             tabNumber={currentTab}
