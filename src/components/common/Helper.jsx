@@ -1,3 +1,4 @@
+import { getSessionStorageItem } from '@/lib/sessionStorage';
 import {
     AddressIcon,
     FacebookIcon,
@@ -584,17 +585,15 @@ export const postnote = [
 export const profileData = {
     avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
     userName: 'Bhupinder Singh FNK-BN',
-    timings: sessionStorage.getItem('timing') || 'No Timings Available',
-    appointmentType: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[0]
+    timings: getSessionStorageItem('timing') || 'No Timings Available',
+    appointmentType: getSessionStorageItem('appointmentType') || 'videp',
+    appointmentName: getSessionStorageItem('appointmentData')
+        ? getSessionStorageItem('appointmentData').split(',')[1]
         : 'N/A',
-    appointmentName: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[1]
+    appointmentDesc: getSessionStorageItem('appointmentData')
+        ? getSessionStorageItem('appointmentData').split(',')[2]
         : 'N/A',
-    appointmentDesc: sessionStorage.getItem('appointmentData')
-        ? sessionStorage.getItem('appointmentData').split(',')[2]
-        : 'N/A',
-    selectedDate: sessionStorage.getItem('selectedDate'),
+    selectedDate: getSessionStorageItem('selectedDate'),
     appointmentDuration: 30,
     desc: 'Acute Care',
     exp: '13 years of experience',

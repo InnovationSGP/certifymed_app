@@ -1,7 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+    getSessionStorageItem,
+    setSessionStorageItem
+} from '@/lib/sessionStorage';
 import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { HorizontalDatePickerArrow } from './Icons';
 
 const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
@@ -15,7 +18,7 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
 
     // Load saved date from sessionStorage on mount
     useEffect(() => {
-        const savedDate = sessionStorage.getItem('selectedDate');
+        const savedDate = getSessionStorageItem('selectedDate');
         if (savedDate) {
             const parsedDate = dayjs(savedDate, 'dddd, MMM D, YYYY');
             setSelectedDate(parsedDate);
@@ -26,7 +29,7 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
 
     const saveDateToSession = (date) => {
         const formattedDate = date.format('dddd, MMM D, YYYY');
-        sessionStorage.setItem('selectedDate', formattedDate);
+        setSessionStorageItem('selectedDate', formattedDate);
     };
 
     const handleNext = () => {

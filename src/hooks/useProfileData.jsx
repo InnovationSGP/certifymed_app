@@ -4,14 +4,6 @@ import axiosInstance from "@/utils/axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-=======
-'use client';
-import { setUser, updateUser } from '@/redux/slices/userSlice';
-import axiosInstance from '@/utils/axios';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
->>>>>>> Stashed changes
 
 export function useProfileData() {
     const dispatch = useDispatch();

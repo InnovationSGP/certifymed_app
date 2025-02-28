@@ -17,7 +17,7 @@ const AppoinmentPage = async () => {
                     heading="Appointments Overview"
                     buttontext="Book an Appointment"
                 />
-                <AppointmentsAnalytics data={appointments} />
+                <AppointmentsAnalytics data={appointments || []} />
                 {/* <button
                     onClick={() =>
                         handleTransition(

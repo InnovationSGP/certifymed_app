@@ -1,9 +1,5 @@
 'use client';
-import { useState } from "react";
-=======
-'use client';
 import { useState } from 'react';
->>>>>>> Stashed changes
 
 const initialFormState = {
     firstName: '',
@@ -26,7 +22,8 @@ const initialFormState = {
     phoneNumber: '',
     emergencyContactName: '',
     emergencyContactPhoneNumber: '',
-    emergencyContactRelationship: ''
+    emergencyContactRelationship: '',
+    bio: ''
     // createdAt: null,
     // updatedAt: null
 };

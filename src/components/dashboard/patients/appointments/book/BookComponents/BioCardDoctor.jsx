@@ -19,7 +19,7 @@ export default function BioCardDoctor() {
     const [isBioShow, setIsBioShow] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
-    const data = sessionStorage.getItem('appointmentData');
+    const data = getSessionStorageItem('appointmentData');
     const selectedDoctor = JSON.parse(data);
 
     return (

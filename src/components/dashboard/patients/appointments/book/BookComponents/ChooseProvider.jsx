@@ -10,7 +10,6 @@ import {
 } from '@/components/common/select';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import PrimaryBtn from '@/components/common/PrimaryBtn';
 
 export default function ChooseProvider({ city, setCity, isDoctor }) {
     const searchParams = useSearchParams();

@@ -6,6 +6,7 @@ import { TabDownArrowIcon } from './AppIcons';
 import { Badge } from './badge';
 import { Card } from './Card';
 import PrimaryBtn from './PrimaryBtn';
+import { setSessionStorageItem } from '@/lib/sessionStorage';
 
 export default function AppointmentTypes({
     selectedIdType,
@@ -20,7 +21,7 @@ export default function AppointmentTypes({
     };
 
     function handleAppointment(data) {
-        sessionStorage.setItem('appointmentData', JSON.stringify(data));
+      setSessionStorageItem('appointmentData', JSON.stringify(data));
         const newParams = new URLSearchParams(searchParams);
         newParams.set('tab', 'payment'.toString());
         router.push(`?${newParams.toString()}`, { scroll: false });

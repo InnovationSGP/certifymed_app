@@ -14,7 +14,7 @@ const AppointmentsAnalytics = ({ data }) => {
     useEffect(() => {
         dispatch(
             setAppointmentsForPatients({
-                appointmentsHistory: data.data,
+                appointmentsHistory: Array.isArray(data.data) ? data.data : [],
                 upcomingAppointments: '2',
                 completedAppointments: '7',
                 cancelledAppointments: '3'

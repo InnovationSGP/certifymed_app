@@ -7,7 +7,6 @@ const DateOfBirthInput = ({ defaultDate, setDateOfBirth }) => {
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
 
-    console.log(month, day, year);
 
     useEffect(() => {
         const defaultYear = parsedDate?.getUTCFullYear().toString();

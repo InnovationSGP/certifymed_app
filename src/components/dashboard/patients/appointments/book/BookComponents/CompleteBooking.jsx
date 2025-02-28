@@ -153,7 +153,7 @@ export default function CompleteBooking({
                 const parsedData = {
                     physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
                     careCoordinator: `Dr Wilson`,
-                    videoOn: appointmentType === 'video' ? true : false,
+                    videoOn: true,
                     visitReason: formValues.visitReason,
                     visitCoordinates: '',
                     visitDescription: formValues.visitDescription,
@@ -662,7 +662,6 @@ export default function CompleteBooking({
                             </label>
                         </div>
                         <button
-                            // onClick={() => setShowBioCard(true)}
                             disabled={loading}
                             type="submit"
                             className="text-center bg-[#293991] h-[60px] w-full md:w-min md:px-40 md:whitespace-nowrap mt-4 rounded-[12px] text-white disabled:opacity-65"

@@ -5,8 +5,6 @@ export default function PayOutOfPocket({
     pocketPayDetails,
     handleContinue
 }) {
-    console.log(handleContinue);
-
     return (
         <div className="w-11/12 p-4 px-6 mb-24 text-black bg-white rounded-xl shadow-tab">
             <p className="mt-4 text-lg font-semibold sm:text-xl font-poppins text-secondary">
@@ -23,7 +21,7 @@ export default function PayOutOfPocket({
                             }));
                         }}
                         className={`border min-w-36 text-sm rounded-lg h-[55px] xl:h-[60px] hover:bg-primary hover:text-white transition-all duration-200 ease-in-out flex items-center justify-center ${
-                            pocketPayDetails.type === item
+                            pocketPayDetails.paymentMethod === item
                                 ? 'bg-primary text-white'
                                 : 'bg-white'
                         } cursor-pointer`}

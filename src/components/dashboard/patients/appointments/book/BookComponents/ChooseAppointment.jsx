@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronRight, Smartphone, Building2 } from 'lucide-react';
+import { ChevronRight, Smartphone, Building2, ChevronDown } from 'lucide-react';
 import { Card } from '@/components/common/Card';
 import AppointmentTypes from '@/components/common/AppointmentType';
 
