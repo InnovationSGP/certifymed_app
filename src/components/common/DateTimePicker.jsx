@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { HorizontalDatePickerArrow } from './Icons';
 
 const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
@@ -15,12 +14,14 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
 
     // Load saved date from sessionStorage on mount
     useEffect(() => {
-        const savedDate = sessionStorage.getItem('selectedDate');
-        if (savedDate) {
-            const parsedDate = dayjs(savedDate, 'dddd, MMM D, YYYY');
-            setSelectedDate(parsedDate);
-            setStartDate(parsedDate);
-            setDates(generateDates(parsedDate));
+        if (typeof window !== 'undefined') {
+            const savedDate = sessionStorage.getItem('selectedDate');
+            if (savedDate) {
+                const parsedDate = dayjs(savedDate, 'dddd, MMM D, YYYY');
+                setSelectedDate(parsedDate);
+                setStartDate(parsedDate);
+                setDates(generateDates(parsedDate));
+            }
         }
     }, []);
 

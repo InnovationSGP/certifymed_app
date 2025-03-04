@@ -19,17 +19,17 @@ const NotesWelcome = ({
     useEffect(() => {
         dispatch(
             setDoctorAppointments({
-                appointmentsHistory: data || [],
-                upcomingAppointments: '4',
-                completedAppointments: '4',
-                unreadMessages: '2'
+                appointmentsHistory: data.data || [],
+                upcomingAppointments: data.upcoming_appointment_count || 0,
+                completedAppointments: data?.count || 0,
+                unreadMessages: '0'
             })
         );
 
         dispatch(setPatients(patientsdatalist));
     }, [dispatch]);
-    const userFullName = `Dr. ${user.firstName || ''} ${
-        user.lastName || ''
+    const userFullName = `Dr. ${user?.firstName || ''} ${
+        user?.lastName || ''
     }`.trim();
     return (
         <>

@@ -20,10 +20,11 @@ const AppoinmentPage = async () => {
         <DashboardLayout className="overflow-auto">
             <div>
                 <DashboardWelcome
+                    data={appointments || []}
                     heading="Appointments Overview"
                     buttontext="Book an Appointment"
                 />
-                <AppointmentsAnalytics data={appointments.data || []} />
+                <AppointmentsAnalytics />
                 <div className="hidden md:block">
                     <AppointmentList
                         type="Patients"

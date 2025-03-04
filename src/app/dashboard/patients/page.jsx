@@ -15,7 +15,7 @@ const PatientsDashboardPage = async () => {
     return (
         <DashboardLayout className="overflow-auto">
             <DashboardWelcome
-                data={appointments.data || []}
+                data={appointments || []}
                 description="Welcome back!"
                 emergencycall={false}
                 buttontext="Book a Doctor"

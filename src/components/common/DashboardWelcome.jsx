@@ -15,15 +15,17 @@ const DashboardWelcome = ({ data, description, emergencycall, buttontext }) => {
         dispatch(
             setAppointmentsForPatients({
                 appointmentsHistory: data,
-                upcomingAppointments: '1',
+                upcomingAppointments: data?.upcoming_appointment_count || 0,
                 completedAppointments: '3',
-                cancelledAppointments: '1'
+                cancelledAppointments: data?.cancel_appointment_count || 0
             })
         );
     }, [dispatch]);
+
     const userFullName = `${user.firstName || ''} ${
         user.lastName || ''
     }`.trim();
+
     return (
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] sm:mt-10 md:mt-16 gap-[29px] px-5 md:px-[35px]">

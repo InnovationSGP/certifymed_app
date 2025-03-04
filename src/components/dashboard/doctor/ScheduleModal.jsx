@@ -1,8 +1,10 @@
 import DurationSelect from '@/components/common/DurationSelect';
 import { HiddenIcon } from '@/components/common/Icons';
+import { createMultipleSchedule } from '@/services/ScheduleService';
 import { getTimeOptions } from '@/utils/dateHelpers';
 import { Clock, Plus, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
     const [scheduleTitle, setScheduleTitle] = useState('');
@@ -11,30 +13,68 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
     const sidebarRef = useRef(null);
     const [scheduleDuration, setScheduleDuration] = useState('30 minutes');
     const [availability, setAvailability] = useState({
-        Sun: { isAvailable: false, slots: [] },
-        Mon: { isAvailable: false, slots: [] },
+        Sun: { isBooked: false, slots: [] },
+        Mon: { isBooked: false, slots: [] },
         Tue: {
-            isAvailable: true,
-            slots: [{ id: 1, start: '9:00am', end: '9:00pm' }]
+            isBooked: false,
+            slots: [{ start: '9:00am', end: '9:00pm' }]
         },
         Wed: {
-            isAvailable: true,
-            slots: [{ id: 1, start: '9:00am', end: '9:00pm' }]
+            isBooked: false,
+            slots: [{ start: '9:00am', end: '9:00pm' }]
         },
         Thu: {
-            isAvailable: true,
-            slots: [{ id: 1, start: '9:00am', end: '9:00pm' }]
+            isBooked: false,
+            slots: [{ start: '9:00am', end: '9:00pm' }]
         },
         Fri: {
-            isAvailable: true,
-            slots: [{ id: 1, start: '9:00am', end: '9:00pm' }]
+            isBooked: false,
+            slots: [{ start: '9:00am', end: '9:00pm' }]
         },
         Sat: {
-            isAvailable: true,
-            slots: [{ id: 1, start: '9:00am', end: '9:00pm' }]
+            isBooked: false,
+            slots: [{ start: '9:00am', end: '9:00pm' }]
         }
     });
 
+    const generateAppointmentArray = (selectedDate, availability) => {
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const currentDate = new Date(selectedDate);
+
+        return daysOfWeek
+            .filter((day) => availability[day].isBooked)
+            .map((day) => {
+                const fullDayName = {
+                    Sun: 'Sunday',
+                    Mon: 'Monday',
+                    Tue: 'Tuesday',
+                    Wed: 'Wednesday',
+                    Thu: 'Thursday',
+                    Fri: 'Friday',
+                    Sat: 'Saturday'
+                }[day];
+
+                const dayIndex = daysOfWeek.indexOf(day);
+                const appointmentDate = new Date(currentDate);
+                appointmentDate.setDate(
+                    currentDate.getDate() + (dayIndex - currentDate.getDay())
+                );
+
+                const formattedDate = appointmentDate
+                    .toISOString()
+                    .split('T')[0];
+
+                return {
+                    day: fullDayName,
+                    appointmentDate: formattedDate,
+                    slots: availability[day].slots.map((slot) => ({
+                        startTime: slot.start,
+                        endTime: slot.end,
+                        isBooked: false
+                    }))
+                };
+            });
+    };
     useEffect(() => {
         setIsEntering(false);
     }, []);
@@ -45,11 +85,11 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
     };
     const addTimeSlot = (day) => {
         setAvailability((prev) => {
-            if (!prev[day].isAvailable) {
+            if (!prev[day].isBooked) {
                 return {
                     ...prev,
                     [day]: {
-                        isAvailable: true,
+                        isBooked: true,
                         slots: [
                             { id: Date.now(), start: '9:00am', end: '9:00pm' }
                         ]
@@ -77,7 +117,7 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
             return {
                 ...prev,
                 [day]: {
-                    isAvailable: updatedSlots.length > 0,
+                    isBooked: updatedSlots.length > 0,
                     slots: updatedSlots
                 }
             };
@@ -96,14 +136,23 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
         }));
     };
 
-    const handleSave = () => {
-        onSave({
-            title: scheduleTitle || 'Medical Consultation',
-            startTime: '11:00',
-            endTime: scheduleDuration === '30 minutes' ? '11:30' : '12:00',
-            date: selectedDate.toISOString().split('T')[0],
-            participants: 2
-        });
+    const handleSave = async () => {
+        try {
+            const appointmentArray = generateAppointmentArray(
+                selectedDate,
+                availability
+            );
+
+            const response = await createMultipleSchedule(appointmentArray);
+            if (response.success) {
+                toast.success(response.message);
+            } else {
+                toast.error('Error creating schedule');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Error creating schedule');
+        }
     };
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -214,13 +263,13 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
                     {/* Schedule Grid */}
                     <div className="space-y-4 mb-6 mt-5 ml-6">
                         {Object.entries(availability).map(
-                            ([day, { isAvailable, slots }]) => (
+                            ([day, { isBooked, slots }]) => (
                                 <div key={day} className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <span className="w-16 text-pantone text-[13px] font-medium">
                                             {day}
                                         </span>
-                                        {!isAvailable ? (
+                                        {!isBooked ? (
                                             <div className="flex flex-1 items-center justify-between pl-4">
                                                 <span className="text-pantone text-xs font-medium">
                                                     Unavailable

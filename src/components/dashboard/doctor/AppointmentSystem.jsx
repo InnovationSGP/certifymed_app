@@ -115,6 +115,7 @@ const AppointmentSystem = ({ data }) => {
 
     // Appointment handlers
     const handleSaveAppointment = (appointmentData) => {
+        console.log(appointmentData);
         setAppointments((prev) => [
             ...prev,
             { id: Date.now(), ...appointmentData }

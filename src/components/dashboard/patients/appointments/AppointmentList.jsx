@@ -35,7 +35,7 @@ const AppointmentList = ({ type, dataSet, listType }) => {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {dataSet.length > 0 ? (
-                                dataSet?.map((appointment, index) => (
+                                dataSet.map((appointment, index) => (
                                     <RecentAppointmentsListItem
                                         type={type}
                                         appointment={appointment}

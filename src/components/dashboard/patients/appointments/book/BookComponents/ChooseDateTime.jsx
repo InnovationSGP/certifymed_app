@@ -1,28 +1,47 @@
 import HorizontalDatePicker from '@/components/common/DateTimePicker';
 import { TimingProviders } from '@/components/common/Helper';
+import { getAllDoctorSchedules } from '@/services/ScheduleService';
 import dayjs from 'dayjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ChooseDateTime = () => {
-    const storedDate = sessionStorage.getItem('selectedDate');
-    const storedTime = sessionStorage.getItem('timing');
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [selectedTime, setSelectedTime] = useState(
-        storedTime || 'Select Time'
-    );
-    const [selectedDate, setSelectedDate] = useState(
-        storedDate ? dayjs(storedDate) : dayjs().startOf('day')
-    );
+    const [selectedTime, setSelectedTime] = useState('Select Time');
+    const [selectedDate, setSelectedDate] = useState(dayjs().startOf('day'));
+    const [selectedDoctor, setSelectedDoctor] = useState('');
+
     useEffect(() => {
+        const selectedDoctor = JSON.parse(
+            sessionStorage.getItem('appointmentData')
+        );
+        const { _id } = selectedDoctor;
+        setSelectedDoctor(_id);
+        const storedDate = sessionStorage.getItem('selectedDate');
+        const storedTime = sessionStorage.getItem('timing');
         if (typeof window !== 'undefined') {
+            setSelectedTime(storedTime || 'Select Time');
+            setSelectedDate(
+                storedDate ? dayjs(storedDate) : dayjs().startOf('day')
+            );
             sessionStorage.setItem(
                 'selectedDate',
                 selectedDate.format('YYYY-MM-DD')
             );
         }
-    }, [selectedDate]);
+    }, []);
+
+    async function fetchDoctorSchedules() {
+        const response = await getAllDoctorSchedules(selectedDoctor);
+        return response.data;
+    }
+
+    useEffect(() => {
+        if (selectedDoctor) {
+            fetchDoctorSchedules();
+        }
+    }, [selectedDoctor]);
 
     const handleTimeSelect = (time) => {
         if (typeof window !== 'undefined') {
