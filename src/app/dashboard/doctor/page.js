@@ -1,10 +1,12 @@
 import DashboardLayout from '@/components/common/DashboardLayout';
 import DoctorAnalytics from '@/components/dashboard/doctor/DoctorAnalytics';
 import DoctorDashboard from '@/components/dashboard/doctor/DoctorDashboard';
-import NotesWelcome from '@/components/dashboard/patients/notes/NotesWelcome';
 import { getAppointmentsDoctor } from '@/services/AppointmentService';
+import dynamic from 'next/dynamic';
 import { cookies } from 'next/headers';
-
+const NotesWelcome = dynamic(() => import('@/components/dashboard/patients/notes/NotesWelcome'), {
+    ssr: false
+})
 const DoctorDashboardPage = async () => {
     const cookiesStore = await cookies();
     const token = cookiesStore.get('jwt')?.value;

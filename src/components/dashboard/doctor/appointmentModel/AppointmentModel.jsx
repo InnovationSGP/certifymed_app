@@ -1,39 +1,30 @@
 'use client';
+import { X } from 'lucide-react';
+import Image from 'next/image';
 
-import {
-    BadgeCheck,
-    Calendar,
-    Heart,
-    Mail,
-    MessageCircle,
-    Phone,
-    Ticket,
-    X
-} from 'lucide-react';
-import { useState } from 'react';
-
-export default function AppointmentModel({ setShowModal }) {
+export default function AppointmentModel({ closeModal, data }) {
+    const { doctor, visitReason, _id, visitDate } = data;
     const profileData = {
         avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
-        userName: 'Bhupinder Singh FNK-BN',
-        phoneNumber: '+62 837 4839 3882',
-        email: 'jeanmaxniiolio@mail.com',
+        userName: `Dr. ${doctor?.firstName} ${doctor?.lastName}`,
+        phoneNumber: `${doctor?.phoneNumber}`,
+        email: `${doctor?.email}`,
         appointmentDuration: 30,
-        dob: '12/01/2000',
-        gender: 'Male',
+        dob: `${new Date(doctor?.dateOfBirth).toLocaleDateString()}`,
+        gender: `${doctor?.gender}`,
         desc: 'Acute Care',
         exp: '13 years of experience',
         rating: 4.96,
         totalRating: 1758,
         moreDesc:
             'Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores pariatur mollitia voluptas nesciunt? Non deleniti totam enim magnam pariatur officiis animi, quaerat, ea doloremque a placeat. Ratione, perferendis? Aut explicabo delectus quo officia molestias doloremque laboriosam, fugit consectetur rem voluptates velit ut facere minus non sit nemo. Blanditiis nesciunt modi pariatur, vero alias reiciendis numquam reprehenderit est commodi. Ipsa illo rerum eius aspernatur deleniti, veniam quas quisquam harum voluptatibus aliquid et ullam, dicta ad quaerat laudantium quam magnam corporis quae laborum nesciunt eaque, ducimus fuga? Quaerat ut blanditiis harum laborum animi tempora veritatis saepe quae qui, aut corporis tempore. Deleniti maxime, autem, vitae eligendi id eius suscipit optio atque officia dolores debitis aliquam eos. Impedit libero iure quas dolorem explicabo consectetur fugiat nulla voluptatibus qui reprehenderit alias maiores placeat velit at vitae atque doloribus, repellendus veniam eum iusto cumque officiis similique ipsam. Deserunt nostrum dicta illum veniam facere reiciendis adipisci accusantium modi. Itaque exercitationem, tempore animi architecto nostrum blanditiis ad eius excepturi officiis vero accusamus, possimus odit totam inventore.',
-        reason: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores pariatur mollitia voluptas nesciunt? Non deleniti totam enim magnam pariatur officiis animi, quaerat, ea doloremque a placeat. Ratione, perferendis? Aut explicabo delectus quo officia molestias doloremque laboriosam, fugit consectetur rem voluptates velit ut facere minus non sit nemo. Blanditiis nesciunt modi pariatur, vero alias reiciendis numquam reprehenderit est commodi.'
+        reason: visitReason
     };
 
     return (
         <div
             className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-sm z-50 h-screen overflow-auto hide-scrollbar"
-            onClick={() => setShowModal(false)}
+            onClick={closeModal}
         >
             <div
                 className="sm:max-w-[98%] xl:max-w-[1129px] mx-auto h-[100vh] sm:h-fit overflow-auto hide-scrollbar space-y-5 sm:space-y-12 bg-white sm:rounded-xl shadow-[0px_0px_38.1px_0px_rgba(0,0,0,0.12)] p-3 md:p-6"
@@ -44,7 +35,7 @@ export default function AppointmentModel({ setShowModal }) {
                         Application Information
                     </h2>
                     <button
-                        onClick={() => setShowModal(false)}
+                        onClick={closeModal}
                         className="text-gray-500 hover:text-gray-700"
                     >
                         <X className="w-5 h-5" />
@@ -54,14 +45,15 @@ export default function AppointmentModel({ setShowModal }) {
                 <div>
                     <div className="flex flex-col lg:flex-row w-full items-start lg:items-center sm:space-x-3  sm:space-y-3 rounded-xl">
                         <div className="flex flex-col gap-3 lg:flex-row w-full items-center">
-                            <div className="overflow-hidden rounded-full bg-blue-300">
-                                <img
+                            <div className="overflow-hidden rounded-full bg-blue-300 relative aspect-square w-24">
+                                <Image
+                                    fill
                                     src={profileData.avatar}
-                                    className="h-24 w-24 object-cover text-blue-700"
+                                    alt={profileData.userName}
                                 />
                             </div>
                             <div className="flex flex-col items-start md:px-4 gap-3">
-                                <p className="font-medium text-xl">
+                                <p className="font-medium text-xl text-black">
                                     {profileData.userName}
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 md:gap-6 sm:items-center">
@@ -138,7 +130,9 @@ export default function AppointmentModel({ setShowModal }) {
                                         Appointment Date
                                     </p>
                                     <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
-                                        10/02/2025
+                                        {new Date(
+                                            visitDate
+                                        ).toLocaleDateString()}
                                     </p>
                                 </div>
                                 <div>
@@ -146,23 +140,23 @@ export default function AppointmentModel({ setShowModal }) {
                                         Appointment ID
                                     </p>
                                     <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
-                                        #0029324828
+                                        #{_id}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex flex-col md:flex-row gap-3 md:gap-5">
                                 <button
-                                    onClick={() => setShowModal(false)}
+                                    onClick={closeModal}
                                     className="sm:max-w-[295px] w-full px-8 py-3 border border-dimGray text-dimGray hover:bg-dimGray hover:text-white transition-all duration-200 ease-in-out rounded-xl text-base font-medium h-[55px] xl:h-[60px]"
                                 >
                                     Cancel Appointment
                                 </button>
-                                <button
+                                {/* <button
                                     onClick={() => setShowModal(false)}
                                     className="px-16 py-3 sm:max-w-[295px] w-ful border border-bluetitmouse text-bluetitmouse hover:bg-bluetitmouse hover:text-white rounded-xl transition-all duration-200 ease-in-out h-[55px] xl:h-[60px]"
                                 >
                                     re-schedule
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                     </div>

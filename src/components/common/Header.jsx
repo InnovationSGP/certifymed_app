@@ -1,16 +1,14 @@
 "use client";
+import { TransitionLink } from "@/utils/TransitionLink";
+import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 import Link from "next/link";
 import { useState } from "react";
 import { navLinks } from "./Helper";
 import { LogoIcon, MenuIcon } from "./Icons";
 import PrimaryBtn from "./PrimaryBtn";
 import Sidebar from "./SIdebar";
-import { useRouter } from "next/navigation";
-import { TransitionLink } from "@/utils/TransitionLink";
-import { useTransitionRouteChange } from "@/utils/useTransitionRouteChange";
 
 const Header = () => {
-  const router = useRouter();
   const { handleTransition } = useTransitionRouteChange();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 

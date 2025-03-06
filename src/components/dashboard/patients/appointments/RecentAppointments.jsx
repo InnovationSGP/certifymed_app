@@ -25,7 +25,7 @@ const RecentAppointments = ({ type, appointments = [] }) => {
                                     <th className="table-heading">Date</th>
                                     <th className="table-heading">Mode</th>
                                     <th className="table-heading">Status</th>
-                                    <th className="table-heading">Action</th>
+                                    <th className="table-heading">View</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">

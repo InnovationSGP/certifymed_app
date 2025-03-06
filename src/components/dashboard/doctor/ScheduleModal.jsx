@@ -138,12 +138,19 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
 
     const handleSave = async () => {
         try {
+            if (!scheduleTitle) {
+                return alert('Please enter a schedule title');
+            }
             const appointmentArray = generateAppointmentArray(
                 selectedDate,
                 availability
             );
-
-            const response = await createMultipleSchedule(appointmentArray);
+            const parsedArray = appointmentArray.map((item) => ({
+                appointmentTitle: scheduleTitle,
+                appointmentDuration: scheduleDuration,
+                ...item
+            }));
+            const response = await createMultipleSchedule(parsedArray);
             if (response.success) {
                 toast.success(response.message);
             } else {
@@ -234,7 +241,7 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
                             />
                         </div>
                     </div>
-                    <div className="flex gap-2.5 mt-8 mb-3">
+                    {/* <div className="flex gap-2.5 mt-8 mb-3">
                         <Clock
                             size={20}
                             className="text-pantone mt-[0.6px] w-4"
@@ -259,7 +266,7 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
                                 { value: 'monthly', label: 'Repeat monthly' }
                             ]}
                         />
-                    </div>
+                    </div> */}
                     {/* Schedule Grid */}
                     <div className="space-y-4 mb-6 mt-5 ml-6">
                         {Object.entries(availability).map(
@@ -269,7 +276,7 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
                                         <span className="w-16 text-pantone text-[13px] font-medium">
                                             {day}
                                         </span>
-                                        {!isBooked ? (
+                                        {slots.length === 0 ? (
                                             <div className="flex flex-1 items-center justify-between pl-4">
                                                 <span className="text-pantone text-xs font-medium">
                                                     Unavailable

@@ -1,27 +1,35 @@
 import HorizontalDatePicker from '@/components/common/DateTimePicker';
 import { TimingProviders } from '@/components/common/Helper';
 import { getAllDoctorSchedules } from '@/services/ScheduleService';
-import dayjs from 'dayjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 const ChooseDateTime = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [selectedTime, setSelectedTime] = useState('Select Time');
+    const [selectedTime, setSelectedTime] = useState('');
     const [selectedDate, setSelectedDate] = useState(dayjs().startOf('day'));
     const [selectedDoctor, setSelectedDoctor] = useState('');
 
     useEffect(() => {
-        const selectedDoctor = JSON.parse(
-            sessionStorage.getItem('appointmentData')
-        );
-        const { _id } = selectedDoctor;
-        setSelectedDoctor(_id);
-        const storedDate = sessionStorage.getItem('selectedDate');
-        const storedTime = sessionStorage.getItem('timing');
+        router.prefetch('/dashboard/patients/appointments/book');
+    }, [router]);
+
+    useEffect(() => {
         if (typeof window !== 'undefined') {
-            setSelectedTime(storedTime || 'Select Time');
+            const selectedDoctor = JSON.parse(
+                sessionStorage.getItem('appointmentData')
+            );
+            if (!selectedDoctor) {
+                alert('Please select a doctor first');
+                router.push('/dashboard/patients/appointments/book');
+            }
+            const { _id } = selectedDoctor;
+            setSelectedDoctor(_id);
+            const storedDate = sessionStorage.getItem('selectedDate');
+            const storedTime = sessionStorage.getItem('timing');
+            setSelectedTime(storedTime || '');
             setSelectedDate(
                 storedDate ? dayjs(storedDate) : dayjs().startOf('day')
             );
@@ -34,6 +42,7 @@ const ChooseDateTime = () => {
 
     async function fetchDoctorSchedules() {
         const response = await getAllDoctorSchedules(selectedDoctor);
+        console.log(response);
         return response.data;
     }
 
@@ -89,9 +98,9 @@ const ChooseDateTime = () => {
                                     >
                                         {time}
                                     </span>
-                                    <span className="sm:p-1 sm:px-3 justify-center items-center shadow-tab rounded-full border min-w-8 min-h-8 flex text-sm font-medium">
+                                    {/* <span className="sm:p-1 sm:px-3 justify-center items-center shadow-tab rounded-full border min-w-8 min-h-8 flex text-sm font-medium">
                                         {count}
-                                    </span>
+                                    </span> */}
                                 </button>
                             ))}
                         </div>
@@ -99,7 +108,8 @@ const ChooseDateTime = () => {
                 ))}
                 <div>
                     <button
-                        className="rounded-xl w-full sm:w-fit text-sm sm:text-base bg-primary font-medium text-white py-5 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 lg:mt-20"
+                        disabled={!selectedTime || !selectedDate}
+                        className="rounded-xl w-full sm:w-fit text-sm sm:text-base bg-primary font-medium text-white py-5 px-5 sm:px-8 hover:bg-[#2b923b] duration-300 ease-in-out transition-colors h-full md:h-[60px] flex justify-center items-center mt-3 md:mt-10 disabled:opacity-60 lg:mt-20 disabled:hover:bg-primary disabled:cursor-not-allowed"
                         onClick={() => {
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('tab', 'final'.toString());

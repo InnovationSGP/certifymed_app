@@ -23,7 +23,8 @@ const initialFormState = {
     emergencyContactName: '',
     emergencyContactPhoneNumber: '',
     emergencyContactRelationship: '',
-    bio: ''
+    bio: '',
+    apartment: ''
 };
 
 export function useProfileForm() {

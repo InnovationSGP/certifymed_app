@@ -6,6 +6,17 @@ import AppointmentModel from './appointmentModel/AppointmentModel';
 
 const TimeSlots = ({ appointments, currentDate }) => {
     const [showModel, setShowModel] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+    const handleCardClick = (apt) => {
+        setSelectedAppointment(apt);
+        setShowModel(true);
+    };
+
+    function closeModal() {
+        setShowModel(false);
+        setSelectedAppointment(null);
+    }
     return (
         <div
             className="overflow-auto hide-scrollbar"
@@ -17,13 +28,13 @@ const TimeSlots = ({ appointments, currentDate }) => {
                     className="flex border-t border-gray-100 h-24"
                 >
                     {/* Fixed time column */}
+                    <div className="w-20 pt-2 text-xs sticky left-0 bg-lightOverlay">
+                        {slot.label}
+                    </div>
 
                     {/* Scrollable day slots */}
                     <div className="flex gap-4 w-full">
-                        <div className="w-20 pt-2 text-xs  sticky left-0 bg-lightOverlay">
-                            {slot.label}
-                        </div>
-                        <div className="grid grid-cols-3 w-full  gap-3">
+                        <div className="grid grid-cols-3 w-full gap-3">
                             {getThreeDayView(currentDate).map(
                                 ({ date }, dayIndex) => {
                                     const dayAppointments = appointments.filter(
@@ -42,16 +53,16 @@ const TimeSlots = ({ appointments, currentDate }) => {
                                     );
 
                                     return (
-                                        <button
-                                            onClick={() => {
-                                                setShowModel(!showModel);
-                                            }}
+                                        <div
                                             key={dayIndex}
                                             className="relative"
                                         >
                                             {dayAppointments.map((apt) => (
                                                 <div
                                                     key={apt.id}
+                                                    onClick={() =>
+                                                        handleCardClick(apt)
+                                                    }
                                                     className="bg-pervenche text-white w-full rounded-lg p-3 cursor-pointer"
                                                 >
                                                     <div className="flex justify-between items-start gap-2.5">
@@ -85,7 +96,7 @@ const TimeSlots = ({ appointments, currentDate }) => {
                                                     </div>
                                                 </div>
                                             ))}
-                                        </button>
+                                        </div>
                                     );
                                 }
                             )}
@@ -93,7 +104,13 @@ const TimeSlots = ({ appointments, currentDate }) => {
                     </div>
                 </div>
             ))}
-            {showModel && <AppointmentModel setShowModal={setShowModel} />}
+
+            {showModel && selectedAppointment && (
+                <AppointmentModel
+                    data={selectedAppointment}
+                    closeModal={closeModal}
+                />
+            )}
         </div>
     );
 };

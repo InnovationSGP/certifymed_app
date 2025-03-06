@@ -17,6 +17,7 @@ import { checkFormData } from '@/utils/bookingHelper';
 import { calculateEndTime } from '@/utils/dateHelpers';
 import { LoaderCircle, Minus, Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
@@ -28,6 +29,7 @@ const DoctorInfo = dynamic(() => import('./DoctorInfo'), {
 export default function CompleteBooking({ tabNumber, setTabNumber }) {
     const userData = useSelector((state) => state.user);
     const formRef = useRef(null);
+    const router = useRouter();
     const [showPreferred, setShowPreferred] = useState(false);
     const [selectedDoctor, setselectedDoctor] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -118,6 +120,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                         formValues.visitReason || 'Having pain in the chest',
                     visitCoordinates: '',
                     visitDescription: formValues.visitDescription,
+                    apartment: formValues.apartment,
                     doctorAssign: selectedDoctor._id,
                     visitDate: selectedDate,
                     startTime: selectedTime,
@@ -132,6 +135,9 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                 if (response.success) {
                     toast.success('Appointment created successfully!');
                     setShowBioCard(true);
+                    setTimeout(() => {
+                        router.replace('/dashboard/patients/appointments');
+                    }, [3000]);
                 } else {
                     toast.error('Something went wrong. Please try again.');
                 }
@@ -384,7 +390,16 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             <label className="text-base font-medium font-poppins text-dimGray">
                                                 Apartment, etc
                                             </label>
-                                            <Input placeholder="Enter your apartment" />
+                                            <Input
+                                                name="apartment"
+                                                onChange={(e) => {
+                                                    updateFormField(
+                                                        'apartment',
+                                                        e.target.value
+                                                    );
+                                                }}
+                                                placeholder="Enter your apartment"
+                                            />
                                         </div>
                                     </div>
                                     <div className="w-full flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
@@ -575,27 +590,28 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                         </div>
                                     </div>
 
-                                    {/* <div className="w-full flex justify-betweengap-4 sm:gap-6">
+                                    <div className="w-full flex justify-betweengap-4 sm:gap-6">
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
-                                                Emergency Contact Phone Number
+                                                Booking Reason
                                             </label>
                                             <Input
-                                                name="emergencyContactPhoneNumber"
+                                                name="visitReason"
+                                                type="text"
                                                 defaultValue={
-                                                    formData.emergencyContactPhoneNumber
+                                                    formData.vistReason
                                                 }
                                                 onChange={(e) => {
                                                     updateFormField(
-                                                        'emergencyContactPhoneNumber',
+                                                        'visitReason',
                                                         e.target.value
                                                     );
                                                 }}
-                                                placeholder="Enter your emergency contact phone"
+                                                placeholder="Enter booking reason"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
                                         </div>
-                                    </div> */}
+                                    </div>
                                 </div>
                             </div>
                         </div>

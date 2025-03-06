@@ -20,7 +20,8 @@ const AppointmentSystem = ({ data }) => {
             startTime: item.startTime,
             endTime: item.endTime,
             date: item.visitDate,
-            participants: 1
+            participants: 1,
+            ...item
         };
     });
     const [appointments, setAppointments] = useState(array || []);
