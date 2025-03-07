@@ -100,7 +100,7 @@ export default function ChoosePay() {
                                         <img
                                             className={`${
                                                 provider.name === 'Aetna'
-                                                    ? 'h-12'
+                                                    ? 'h-10'
                                                     : 'h-6'
                                             } w-auto object-contain`}
                                             src={provider.logo}

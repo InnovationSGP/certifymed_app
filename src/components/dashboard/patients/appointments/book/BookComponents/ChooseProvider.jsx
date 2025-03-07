@@ -21,9 +21,7 @@ export default function ChooseProvider() {
     const [error, setError] = useState(false);
     const newParams = new URLSearchParams(searchParams);
     newParams.set('tab', 'appointment'.toString());
-    const providers = Array(8).fill(
-        'https://s3-alpha-sig.figma.com/img/ef6a/fb79/316aa02d5b6e122cff0f2bd2bf3434cc?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=aA7b9aw4Dz1uf0oa0OrCIDVPEegkA4uQrmy6kLLTrFwLHw0PccfNORuNojBiwf6CADEK~OWXrG-Zi0BLS9bT-ipdHTdwfvXmy3RCmd5sY5mNAkRy~Wc8TvFR7I2KRe~uTmUQs3Ca-RYyG9dW29xsTobqyt8j-Vg97eQo9vmbbCiJZzDTNb-lQkpwKeyARwl4hZW~L~mdz6~75vE5BO-PWJ08sNP2nZ7tchyFfsxWGGjzWnpDJN9rPiugH2Xdth-i9acatpLvsCw~WJBzJzjwoSjPnLIpRr6PEAq3fZf2GLHhbyEzgB-1qZVUxgYuzA-JtoS~1Kjj~TZhCchUR32bLQ__'
-    );
+    const providers = Array(8).fill('/images/profile2.webp');
 
     async function searchDoctorHandler() {
         setLoading(true);
