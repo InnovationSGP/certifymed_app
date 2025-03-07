@@ -3,11 +3,11 @@ import React from 'react';
 import RecentAppointmentsListItem from './RecentAppointmentsListItem';
 import ListHeading from '@/components/common/ListHeading';
 
-const AppointmentList = ({ type, dataSet, listType }) => {
+const AppointmentList = ({ type, dataSet = [], listType }) => {
     return (
         <>
             <div className="px-5 md:px-[35px] mt-[35px] mb-20 xl:mb-[30px]">
-                <ListHeading heading="Appointment History" />
+                <ListHeading heading="Appointment History" showLink={false} />
                 <hr />
                 <div className="w-full overflow-y-auto custom-scrollbar ">
                     <table className="min-w-full bg-graywhite rounded-b-xl ">

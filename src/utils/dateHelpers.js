@@ -125,7 +125,7 @@ export const getFirstDayOfMonth = (date) => {
   return firstDay === 0 ? 6 : firstDay - 1;
 };
 
-export function calculateEndTime(startTime, durationInMinutes=30) {
+export function calculateEndTime(startTime, durationInMinutes = 30) {
   // Parse the start time
   const [time, modifier] = startTime.split(" ");
   let [hours, minutes] = time.split(":").map(Number);
@@ -155,4 +155,23 @@ export function calculateEndTime(startTime, durationInMinutes=30) {
 
   // Return the formatted end time
   return `${endHours}:${endMinutes.toString().padStart(2, "0")} ${endModifier}`;
+}
+
+export function removeAmPm(timeString) {
+  // Split the time string into the time part and the AM/PM part
+  const [time, modifier] = timeString.split(' ');
+
+  // Split the time part into hours and minutes
+  let [hours, minutes] = time.split(':');
+
+  // Convert hours to 24-hour format
+  if (modifier === 'pm' && hours !== '12') {
+    hours = parseInt(hours, 10) + 12;
+  }
+  if (modifier === 'am' && hours === '12') {
+    hours = '00';
+  }
+
+  // Return the time in 24-hour format
+  return `${hours}:${minutes}`;
 }

@@ -7,8 +7,9 @@ import CalendarView from './CalendarView';
 import CalendarModal from './CalenderModal';
 import MiniCalendar from './MiniCalendar';
 import ScheduleModal from './ScheduleModal';
+import { removeAmPm } from '@/utils/dateHelpers';
 
-const AppointmentSystem = ({ data }) => {
+const AppointmentSystem = ({ data = [] }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -17,8 +18,8 @@ const AppointmentSystem = ({ data }) => {
         return {
             id: item._id,
             title: 'Medical Consultation',
-            startTime: item.startTime,
-            endTime: item.endTime,
+            startTime: removeAmPm(item.startTime),
+            endTime: removeAmPm(item.endTime),
             date: item.visitDate,
             participants: 1,
             ...item
@@ -116,7 +117,6 @@ const AppointmentSystem = ({ data }) => {
 
     // Appointment handlers
     const handleSaveAppointment = (appointmentData) => {
-        console.log(appointmentData);
         setAppointments((prev) => [
             ...prev,
             { id: Date.now(), ...appointmentData }

@@ -6,7 +6,12 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const DashboardWelcome = ({ data, description, emergencycall, buttontext }) => {
+const DashboardWelcome = ({
+    data = [],
+    description,
+    emergencycall,
+    buttontext
+}) => {
     const { handleTransition } = useTransitionRouteChange();
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
@@ -14,16 +19,16 @@ const DashboardWelcome = ({ data, description, emergencycall, buttontext }) => {
     useEffect(() => {
         dispatch(
             setAppointmentsForPatients({
-                appointmentsHistory: data,
+                appointmentsHistory: data?.data || [],
                 upcomingAppointments: data?.upcoming_appointment_count || 0,
-                completedAppointments: '3',
+                completedAppointments: data?.data.length || 0,
                 cancelledAppointments: data?.cancel_appointment_count || 0
             })
         );
     }, [dispatch]);
 
-    const userFullName = `${user.firstName || ''} ${
-        user.lastName || ''
+    const userFullName = `${user?.firstName || ''} ${
+        user?.lastName || ''
     }`.trim();
 
     return (
@@ -31,7 +36,7 @@ const DashboardWelcome = ({ data, description, emergencycall, buttontext }) => {
             <div className="flex items-center flex-wrap justify-between mt-[29px] sm:mt-10 md:mt-16 gap-[29px] px-5 md:px-[35px]">
                 <div>
                     <h2 className="section-heading leading-[51px] mb-1.5 sm:mb-2.5 capitalize">
-                        Hi , {userFullName}
+                        Hi , {userFullName ? userFullName : 'User'}
                     </h2>
                     {description && (
                         <p className="text-mainblack font-semibold font-poppins">

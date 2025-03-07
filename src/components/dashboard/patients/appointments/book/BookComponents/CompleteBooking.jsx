@@ -82,7 +82,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                 const response = await createAppointment(parsedData);
                 if (response.success) {
                     toast.success('Appointment created successfully!');
-                    // setShowBioCard(true);
+                    setShowBioCard(true);
+                    setTimeout(() => {
+                        router.replace('/dashboard/patients/appointments');
+                        setShowBioCard(false);
+                    }, [3000]);
                 } else {
                     toast.error('Something went wrong. Please try again.');
                 }
@@ -137,6 +141,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                     setShowBioCard(true);
                     setTimeout(() => {
                         router.replace('/dashboard/patients/appointments');
+                        setShowBioCard(false);
                     }, [3000]);
                 } else {
                     toast.error('Something went wrong. Please try again.');

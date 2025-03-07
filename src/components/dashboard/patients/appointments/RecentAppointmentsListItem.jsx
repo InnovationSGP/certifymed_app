@@ -75,7 +75,15 @@ const RecentAppointmentsListItem = ({ appointment, type, listType }) => {
                     </td>
                 )}
                 <td className="table-heading !font-normal xl:!pr-0">
-                    {appointment?.visitDate}
+                    {new Date(
+                        appointment?.visitDate + ' ' + appointment?.startTime
+                    ).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric'
+                    })}
                 </td>
                 <td className="table-heading !font-normal xl:!pr-0">
                     {'Video'}

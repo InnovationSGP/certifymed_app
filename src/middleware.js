@@ -40,7 +40,7 @@ export function middleware(request) {
     if (accessToken && routes.publicRoutes.includes(pathname)) {
         return NextResponse.redirect(
             new URL(
-                userRole === 'CUSTOMER'
+                userRole === 'USER'
                     ? '/dashboard/patients'
                     : '/dashboard/doctor',
                 request.url
@@ -59,7 +59,7 @@ export function middleware(request) {
     if (accessToken && userRole) {
         // CUSTOMER cannot access doctor routes
         if (
-            userRole === 'CUSTOMER' &&
+            userRole === 'USER' &&
             routes.doctorRoutes.some((route) => pathname.startsWith(route))
         ) {
             return NextResponse.redirect(

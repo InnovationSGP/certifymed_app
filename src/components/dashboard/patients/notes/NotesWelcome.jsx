@@ -20,8 +20,8 @@ const NotesWelcome = ({
         dispatch(
             setDoctorAppointments({
                 appointmentsHistory: data.data || [],
-                upcomingAppointments: data.upcoming_appointment_count || 0,
-                completedAppointments: data?.count || 0,
+                upcomingAppointments: data.upcoming_appointment_count || '0',
+                completedAppointments: data?.count || '0',
                 unreadMessages: '0'
             })
         );
@@ -35,7 +35,7 @@ const NotesWelcome = ({
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
                 <div>
-                    <h2 className="section-heading leading-[51px] mb-2.5">
+                    <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
                         Hi ,{userFullName}
                     </h2>
                     {description && (

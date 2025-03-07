@@ -7,7 +7,6 @@ import AppointmentModel from './appointmentModel/AppointmentModel';
 const TimeSlots = ({ appointments, currentDate }) => {
     const [showModel, setShowModel] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
-
     const handleCardClick = (apt) => {
         setSelectedAppointment(apt);
         setShowModel(true);

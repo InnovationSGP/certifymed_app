@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 
 export default function AppointmentModel({ closeModal, data }) {
-    const { doctor, visitReason, _id, visitDate } = data;
+    const { doctor, visitReason, _id, visitDate, startTime } = data;
     const profileData = {
         avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww',
         userName: `Dr. ${doctor?.firstName} ${doctor?.lastName}`,
@@ -131,8 +131,14 @@ export default function AppointmentModel({ closeModal, data }) {
                                     </p>
                                     <p className="text-base md:text-lg text-secondary font-medium sm:pt-2">
                                         {new Date(
-                                            visitDate
-                                        ).toLocaleDateString()}
+                                            visitDate + ' ' + startTime
+                                        ).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: 'numeric'
+                                        })}
                                     </p>
                                 </div>
                                 <div>

@@ -26,6 +26,7 @@ export default function ChooseProvider() {
     );
 
     async function searchDoctorHandler() {
+        if (!city) return;
         setLoading(true);
         setSuccess(false);
         setError(false);
@@ -97,6 +98,9 @@ export default function ChooseProvider() {
                             }}
                             type="text"
                             placeholder="Enter your city"
+                            onKeyDown={(e) =>
+                                e.key === 'Enter' && searchDoctorHandler(e)
+                            }
                             className={`w-full h-[52px] md:h-[60px] disabled:cursor-not-allowed disabled:hover:bg-primary disabled:opacity-70 ${
                                 success
                                     ? 'border-2 border-green-500'

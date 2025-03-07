@@ -6,6 +6,7 @@ const AppointmentsPage = async () => {
     const cookiesStore = await cookies();
     const token = cookiesStore.get('jwt')?.value;
     const appointments = await getAppointmentsDoctor(token);
+
     return (
         <DashboardLayout className="overflow-auto xl:overflow-hidden">
             <AppointmentSystem data={appointments.data || []} />

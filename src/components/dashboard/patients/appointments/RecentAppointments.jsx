@@ -10,7 +10,14 @@ const RecentAppointments = ({ type, appointments = [] }) => {
         <>
             <div className="col-span-3 lg:col-span-2">
                 <div>
-                    <ListHeading heading="Recent Appointments" />
+                    <ListHeading
+                        heading="Recent Appointments"
+                        href={
+                            type === 'Patients'
+                                ? '/dashboard/patients/appointments'
+                                : '/dashboard/doctor/appointments'
+                        }
+                    />
                     {/* DESKTOP APPOINTMENTS  */}
                     <div className="w-full overflow-y-auto custom-scrollbar hidden md:block">
                         <table className="min-w-full bg-white rounded-b-xl ">
@@ -70,6 +77,7 @@ const RecentAppointments = ({ type, appointments = [] }) => {
                                 appointments.map((appointment, index) => (
                                     <SwiperSlide key={index}>
                                         <RecentAppointmentsCard
+                                            type={type}
                                             appointment={appointment}
                                         />
                                     </SwiperSlide>

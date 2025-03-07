@@ -21,6 +21,7 @@ const DoctorInfo = () => {
             setSelectedTime(sessionStorage.getItem('timing'));
         }
     }, []);
+
     return (
         <div className="flex flex-col lg:flex-row w-full items-start lg:items-end sm:space-x-3 space-y-3 md:border border-gainsboro md:p-5 rounded-xl">
             <div className="flex flex-col md:flex-row w-full items-center">
@@ -35,15 +36,16 @@ const DoctorInfo = () => {
                 </div>
                 <div className="flex flex-col items-start px-4">
                     <p className="text-lg sm:text-xl font-poppins font-medium text-secondary text-center sm:text-start w-full">
-                        {profileData?.userName}
+                        {profileData?.firstName || 'sample'}{' '}
+                        {profileData?.lastName || 'doctor'}
                     </p>
                     <p className="text-base text-secondary py-1 text-center sm:text-start w-full">
                         {selectedDate} - {selectedTime}
                     </p>
                     <p className="font-medium text-base md:text-lg text-secondary capitalize text-center sm:text-start w-full">
                         Video
-                        {' Appointment '}({profileData?.appointmentDuration}{' '}
-                        {'min'})
+                        {' Appointment '}(
+                        {profileData?.appointmentDuration || 30} {'min'})
                     </p>
                     <button
                         className="text-bluetitmouse underline hover:no-underline whitespace-nowrap w-full sm:w-fit"
