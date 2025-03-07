@@ -27,7 +27,7 @@ export const createAppointment = async (data) => {
     const response = reponse.data;
     return response;
 };
-
+//Get doctor appointments
 export const getAppointmentsDoctor = async (token) => {
     const reponse = await axios(`${API_BASE_URL}/doctor`, {
         headers: {
