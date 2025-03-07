@@ -1,7 +1,7 @@
 'use client';
 import { setUser, updateUser } from '@/redux/slices/userSlice';
 import axiosInstance from '@/utils/axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -136,9 +136,78 @@ export function useProfileData() {
         }
     };
 
+    const saveProfileBooking = async (formData) => {
+        const userId = user?.id || user?._id;
+        if (!userId) {
+            toast.error('User ID not found. Please try refreshing the page.');
+            return false;
+        }
+
+        try {
+            // Include all required fields in the request
+            const {
+                firstName,
+                lastName,
+                email,
+                phone,
+                countryCode,
+                city,
+                dob,
+                gender
+            } = formData;
+            const dataToSend = {
+                firstName,
+                lastName,
+                email,
+                phone,
+                countryCode,
+                gender,
+                city,
+                dob: dob instanceof Date ? dob.toISOString() : dob,
+                ...formData
+            };
+            if (formData.specialization) {
+                dataToSend.specialization = formData.specialization;
+            }
+            const response = await axiosInstance.put(
+                `/auth/api/users/${userId}`,
+                dataToSend
+            );
+
+            if (response.data) {
+                // Update Redux store with new data
+                dispatch(
+                    updateUser({
+                        ...dataToSend,
+                        updatedAt: new Date().toISOString()
+                    })
+                );
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Profile update error:', error);
+            if (error.response?.status === 404) {
+                // await fetchProfile();
+                toast.error('Please try updating your profile again');
+            } else {
+                toast.error(
+                    error?.response?.data?.message || 'Update profile failed'
+                );
+            }
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
     return {
         isLoading,
         fetchProfile,
-        saveProfile
+        saveProfile,
+        user,
+        saveProfileBooking
     };
 }

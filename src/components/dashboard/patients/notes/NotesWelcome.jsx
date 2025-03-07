@@ -36,7 +36,7 @@ const NotesWelcome = ({
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
                 <div>
                     <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
-                        Hi ,{userFullName}
+                        Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
                     </h2>
                     {description && (
                         <p className="text-mainblack font-semibold">

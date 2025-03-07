@@ -7,7 +7,6 @@ import { useProfileData } from '@/hooks/useProfileData';
 import { useProfileForm } from '@/hooks/useProfileForm';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { Input } from './Input';
 import {
     Select,
@@ -18,7 +17,6 @@ import {
 } from './select';
 
 const UserProfile = () => {
-    const userData = useSelector((state) => state.user);
     const pathname = usePathname();
     const isDoctor = pathname.includes('/doctor/profile');
     const {
@@ -30,13 +28,7 @@ const UserProfile = () => {
         resetForm
     } = useProfileForm();
 
-    const { isLoading, saveProfile } = useProfileData();
-
-    useEffect(() => {
-        if (userData) {
-            resetForm(userData);
-        }
-    }, [userData]);
+    const { isLoading, saveProfile, user } = useProfileData();
 
     const handleSave = async () => {
         const success = await saveProfile(formData);
@@ -44,6 +36,11 @@ const UserProfile = () => {
             setIsEditing(false);
         }
     };
+    useEffect(() => {
+        if (user) {
+            resetForm(user);
+        }
+    }, [user]);
 
     if (isLoading) {
         return <div className="p-6 lg:p-10">Loading...</div>;
@@ -211,6 +208,24 @@ const UserProfile = () => {
                                         />
                                     </div>
                                     <div className="w-full">
+                                        <label>Apartment</label>
+                                        <Input
+                                            name="apartment"
+                                            value={formData.apartment}
+                                            disabled={!isEditing}
+                                            onChange={(e) =>
+                                                updateFormField(
+                                                    'apartment',
+                                                    e.target.value
+                                                )
+                                            }
+                                            placeholder="Enter your apartment"
+                                            className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col justify-between w-full gap-6 md:flex-row">
+                                    <div className="w-full">
                                         <label>Postal Code</label>
                                         <Input
                                             name="zipcode"
@@ -226,8 +241,6 @@ const UserProfile = () => {
                                             className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                         />
                                     </div>
-                                </div>
-                                <div className="flex flex-col justify-between w-full gap-6 md:flex-row">
                                     <div className="w-full">
                                         <label>City</label>
                                         <Input
@@ -244,6 +257,8 @@ const UserProfile = () => {
                                             className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                         />
                                     </div>
+                                </div>
+                                <div className="flex flex-col justify-between w-full gap-6 md:flex-row">
                                     <div className="w-full">
                                         <label>State</label>
                                         <Input
@@ -260,22 +275,22 @@ const UserProfile = () => {
                                             className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                         />
                                     </div>
-                                </div>
-                                <div className="w-1/2">
-                                    <label>Country / Region</label>
-                                    <Input
-                                        name="countryName"
-                                        value={formData.countryName}
-                                        disabled={!isEditing}
-                                        onChange={(e) =>
-                                            updateFormField(
-                                                'countryName',
-                                                e.target.value
-                                            )
-                                        }
-                                        placeholder="Enter your country / region"
-                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
-                                    />
+                                    <div className="w-full">
+                                        <label>Country / Region</label>
+                                        <Input
+                                            name="countryName"
+                                            value={formData.countryName}
+                                            disabled={!isEditing}
+                                            onChange={(e) =>
+                                                updateFormField(
+                                                    'countryName',
+                                                    e.target.value
+                                                )
+                                            }
+                                            placeholder="Enter your country / region"
+                                            className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

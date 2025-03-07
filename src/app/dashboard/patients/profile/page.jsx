@@ -1,6 +1,7 @@
 import DashboardLayout from "@/components/common/DashboardLayout";
 import UserProfile from "@/components/common/UserProfile";
 import React from "react";
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: "CertifyMed - Patient Profile",

@@ -10,24 +10,21 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/common/select';
+import { useBookingForm } from '@/hooks/useBookingForm';
 import { useProfileData } from '@/hooks/useProfileData';
-import { useProfileForm } from '@/hooks/useProfileForm';
 import { createAppointment } from '@/services/AppointmentService';
-import { checkFormData } from '@/utils/bookingHelper';
 import { calculateEndTime } from '@/utils/dateHelpers';
 import { LoaderCircle, Minus, Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
 const DoctorInfo = dynamic(() => import('./DoctorInfo'), {
     ssr: false,
     loading: () => <div>Loading...</div>
 });
 
 export default function CompleteBooking({ tabNumber, setTabNumber }) {
-    const userData = useSelector((state) => state.user);
     const formRef = useRef(null);
     const router = useRouter();
     const [showPreferred, setShowPreferred] = useState(false);
@@ -39,118 +36,102 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
     const [showBioCard, setShowBioCard] = useState(false);
     const [isShowConfirmCard, setIsShowConfirmCard] = useState(true);
     const [loading, setloading] = useState(false);
-    const { saveProfile } = useProfileData();
+    const [errors, setErrors] = useState({});
     const [dateOfBirth, setDateOfBirth] = useState({
         day: '',
         month: '',
         year: ''
     });
-    const { formData, updateFormField, resetForm } = useProfileForm();
+    const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
+    const [isConsentForTreatmentChecked, setIsConsentForTreatmentChecked] =
+        useState(false);
+    const { user, saveProfileBooking } = useProfileData();
+    const { formData, updateFormField, resetForm } = useBookingForm();
 
-    async function handleSubmit(e) {
+    const validateForm = () => {
+        const newErrors = {};
+        const requiredFields = [
+            'firstName',
+            'lastName',
+            'email',
+            'city',
+            'gender',
+            'address',
+            'zipcode',
+            'state',
+            'countryName',
+            'phoneNumber',
+            'emergencyContactName',
+            'emergencyContactPhoneNumber',
+            'emergencyContactRelationship',
+            'visitReason',
+            'apartment'
+        ];
+
+        requiredFields.forEach((field) => {
+            if (!formData[field]) {
+                newErrors[field] = '*This field is required';
+            }
+        });
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    async function onSubmit(e) {
         e.preventDefault();
-        const result = checkFormData(formData, userData);
-        if (result === true) {
-            setloading(true);
-            const bookingData = new FormData(formRef.current);
-            // Convert FormData to a plain object
-            const formValues = {};
-            bookingData.forEach((value, key) => {
-                if (value.trim() === '') return;
-                formValues[key] = value;
+        if (!isPrivacyPolicyChecked || !isConsentForTreatmentChecked) {
+            return alert(
+                'Please accept privacy policy and consent for treatment.'
+            );
+        } else if (!validateForm()) {
+            return toast.error('Please fill all the required fields.');
+        }
+        setloading(true);
+        try {
+            const combinedDate = `${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}`;
+            const { visitReason, ...rest } = formData;
+
+            const updateUser = await saveProfileBooking({
+                ...rest,
+                dateOfBirth: combinedDate
             });
-            try {
-                const { paymentMethod, amount, currency } = paymentData;
-                const parsedData = {
-                    physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
-                    careCoordinator: `Dr Wilson`,
-                    videoOn: true,
-                    visitReason:
-                        formValues.visitReason || 'Having pain in the chest',
-                    visitCoordinates: '',
-                    visitDescription: formValues.visitDescription || '',
-                    doctorAssign: selectedDoctor._id,
-                    visitDate: selectedDate,
-                    startTime: selectedTime,
-                    endTime: calculateEndTime(selectedTime),
-                    payment: {
-                        paymentMethod,
-                        amount,
-                        currency
-                    }
-                };
-                const response = await createAppointment(parsedData);
-                if (response.success) {
-                    toast.success('Appointment created successfully!');
-                    setShowBioCard(true);
-                    setTimeout(() => {
-                        router.replace('/dashboard/patients/appointments');
-                        setShowBioCard(false);
-                    }, [3000]);
-                } else {
-                    toast.error('Something went wrong. Please try again.');
-                }
-            } catch (error) {
-                toast.error('Something went wrong. Please try again.');
-            } finally {
-                setloading(false);
+            if (!updateUser) {
+                return toast.error('Something went wrong. Please try again.');
             }
-        } else {
-            setloading(true);
-            try {
-                const combinedDate = `${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}`;
-                const updateUser = await saveProfile({
-                    ...formData,
-                    dateOfBirth: combinedDate
-                });
-                if (!updateUser) {
-                    return toast.error(
-                        'Something went wrong. Please try again.'
-                    );
+            const { paymentMethod, amount, currency } = paymentData;
+            const parsedData = {
+                physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
+                careCoordinator: `Dr Wilson`,
+                videoOn: true,
+                visitReason: visitReason || 'Having pain in the chest',
+                visitCoordinates: '',
+                visitDescription: '',
+                doctorAssign: selectedDoctor._id,
+                visitDate: selectedDate,
+                startTime: selectedTime,
+                endTime: calculateEndTime(selectedTime),
+                payment: {
+                    paymentMethod,
+                    amount,
+                    currency
                 }
-                const inputData = new FormData(formRef.current);
-                // Convert FormData to a plain object
-                const formValues = {};
-                inputData.forEach((value, key) => {
-                    if (value.trim() === '') return;
-                    formValues[key] = value;
-                });
-                const { paymentMethod, amount, currency } = paymentData;
-                const parsedData = {
-                    physician: `${selectedDoctor.firstName} ${selectedDoctor.lastName}`,
-                    careCoordinator: `Dr Wilson`,
-                    videoOn: true,
-                    visitReason:
-                        formValues.visitReason || 'Having pain in the chest',
-                    visitCoordinates: '',
-                    visitDescription: formValues.visitDescription,
-                    apartment: formValues.apartment,
-                    doctorAssign: selectedDoctor._id,
-                    visitDate: selectedDate,
-                    startTime: selectedTime,
-                    endTime: calculateEndTime(selectedTime),
-                    payment: {
-                        paymentMethod,
-                        amount,
-                        currency
-                    }
-                };
-                const response = await createAppointment(parsedData);
-                if (response.success) {
-                    toast.success('Appointment created successfully!');
-                    setShowBioCard(true);
-                    setTimeout(() => {
-                        router.replace('/dashboard/patients/appointments');
-                        setShowBioCard(false);
-                    }, [3000]);
-                } else {
-                    toast.error('Something went wrong. Please try again.');
-                }
-            } catch (error) {
+            };
+            const response = await createAppointment(parsedData);
+            if (response.success) {
+                toast.success('Appointment created successfully!');
+                setShowBioCard(true);
+                setTimeout(() => {
+                    setShowBioCard(false);
+                    router.push('/dashboard/patients/appointments');
+                }, [2000]);
+            } else {
                 toast.error('Something went wrong. Please try again.');
-            } finally {
-                setloading(false);
             }
+        } catch (error) {
+            console.log(error);
+            toast.error('Something went wrong. Please try again.');
+        } finally {
+            setloading(false);
         }
     }
 
@@ -164,7 +145,6 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
             setPaymentData(JSON.parse(sessionStorage.getItem('paymentData')));
         }
     }, []);
-
     function initialDateAndTIme(date) {
         const dateOfBirth = new Date(date);
         const initialYear = dateOfBirth.getUTCFullYear();
@@ -180,13 +160,12 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
             year: initialYear
         });
     }
-
     useEffect(() => {
-        if (userData) {
-            resetForm(userData);
-            initialDateAndTIme(userData.dateOfBirth);
+        if (user) {
+            resetForm(user);
+            initialDateAndTIme(user.dateOfBirth);
         }
-    }, [userData]);
+    }, [user]);
 
     if (showBioCard && isShowConfirmCard) {
         return (
@@ -207,23 +186,39 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                 </h2>
                 <div className="space-y-6">
                     <DoctorInfo />
-                    <form onSubmit={handleSubmit} ref={formRef}>
+                    <form onSubmit={onSubmit} ref={formRef}>
                         <div className="flex flex-col my-4 sm:my-6 mt-6 gap-3 sm:gap-4">
                             <div className="flex flex-col gap-6 justify-between w-full md:flex-row">
                                 <div className="w-full">
                                     <label>First Name</label>
                                     <Input
+                                        type="text"
+                                        value={formData.firstName}
                                         name="firstName"
-                                        defaultValue={formData.firstName}
                                         onChange={(e) => {
                                             updateFormField(
                                                 'firstName',
                                                 e.target.value
                                             );
                                         }}
+                                        onFocus={() => {
+                                            setErrors((prev) => {
+                                                const updatedErrors = {
+                                                    ...prev
+                                                };
+                                                delete updatedErrors.firstName;
+                                                return updatedErrors;
+                                            });
+                                        }}
+                                        error={errors.firstName}
                                         placeholder="Enter your first name"
-                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                        className={`h-[60px] rounded-[12px] bg-[#F1F1F1]`}
                                     />
+                                    {errors.firstName && (
+                                        <span className="text-red text-sm">
+                                            {errors.firstName}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="w-full">
                                     <label>Last Name</label>
@@ -235,13 +230,29 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 e.target.value
                                             );
                                         }}
-                                        defaultValue={formData.lastName}
+                                        value={formData.lastName}
+                                        onFocus={() => {
+                                            setErrors((prev) => {
+                                                const updatedErrors = {
+                                                    ...prev
+                                                };
+                                                delete updatedErrors.lastName;
+                                                return updatedErrors;
+                                            });
+                                        }}
+                                        error={errors.lastName}
                                         placeholder="Enter your last name"
-                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
+                                        className="h-[60px] rounded-[12px] bg-[#F1F1F1] "
                                     />
+                                    {errors.lastName && (
+                                        <span className="text-red text-sm">
+                                            {errors.lastName}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                             <button
+                                type="button"
                                 onClick={() => {
                                     setShowPreferred(!showPreferred);
                                 }}
@@ -273,7 +284,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             <Input
                                                 placeholder="MM"
                                                 type="number"
-                                                defaultValue={dateOfBirth.month}
+                                                value={dateOfBirth.month}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.month;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                errors={errors.month}
                                                 onChange={(e) =>
                                                     setDateOfBirth({
                                                         ...dateOfBirth,
@@ -290,13 +311,23 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             <Input
                                                 placeholder="DD"
                                                 type="number"
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.day;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                errors={errors.day}
                                                 onChange={(e) =>
                                                     setDateOfBirth({
                                                         ...dateOfBirth,
                                                         day: e.target.value
                                                     })
                                                 }
-                                                defaultValue={dateOfBirth.day}
+                                                value={dateOfBirth.day}
                                                 className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
@@ -307,13 +338,23 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             <Input
                                                 placeholder="YYYY"
                                                 type="number"
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.year;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                errors={errors.year}
                                                 onChange={(e) =>
                                                     setDateOfBirth({
                                                         ...dateOfBirth,
                                                         year: e.target.value
                                                     })
                                                 }
-                                                defaultValue={dateOfBirth.year}
+                                                value={dateOfBirth.year}
                                                 className="placeholder:!text-center text-center sm:!pl-0 sm:!pr-3"
                                             />
                                         </div>
@@ -323,6 +364,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             Sex assigned at birth
                                         </p>
                                         <Select
+                                            className={
+                                                errors.gender
+                                                    ? 'border-2 border-red'
+                                                    : ''
+                                            }
                                             onValueChange={(e) => {
                                                 updateFormField('gender', e);
                                             }}
@@ -344,9 +390,15 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        {errors.gender && (
+                                            <span className="text-red text-sm">
+                                                {errors.gender}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                                 <button
+                                    type="button"
                                     onClick={() => {
                                         setShowGenderPronouns(
                                             !showGenderPronouns
@@ -380,7 +432,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="address"
-                                                defaultValue={formData.address}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.address;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.address}
+                                                value={formData.address}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'address',
@@ -390,6 +452,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your address"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.address && (
+                                                <span className="text-red text-sm">
+                                                    {errors.address}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
@@ -397,6 +464,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="apartment"
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.apartment;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.apartment}
+                                                value={formData.apartment}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'apartment',
@@ -405,6 +483,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 }}
                                                 placeholder="Enter your apartment"
                                             />
+                                            {errors.apartment && (
+                                                <span className="text-red text-sm">
+                                                    {errors.apartment}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="w-full flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
@@ -414,7 +497,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="city"
-                                                defaultValue={formData.city}
+                                                value={formData.city}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.city;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.city}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'city',
@@ -424,6 +517,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your city"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.city && (
+                                                <span className="text-red text-sm">
+                                                    {errors.city}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
@@ -431,7 +529,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="zipCode"
-                                                defaultValue={formData.zipcode}
+                                                value={formData.zipcode}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.zipcode;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.zipcode}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'zipcode',
@@ -441,6 +549,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your zip code"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.zipcode && (
+                                                <span className="text-red text-sm">
+                                                    {errors.zipcode}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
@@ -451,7 +564,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="state"
-                                                defaultValue={formData.state}
+                                                value={formData.state}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.state;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.state}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'state',
@@ -461,6 +584,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your state"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.state && (
+                                                <span className="text-red text-sm">
+                                                    {errors.state}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
@@ -468,9 +596,17 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="country"
-                                                defaultValue={
-                                                    formData.countryName
-                                                }
+                                                value={formData.countryName}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.countryName;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                error={errors.countryName}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'countryName',
@@ -480,6 +616,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your country / region"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.countryName && (
+                                                <span className="text-red text-sm">
+                                                    {errors.countryName}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -498,9 +639,18 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="phoneNumber"
-                                                defaultValue={
-                                                    formData.phoneNumber
-                                                }
+                                                type="number"
+                                                error={errors.phoneNumber}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.phoneNumber;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                value={formData.phoneNumber}
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'phoneNumber',
@@ -510,6 +660,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="1234567890"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.phoneNumber && (
+                                                <span className="text-red text-sm">
+                                                    {errors.phoneNumber}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
@@ -517,7 +672,20 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="emergencyContactPhoneNumber"
-                                                defaultValue={
+                                                type="number"
+                                                error={
+                                                    errors.emergencyContactPhoneNumber
+                                                }
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.emergencyContactPhoneNumber;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                value={
                                                     formData.emergencyContactPhoneNumber
                                                 }
                                                 onChange={(e) => {
@@ -529,6 +697,13 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter your emergency contact phone"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.emergencyContactPhoneNumber && (
+                                                <span className="text-red text-sm">
+                                                    {
+                                                        errors.emergencyContactPhoneNumber
+                                                    }
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="w-full flex flex-col md:flex-row justify-between gap-4 sm:gap-6">
@@ -538,7 +713,20 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="emergencyContactName"
-                                                defaultValue={
+                                                type="text"
+                                                error={
+                                                    errors.emergencyContactName
+                                                }
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.emergencyContactName;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
+                                                value={
                                                     formData.emergencyContactName
                                                 }
                                                 onChange={(e) => {
@@ -550,6 +738,13 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter emergency contact name"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.emergencyContactName && (
+                                                <span className="text-red text-sm">
+                                                    {
+                                                        errors.emergencyContactName
+                                                    }
+                                                </span>
+                                            )}
                                         </div>
 
                                         <div className="w-full">
@@ -557,6 +752,10 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 Emergency Contact Relationship
                                             </p>
                                             <Select
+                                                className={`${
+                                                    errors.emergencyContactRelationship &&
+                                                    'border-red border-2'
+                                                }`}
                                                 value={
                                                     formData.emergencyContactRelationship
                                                 }
@@ -602,10 +801,18 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                             </label>
                                             <Input
                                                 name="visitReason"
+                                                error={errors.visitReason}
+                                                onFocus={() => {
+                                                    setErrors((prev) => {
+                                                        const updatedErrors = {
+                                                            ...prev
+                                                        };
+                                                        delete updatedErrors.visitReason;
+                                                        return updatedErrors;
+                                                    });
+                                                }}
                                                 type="text"
-                                                defaultValue={
-                                                    formData.vistReason
-                                                }
+                                                required
                                                 onChange={(e) => {
                                                     updateFormField(
                                                         'visitReason',
@@ -615,6 +822,11 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                                 placeholder="Enter booking reason"
                                                 className="h-[60px] rounded-[12px] bg-[#F1F1F1]"
                                             />
+                                            {errors.visitReason && (
+                                                <span className="text-red text-sm">
+                                                    {errors.visitReason}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -625,6 +837,12 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                 <div className="flex items-center justify-center agreecheckbox">
                                     <input
                                         required
+                                        checked={isPrivacyPolicyChecked}
+                                        onChange={(e) =>
+                                            setIsPrivacyPolicyChecked(
+                                                e.target.checked
+                                            )
+                                        }
                                         type="checkbox"
                                         className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
@@ -649,6 +867,12 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                     <input
                                         required
                                         type="checkbox"
+                                        checked={isConsentForTreatmentChecked}
+                                        onChange={(e) =>
+                                            setIsConsentForTreatmentChecked(
+                                                e.target.checked
+                                            )
+                                        }
                                         className="w-full h-full rounded-[4px] border-bluetitmouse border-2 min-w-5 min-h-5 sm:min-w-6 sm:min-h-6"
                                     />
                                 </div>
@@ -659,7 +883,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                         </div>
                         <PrimaryBtn
                             disabled={loading}
-                            onClick={handleSubmit}
+                            onClick={onSubmit}
                             className="!h-[55px] md:!h-[60px] w-full md:max-w-[389px] mt-6 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-primary"
                         >
                             {loading ? (

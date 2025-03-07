@@ -5,6 +5,7 @@ import { generateTimeSlots, getThreeDayView } from '@/utils/dateHelpers';
 import AppointmentModel from './appointmentModel/AppointmentModel';
 
 const TimeSlots = ({ appointments, currentDate }) => {
+    console.log(appointments);
     const [showModel, setShowModel] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const handleCardClick = (apt) => {

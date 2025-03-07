@@ -1,8 +1,9 @@
 // utils/auth.js
 "use client";
 
-import Cookies from "js-cookie";
+import { clearUser } from "@/redux/slices/userSlice";
 import axiosInstance from "@/utils/axios";
+import Cookies from "js-cookie";
 
 export const setAuth = (data) => {
   try {
@@ -24,18 +25,14 @@ export const setAuth = (data) => {
     const cookieOptions = `expires=${cookieExpiry.toUTCString()}; path=/; SameSite=Lax`;
 
     // Set essential cookies consistently
-    document.cookie = `accessToken=${
-      userData.access_token || userData.jwt || ""
-    }; ${cookieOptions}`;
-    document.cookie = `jwt=${
-      userData.access_token || userData.jwt || ""
-    }; ${cookieOptions}`;
-    document.cookie = `userRole=${
-      userData.roleType || "CUSTOMER"
-    }; ${cookieOptions}`;
-    document.cookie = `userType=${
-      userData.userType || "CUSTOMER"
-    }; ${cookieOptions}`;
+    document.cookie = `accessToken=${userData.access_token || userData.jwt || ""
+      }; ${cookieOptions}`;
+    document.cookie = `jwt=${userData.access_token || userData.jwt || ""
+      }; ${cookieOptions}`;
+    document.cookie = `userRole=${userData.roleType || "CUSTOMER"
+      }; ${cookieOptions}`;
+    document.cookie = `userType=${userData.userType || "CUSTOMER"
+      }; ${cookieOptions}`;
 
     if (userData.refreshToken) {
       document.cookie = `refreshToken=${userData.refreshToken}; ${cookieOptions}; HttpOnly`;
@@ -66,9 +63,8 @@ export const setAuth = (data) => {
     });
 
     // Update axios headers
-    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${
-      userData.access_token || userData.jwt
-    }`;
+    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${userData.access_token || userData.jwt
+      }`;
 
     return true;
   } catch (error) {
@@ -98,7 +94,6 @@ export const clearAuth = () => {
       "G_AUTHUSER_H",
       "G_ENABLED_IDPS",
     ];
-
     // Clear cookies from all possible paths and domains
     cookiesToClear.forEach((cookieName) => {
       ["/auth", "/", ""].forEach((path) => {

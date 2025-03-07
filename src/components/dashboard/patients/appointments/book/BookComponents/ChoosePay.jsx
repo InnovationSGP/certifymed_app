@@ -4,19 +4,17 @@ import { WalletIcon } from '@/components/common/Icons';
 import PaymentForm from '@/components/common/PaymentForm';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import PayOutOfPocket from './PayOutOfPocketComponent';
 
 export default function ChoosePay() {
     const [selectedMethod, setSelectedMethod] = useState('');
     const [showPaymentForm, setShowPaymentForm] = useState(false);
-    const [isPayOutOfPocket, setIsPayOutOfPocket] = useState(false);
-    const amount = 150;
     const searchParams = useSearchParams();
     const router = useRouter();
 
     const newParams = new URLSearchParams(searchParams);
     newParams.set('tab', 'datetime'.toString());
-
+    const payoutParams = new URLSearchParams(searchParams);
+    payoutParams.set('tab', 'payout'.toString());
     const handlePaymentMethodChange = (value) => {
         setSelectedMethod(value);
         if (value === 'pocket') {
@@ -26,32 +24,22 @@ export default function ChoosePay() {
         }
     };
 
-    const handleContinue = (data) => {
-        if (typeof window !== 'undefined') {
-            sessionStorage.setItem(
-                'paymentData',
-                JSON.stringify({ ...data, amount })
-            );
-            router.push(`?${newParams.toString()}`, { scroll: false });
-        }
-    };
-
     const handleContinueIn = () => {
         if (typeof window !== 'undefined') {
             sessionStorage.setItem(
                 'paymentData',
                 JSON.stringify({
                     paymentMethod: 'Insurance',
-                    amount
+                    amount: 200
                 })
             );
             router.push(`?${newParams.toString()}`, { scroll: false });
         }
     };
-
-    return isPayOutOfPocket ? (
-        <PayOutOfPocket addPayment={handleContinue} />
-    ) : (
+    function handlePayout() {
+        router.push(`?${payoutParams.toString()}`, { scroll: false });
+    }
+    return (
         <div className="w-full mx-auto mb-24 space-y-8 sm:w-11/12">
             <div className="bg-white rounded-[12px] shadow-tab p-3 sm:p-4 md:px-6 md:pb-12 md:pt-6">
                 <div className="flex justify-between items-center mb-4 ">
@@ -59,15 +47,13 @@ export default function ChoosePay() {
                         How would you like to pay?
                     </h2>
                     <span className="text-right block font-semibold">
-                        Amount ₹ {amount}
+                        Amount ₹ {200}
                     </span>
                 </div>
                 <div value={selectedMethod} onClick={handlePaymentMethodChange}>
                     <div className="space-y-6">
                         <button
-                            onClick={() => {
-                                setIsPayOutOfPocket(true);
-                            }}
+                            onClick={handlePayout}
                             className="flex items-center w-full p-3 space-x-3 border border-gainsboro sm:p-4 rounded-xl"
                         >
                             <WalletIcon />

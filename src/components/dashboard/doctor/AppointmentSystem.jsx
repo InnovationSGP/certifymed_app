@@ -20,12 +20,13 @@ const AppointmentSystem = ({ data = [] }) => {
             title: 'Medical Consultation',
             startTime: removeAmPm(item.startTime),
             endTime: removeAmPm(item.endTime),
-            date: item.visitDate,
+            date: new Date(item.visitDate).toISOString().split('T')[0],
             participants: 1,
             ...item
         };
     });
     const [appointments, setAppointments] = useState(array || []);
+
     // const [appointments, setAppointments] = useState([
     //     {
     //         id: 1,
