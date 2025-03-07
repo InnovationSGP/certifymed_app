@@ -9,16 +9,14 @@ const DashboardNav = () => {
 
     useEffect(() => {
         // Fetch the user role from cookiesx
-        if (typeof window !== 'undefined') {
-            const cookies = document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('userRole='));
-            const role = cookies ? cookies.split('=')[1] : null;
-            setUserRole(role);
-        }
+        const cookies = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('userRole='));
+        const role = cookies ? cookies.split('=')[1] : null;
+        setUserRole(role);
     }, []);
 
-    const isPatientView = userRole === 'USER';
+    const isPatientView = userRole === 'CUSTOMER';
 
     const userMenuLinks = isPatientView
         ? [
