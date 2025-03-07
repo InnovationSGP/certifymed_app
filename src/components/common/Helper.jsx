@@ -686,66 +686,66 @@ export const TimingProviders = [
 export const insuranceProviders = [
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     },
     {
         name: 'Aetna',
-        logo: 'https://s3-alpha-sig.figma.com/img/c3a1/3bb9/d2950a7defad59da60ac6aa68b7a6673?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=SsuENc~91pG54dk7WzF2g7FH~HMn9SDRjdLY5kBxb7j-1qViiKxqwUfdNpnt76lYo3CDMypbcSYEQcHzGqLgmTRpamv6pwP4rSeQfjoBImpiNY23KDPoK2W3dnCyF6oqblJJVBw9mW0FQ82jgpWdBbQ2T~GhIPLaPt6Z6cZWIw24YZojpSBfDmDiFAazfUcRTpiOWeOQYSOxYbyZX2-TsAUX~c~GRgfAHgrTjVm2-0CGKGfkQjTaesNro5sqKz2VmSgeTX8~bbD5~S8xU-wC~LJXWPLsQxKtcqXxfJwKH8Ttwrt48BZ-RLEIB6qsv9IYQh9sE5dbxoI060IeAkSRdA__'
+        logo: '/images/svg/Aetna-Logo.svg'
     },
     {
         name: 'Anthem',
-        logo: 'https://s3-alpha-sig.figma.com/img/1c4b/c358/d3e4616fa265bdb8a19e3a7dd8cc09b9?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=dA9LkIEJSbRFNJ5Ptk6xijsotVroyzavdcZO5FaTeZdNrip7iV-Oz3NqsNI-UrhFhCm~l5lbN8iLas-71nVMb28lwPOkHu1vmijafsBaT9RblMRnhEVSfnBZL9LKTj7MPlkzVetCLVr5iTpOrS5bha0NpaDyCovCmRxyPDYfNw-FcJB2zhhMS7urjpcOiXqrXU8MzLvAznSF6wm3ewuhNQmGPPiKY5ItJC5VBCtB3kR6RBQ1RoYy1VSAPqw2~M1xqbMBhDGinPlmy4N6apik1dYT1o7HchsH0zBn~g1ZTL14lAGCddm3XjqmbKrGnl-YW2PItNQsFlSIXQFGafqpNw__'
+        logo: '/images/svg/Anthem-Logo.svg'
     }
 ];
