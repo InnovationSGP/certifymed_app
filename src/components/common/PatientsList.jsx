@@ -1,4 +1,3 @@
-import React from "react";
 import PatientListItem from "./PatientListItem";
 
 const PatientsList = ({

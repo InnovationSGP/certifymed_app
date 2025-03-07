@@ -1,47 +1,40 @@
-"use client";
-import React, { useEffect } from "react";
-import AppointmentList from "@/components/dashboard/patients/appointments/AppointmentList";
-import AppointmentsAnalytics from "@/components/dashboard/patients/appointments/AppointmentsAnalytics";
-import DashboardLayout from "@/components/common/DashboardLayout";
-import DashboardWelcome from "@/components/common/DashboardWelcome";
-import PatientsHistory from "@/components/common/AppointmentHistoryMobileList";
-import { setAppointmentsForPatients } from "@/redux/slices/patientAppointments";
-import { patientappointments } from "@/components/common/Helper";
-import { useDispatch, useSelector } from "react-redux";
+import PatientsHistory from '@/components/common/AppointmentHistoryMobileList';
+import DashboardLayout from '@/components/common/DashboardLayout';
+import DashboardWelcome from '@/components/common/DashboardWelcome';
+import AppointmentList from '@/components/dashboard/patients/appointments/AppointmentList';
+import AppointmentsAnalytics from '@/components/dashboard/patients/appointments/AppointmentsAnalytics';
+import { getAppointments } from '@/services/AppointmentService';
+import { cookies } from 'next/headers';
 
-const AppoinmentPage = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(
-      setAppointmentsForPatients({
-        appointmentsHistory: patientappointments,
-        upcomingAppointments: "2",
-        completedAppointments: "7",
-        cancelledAppointments: "3",
-      })
+export const metadata = {
+    title: 'CertifyMed - Appointment List',
+    description:
+        'Discover the future of healthcare through CertifyMed: top-tier medical care at your fingertips. No more waiting—access qualified professionals instantly from home.'
+};
+
+const AppoinmentPage = async () => {
+    const cookiesStore = await cookies();
+    const token = cookiesStore.get('jwt')?.value;
+    const appointments = await getAppointments(token);
+    return (
+        <DashboardLayout className="overflow-auto">
+            <div>
+                <DashboardWelcome
+                    data={appointments || []}
+                    heading="Appointments Overview"
+                    buttontext="Book an Appointment"
+                />
+                <AppointmentsAnalytics />
+                <div className="hidden md:block">
+                    <AppointmentList
+                        type="Patients"
+                        dataSet={appointments.data || []}
+                    />
+                </div>
+                <PatientsHistory />
+            </div>
+        </DashboardLayout>
     );
-  }, [dispatch]);
-
-  const recentAppointments = useSelector(
-    (state) => state.patientDashboard.appointmentsHistory
-  );
-
-  return (
-    <DashboardLayout className="overflow-auto">
-      <DashboardWelcome
-        heading="Appointments Overview"
-        buttontext="Book an Appointment"
-      />
-      <AppointmentsAnalytics />
-      <button className="bg-primary primary-btn mx-auto mt-[39px] sm:hidden">
-        Book an Appointment
-      </button>
-      <div className="hidden md:block">
-        <AppointmentList type="Patients" dataSet={recentAppointments} />
-      </div>
-      <PatientsHistory />
-    </DashboardLayout>
-  );
 };
 
 export default AppoinmentPage;

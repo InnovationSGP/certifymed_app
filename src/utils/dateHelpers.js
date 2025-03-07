@@ -124,3 +124,54 @@ export const getFirstDayOfMonth = (date) => {
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
   return firstDay === 0 ? 6 : firstDay - 1;
 };
+
+export function calculateEndTime(startTime, durationInMinutes = 30) {
+  // Parse the start time
+  const [time, modifier] = startTime.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  // Convert to 24-hour format
+  if (modifier === "pm" && hours !== 12) {
+    hours += 12;
+  }
+  if (modifier === "am" && hours === 12) {
+    hours = 0;
+  }
+
+  // Create a Date object for the start time
+  const startDate = new Date();
+  startDate.setHours(hours, minutes, 0, 0);
+
+  // Add the duration in minutes
+  const endDate = new Date(startDate.getTime() + durationInMinutes * 60000);
+
+  // Format the end time in 12-hour format
+  let endHours = endDate.getHours();
+  const endMinutes = endDate.getMinutes();
+  const endModifier = endHours >= 12 ? "pm" : "am";
+
+  // Convert to 12-hour format
+  endHours = endHours % 12 || 12;
+
+  // Return the formatted end time
+  return `${endHours}:${endMinutes.toString().padStart(2, "0")} ${endModifier}`;
+}
+
+export function removeAmPm(timeString) {
+  // Split the time string into the time part and the AM/PM part
+  const [time, modifier] = timeString.split(' ');
+
+  // Split the time part into hours and minutes
+  let [hours, minutes] = time.split(':');
+
+  // Convert hours to 24-hour format
+  if (modifier === 'pm' && hours !== '12') {
+    hours = parseInt(hours, 10) + 12;
+  }
+  if (modifier === 'am' && hours === '12') {
+    hours = '00';
+  }
+
+  // Return the time in 24-hour format
+  return `${hours}:${minutes}`;
+}
