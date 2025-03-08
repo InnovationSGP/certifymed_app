@@ -3,7 +3,7 @@ import { patientsdatalist } from '@/components/common/Helper';
 import { setPatients } from '@/redux/slices/allPatientsForDoctorSlice';
 import { setDoctorAppointments } from '@/redux/slices/doctorRecentAppointmentsSlice';
 import { selectUser } from '@/redux/slices/userSlice';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NotesWelcome = ({
@@ -15,7 +15,6 @@ const NotesWelcome = ({
 }) => {
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
-
     useEffect(() => {
         dispatch(
             setDoctorAppointments({

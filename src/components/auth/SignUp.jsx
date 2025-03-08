@@ -140,7 +140,7 @@ const SignUp = ({ role }) => {
           ...responseData,
           access_token: responseData.user?.access_token,
           roleType:
-            responseData.role?.role || responseData.roleType || userType,
+            responseData.role?.userType || responseData.userType || userType,
           userType:
             responseData.role?.userType || responseData.userType || userType,
           id: responseData.user?._id,
