@@ -37,7 +37,7 @@ export const getThreeDayView = (date) => {
     return {
       date: currentDate,
       dayName: currentDate.toLocaleString("default", { weekday: "short" }),
-      dayNumber: currentDate.getDate(),
+      dayNumber: currentDate.getUTCDate(),
     };
   });
 };

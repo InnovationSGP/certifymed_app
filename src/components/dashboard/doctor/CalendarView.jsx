@@ -1,10 +1,11 @@
+'use client';
 import { getThreeDayView } from '@/utils/dateHelpers';
 import CalendarHeader from './CalendarHeader';
 import TimeSlots from './TimeSlots';
 
 const CalendarView = ({
     currentDate,
-    appointments,
+    data,
     onNavigate,
     setState,
     onToggleCalendar
@@ -51,10 +52,7 @@ const CalendarView = ({
                             )}
                         </div>
                     </div>
-                    <TimeSlots
-                        appointments={appointments}
-                        currentDate={currentDate}
-                    />
+                    <TimeSlots data={data} currentDate={currentDate} />
                 </div>
             </div>
         </div>

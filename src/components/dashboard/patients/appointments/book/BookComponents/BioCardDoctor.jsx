@@ -1,28 +1,27 @@
 'use client';
-import { profileData } from '@/components/common/Helper';
 import {
     CareIcon,
-    CrossIcon,
     ExprienceIcon,
     MassageStartIcon
 } from '@/components/common/Icons';
-import {
-    ArrowLeft,
-    BadgeCheck,
-    Calendar,
-    Cross,
-    Heart,
-    MessageCircle,
-    X
-} from 'lucide-react';
+import { ArrowLeft, BadgeCheck, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function BioCardDoctor() {
     const [isBioShow, setIsBioShow] = useState(false);
     const searchParams = useSearchParams();
+    const [profileData, setprofileData] = useState(null);
     const router = useRouter();
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setprofileData(
+                JSON.parse(sessionStorage.getItem('appointmentData'))
+            );
+        }
+    }, []);
 
+    console.log(profileData);
     return (
         <div className="opacity-100 overflow-auto right-0 xl:w-6/12 xl:h-min rounded-l-xl mb-24 shadow-tab p-4 md:p-6 rounded-xl">
             <div className="flex flex-col w-full justify-center">
@@ -40,34 +39,37 @@ export default function BioCardDoctor() {
                 <div className="flex flex-row justify-center gap-12">
                     <div className="overflow-hidden w-24 rounded-full bg-blue-300">
                         <img
-                            src={profileData.avatar}
+                            src={
+                                profileData?.avatar ||
+                                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww'"
+                            }
+                            alt="profile"
                             className="h-24 w-24 object-cover text-blue-700"
                         />
                     </div>
                 </div>
                 <div className="flex flex-col items-start space-y-4 mt-4">
-                    <p className="font-medium text-xl">
-                        {profileData.userName}
+                    <p className="font-medium text-xl capitalize">
+                        {profileData?.firstName || 'sample'}{' '}
+                        {profileData?.lastName || 'doctor'}
                     </p>
                     <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center">
                         <p className="text-base flex items-center gap-1">
                             <CareIcon />
-                            {profileData.desc}
+                            {profileData?.specialization || 'doctor bio'}
                         </p>
                         <p className="text-base flex items-center gap-1">
                             <ExprienceIcon />
-                            {profileData.exp}
+                            {profileData?.exp || '5 years'}
                         </p>
                         <p className="text-base flex items-center gap-1">
                             <MassageStartIcon />
-                            {profileData.rating}{' '}
-                            <span className="text-gray-500">
-                                ({profileData.totalRating})
-                            </span>
+                            {profileData?.rating || '5.0'}{' '}
+                            <span className="text-gray-500">({44})</span>
                         </p>
                     </div>
                 </div>
-                <p className="mt-4">{profileData.moreDesc}</p>
+                <p className="mt-4">{profileData?.bio || 'doctor bio'}</p>
                 <button
                     onClick={() => setIsBioShow(true)}
                     className="flex items-center justify-center rounded-xl bg-[#4864FF29] transition-all duration-200 ease-in-out hover:bg-[#4863ff1c] text-bluetitmouse whitespace-nowrap p-4 px-8 mt-8 text-center"
@@ -93,7 +95,10 @@ export default function BioCardDoctor() {
                     <div className="flex flex-row items-start justify-between">
                         <div className="overflow-hidden w-24 rounded-full bg-blue-300">
                             <img
-                                src={profileData.avatar}
+                                src={
+                                    profileData?.avatar ||
+                                    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBvcnRyYWl0JTIwbWFufGVufDB8fDB8fHww'"
+                                }
                                 className="h-24 w-24 object-cover text-blue-700"
                             />
                         </div>
@@ -105,29 +110,30 @@ export default function BioCardDoctor() {
                         </button>
                     </div>
                     <div className="flex flex-col items-start space-y-4 mt-4">
-                        <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary">
-                            {profileData.userName}
+                        <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary capitalize">
+                            {profileData?.firstName || 'sample'}{' '}
+                            {profileData?.lastName || 'doctor'}
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-start md:items-center">
                             <p className="text-base text-secondary flex items-center gap-1">
                                 <CareIcon />
-                                {profileData.desc}
+                                {profileData?.specialization || 'doctor bio'}
                             </p>
                             <p className="text-base text-secondary flex items-center gap-1">
                                 <ExprienceIcon />
-                                {profileData.exp}
+                                {profileData?.exp || '5 years'}
                             </p>
                             <p className="text-base text-secondary flex items-center gap-1">
                                 <MassageStartIcon />
-                                {profileData.rating}{' '}
+                                {profileData?.rating || '5.0'}{' '}
                                 <span className="text-gray-500">
-                                    ({profileData.totalRating})
+                                    ({profileData?.totalRating || 44})
                                 </span>
                             </p>
                         </div>
                     </div>
-                    <p className="mt-4 text-base text-secondary">
-                        {profileData.moreDesc}
+                    <p className="mt-4 text-base text-secondary capitalize">
+                        {profileData?.bio || 'doctor bio'}
                     </p>
                     <button
                         onClick={() => setIsBioShow(false)}

@@ -15,14 +15,10 @@ import { useProfileData } from '@/hooks/useProfileData';
 import { createAppointment } from '@/services/AppointmentService';
 import { calculateEndTime } from '@/utils/dateHelpers';
 import { LoaderCircle, Minus, Plus } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-const DoctorInfo = dynamic(() => import('./DoctorInfo'), {
-    ssr: false,
-    loading: () => <div>Loading...</div>
-});
+import DoctorInfo from './DoctorInfo';
 
 export default function CompleteBooking({ tabNumber, setTabNumber }) {
     const formRef = useRef(null);
