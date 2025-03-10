@@ -11,7 +11,7 @@ const CalendarHeader = ({ currentDate, onNavigate, onToggleCalendar }) => {
         return date.toLocaleDateString('en-US', {
             day: 'numeric',
             month: 'long'
-            // timeZone: "UTC", // Use UTC to ensure consistency
+            // timeZone: 'UTC' // Use UTC to ensure consistency
         });
     };
 

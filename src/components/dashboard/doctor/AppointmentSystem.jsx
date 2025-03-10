@@ -7,25 +7,13 @@ import CalendarView from './CalendarView';
 import CalendarModal from './CalenderModal';
 import MiniCalendar from './MiniCalendar';
 import ScheduleModal from './ScheduleModal';
-import { removeAmPm } from '@/utils/dateHelpers';
 
 const AppointmentSystem = ({ data = [] }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showCalendarModal, setShowCalendarModal] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
-    const array = data.map((item) => {
-        return {
-            id: item._id,
-            title: 'Medical Consultation',
-            startTime: removeAmPm(item.startTime),
-            endTime: removeAmPm(item.endTime),
-            date: item.visitDate,
-            participants: 1,
-            ...item
-        };
-    });
-    const [appointments, setAppointments] = useState(array || []);
+
     // const [appointments, setAppointments] = useState([
     //     {
     //         id: 1,
@@ -93,7 +81,7 @@ const AppointmentSystem = ({ data = [] }) => {
         const newDate = new Date(
             currentDate.getUTCFullYear(),
             currentDate.getUTCMonth(),
-            day
+            day 
         );
         setSelectedDate(newDate);
         setCurrentDate(newDate);
@@ -131,7 +119,7 @@ const AppointmentSystem = ({ data = [] }) => {
                 <CalendarView
                     setState={() => setShowScheduleModal(true)}
                     currentDate={currentDate}
-                    appointments={appointments}
+                    data={data}
                     onNavigate={handleDayNavigation}
                     onToggleCalendar={toggleCalendarModal}
                 />

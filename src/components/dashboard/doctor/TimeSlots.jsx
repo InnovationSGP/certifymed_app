@@ -1,21 +1,47 @@
 'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { generateTimeSlots, getThreeDayView } from '@/utils/dateHelpers';
+import React, { useEffect, useState } from 'react';
 import AppointmentModel from './appointmentModel/AppointmentModel';
+import Image from 'next/image';
+import {
+    generateTimeSlots,
+    getThreeDayView,
+    removeAmPm
+} from '@/utils/dateHelpers';
+import dayjs from 'dayjs';
 
-const TimeSlots = ({ appointments, currentDate }) => {
+const TimeSlots = ({ data, currentDate }) => {
     const [showModel, setShowModel] = useState(false);
+    const [appointments, setAppointments] = useState([]);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
-    const handleCardClick = (apt) => {
-        setSelectedAppointment(apt);
+    const handleCardClick = (id) => {
+        const apt = data.find((item) => item._id === id);
         setShowModel(true);
+        setSelectedAppointment(apt);
     };
 
     function closeModal() {
         setShowModel(false);
         setSelectedAppointment(null);
     }
+
+    useEffect(() => {
+        const array = data.map((item) => {
+            const visitDate = dayjs(item.visitDate, [
+                'dddd, MMM D, YYYY',
+                'YYYY-MM-DD'
+            ]).format('YYYY-MM-DD');
+            return {
+                id: item._id,
+                title: 'Medical Consultation',
+                startTime: removeAmPm(item.startTime),
+                endTime: removeAmPm(item.endTime),
+                date: visitDate,
+                participants: 1
+            };
+        });
+        setAppointments(array);
+    }, [data]);
+
     return (
         <div
             className="overflow-auto hide-scrollbar"
@@ -60,7 +86,7 @@ const TimeSlots = ({ appointments, currentDate }) => {
                                                 <div
                                                     key={apt.id}
                                                     onClick={() =>
-                                                        handleCardClick(apt)
+                                                        handleCardClick(apt.id)
                                                     }
                                                     className="bg-pervenche text-white w-full rounded-lg p-3 cursor-pointer"
                                                 >

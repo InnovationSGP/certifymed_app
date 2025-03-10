@@ -42,7 +42,6 @@ const ChooseDateTime = () => {
 
     async function fetchDoctorSchedules() {
         const response = await getAllDoctorSchedules(selectedDoctor);
-        console.log(response);
         return response.data;
     }
 

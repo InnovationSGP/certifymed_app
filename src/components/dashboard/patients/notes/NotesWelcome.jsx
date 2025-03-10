@@ -3,7 +3,7 @@ import { patientsdatalist } from '@/components/common/Helper';
 import { setPatients } from '@/redux/slices/allPatientsForDoctorSlice';
 import { setDoctorAppointments } from '@/redux/slices/doctorRecentAppointmentsSlice';
 import { selectUser } from '@/redux/slices/userSlice';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NotesWelcome = ({
@@ -15,7 +15,6 @@ const NotesWelcome = ({
 }) => {
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
-
     useEffect(() => {
         dispatch(
             setDoctorAppointments({
@@ -36,7 +35,7 @@ const NotesWelcome = ({
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
                 <div>
                     <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
-                        Hi ,{userFullName}
+                        Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
                     </h2>
                     {description && (
                         <p className="text-mainblack font-semibold">

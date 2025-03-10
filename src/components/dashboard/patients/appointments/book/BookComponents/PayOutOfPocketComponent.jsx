@@ -2,8 +2,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import PrimaryBtn from '@/components/common/PrimaryBtn';
 import { paymentSchema } from '@/utils/validationSchema';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function PayOutOfPocket({ addPayment }) {
+export default function PayOutOfPocket() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -13,13 +16,22 @@ export default function PayOutOfPocket({ addPayment }) {
     } = useForm({
         resolver: zodResolver(paymentSchema)
     });
-
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', 'datetime'.toString());
     const onSubmit = (data) => {
         if (addPayment) {
             addPayment({ ...data, currency: 'Indian Rupee' });
         }
     };
-
+    const handleContinue = (data) => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem(
+                'paymentData',
+                JSON.stringify({ ...data, amount: 200 })
+            );
+            router.push(`?${newParams.toString()}`, { scroll: false });
+        }
+    };
     return (
         <div className="w-full md:w-11/12 text-black p-4 px-4 sm:px-6 bg-white rounded-xl shadow-tab mb-24">
             <p className="text-lg sm:text-xl font-poppins font-semibold text-secondary sm:mt-4">

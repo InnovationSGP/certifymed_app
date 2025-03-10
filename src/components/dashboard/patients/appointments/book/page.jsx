@@ -7,6 +7,7 @@ import ChooseProvider from '@/components/dashboard/patients/appointments/book/Bo
 import CompleteBooking from '@/components/dashboard/patients/appointments/book/BookComponents/CompleteBooking';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BioCardDoctor from './BookComponents/BioCardDoctor';
+import PayOutOfPocket from './BookComponents/PayOutOfPocketComponent';
 
 const FindProvider = () => {
     const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ const FindProvider = () => {
         'provider',
         'appointment',
         'payment',
+        'payout',
         'datetime',
         'final',
         'doctor-profile'
@@ -25,7 +27,7 @@ const FindProvider = () => {
     const tab = searchParams.get('tab') || 'provider';
 
     // Ensure valid tab
-    const tabIndex = validTabs.indexOf(tab);
+    let tabIndex = validTabs.indexOf(tab);
     const currentTab = tabIndex !== -1 ? validTabs[tabIndex] : 'provider';
     // Update URL when step is clicked
     const handleStepClick = (step) => {
@@ -56,6 +58,12 @@ const FindProvider = () => {
                     )}
                     {currentTab === 'payment' && (
                         <ChoosePay
+                            tabNumber={currentTab}
+                            setTabNumber={handleStepClick}
+                        />
+                    )}
+                    {tab === 'payout' && (
+                        <PayOutOfPocket
                             tabNumber={currentTab}
                             setTabNumber={handleStepClick}
                         />

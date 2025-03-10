@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -35,7 +36,7 @@ const DoctorInfo = () => {
                     />
                 </div>
                 <div className="flex flex-col items-start px-4">
-                    <p className="text-lg sm:text-xl font-poppins font-medium text-secondary text-center sm:text-start w-full">
+                    <p className="text-lg sm:text-xl font-poppins font-medium text-secondary text-center sm:text-start w-full capitalize">
                         {profileData?.firstName || 'sample'}{' '}
                         {profileData?.lastName || 'doctor'}
                     </p>

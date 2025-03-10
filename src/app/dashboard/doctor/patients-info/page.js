@@ -1,5 +1,6 @@
 import PatientsInfo from "@/components/dashboard/doctor/PatientInfo";
 import React from "react";
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: " CertifyMed - Patient Info",

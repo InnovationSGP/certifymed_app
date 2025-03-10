@@ -5,6 +5,7 @@ import AppointmentList from '@/components/dashboard/patients/appointments/Appoin
 import AppointmentsAnalytics from '@/components/dashboard/patients/appointments/AppointmentsAnalytics';
 import { getAppointments } from '@/services/AppointmentService';
 import { cookies } from 'next/headers';
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
     title: 'CertifyMed - Appointment List',

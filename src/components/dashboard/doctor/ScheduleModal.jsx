@@ -12,28 +12,52 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
     const [isEntering, setIsEntering] = useState(true);
     const sidebarRef = useRef(null);
     const [scheduleDuration, setScheduleDuration] = useState('30 minutes');
+    // const [availability, setAvailability] = useState({
+    //     Sun: { isBooked: false, slots: [] },
+    //     Mon: { isBooked: false, slots: [] },
+    //     Tue: {
+    //         isBooked: false,
+    //         slots: [{ start: '9:00am', end: '9:00pm' }]
+    //     },
+    //     Wed: {
+    //         isBooked: false,
+    //         slots: [{ start: '9:00am', end: '9:00pm' }]
+    //     },
+    //     Thu: {
+    //         isBooked: false,
+    //         slots: [{ start: '9:00am', end: '9:00pm' }]
+    //     },
+    //     Fri: {
+    //         isBooked: false,
+    //         slots: [{ start: '9:00am', end: '9:00pm' }]
+    //     },
+    //     Sat: {
+    //         isBooked: false,
+    //         slots: [{ start: '9:00am', end: '9:00pm' }]
+    //     }
+    // });
     const [availability, setAvailability] = useState({
         Sun: { isBooked: false, slots: [] },
         Mon: { isBooked: false, slots: [] },
         Tue: {
             isBooked: false,
-            slots: [{ start: '9:00am', end: '9:00pm' }]
+            slots: []
         },
         Wed: {
             isBooked: false,
-            slots: [{ start: '9:00am', end: '9:00pm' }]
+            slots: []
         },
         Thu: {
             isBooked: false,
-            slots: [{ start: '9:00am', end: '9:00pm' }]
+            slots: []
         },
         Fri: {
             isBooked: false,
-            slots: [{ start: '9:00am', end: '9:00pm' }]
+            slots: []
         },
         Sat: {
             isBooked: false,
-            slots: [{ start: '9:00am', end: '9:00pm' }]
+            slots: []
         }
     });
 
@@ -138,18 +162,23 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
 
     const handleSave = async () => {
         try {
-            if (!scheduleTitle) {
+            if (!scheduleTitle || scheduleTitle.trim() === '') {
                 return alert('Please enter a schedule title');
+            }
+            if (!scheduleDuration || scheduleDuration.trim() === '') {
+                return alert('Please enter a schedule duration');
             }
             const appointmentArray = generateAppointmentArray(
                 selectedDate,
                 availability
             );
-            const parsedArray = appointmentArray.map((item) => ({
-                appointmentTitle: scheduleTitle,
-                appointmentDuration: scheduleDuration,
-                ...item
-            }));
+            const parsedArray = appointmentArray.map((item) => {
+                return {
+                    appointmentTitle: scheduleTitle,
+                    appointmentDuration: scheduleDuration,
+                    ...item
+                };
+            });
             const response = await createMultipleSchedule(parsedArray);
             if (response.success) {
                 toast.success(response.message);
