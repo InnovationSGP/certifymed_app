@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ListHeading from '@/components/common/ListHeading';
 import { useSelector } from 'react-redux';
 import RecentAppointments from '../patients/appointments/RecentAppointments';
@@ -7,30 +7,36 @@ import PatientsList from '@/components/common/PatientsList';
 import DashboardSkeleton from '@/components/common/SkeletonLoader';
 
 const DoctorDashboard = () => {
-    const [loading, setLoading] = useState(true);
     const [activePatient, setActivePatient] = useState('');
 
-    // Get data from Redux store
-    const doctorDashboardData = useSelector(
-        (state) => state.doctorDashboard.appointmentsHistory
+    // Get data and loading states from Redux store
+    const { appointmentsHistory, isLoading: appointmentsLoading } = useSelector(
+        (state) => ({
+            appointmentsHistory:
+                state.doctorDashboard.appointmentsHistory || [],
+            isLoading:
+                state.doctorDashboard.isLoading !== undefined
+                    ? state.doctorDashboard.isLoading
+                    : false
+        })
     );
-    const patientsdata = useSelector(
-        (state) => state.allConcernedPatients.patients
-    );
 
-    useEffect(() => {
-        // Simulate data loading
-        const timer = setTimeout(() => {
-            setLoading(false);
-            if (patientsdata && patientsdata.length > 0) {
-                setActivePatient(patientsdata[0]?.name || '');
-            }
-        }, 2000);
+    const { patients, isLoading: patientsLoading } = useSelector((state) => ({
+        patients: state.allConcernedPatients.patients || [],
+        isLoading:
+            state.allConcernedPatients.isLoading !== undefined
+                ? state.allConcernedPatients.isLoading
+                : false
+    }));
 
-        return () => clearTimeout(timer);
-    }, [patientsdata]);
+    // Show skeleton only if both data sources are still loading and don't have any data
+    const showSkeleton =
+        appointmentsLoading &&
+        (!appointmentsHistory || appointmentsHistory.length === 0) &&
+        patientsLoading &&
+        (!patients || patients.length === 0);
 
-    if (loading) {
+    if (showSkeleton) {
         return <DashboardSkeleton />;
     }
 
@@ -39,7 +45,7 @@ const DoctorDashboard = () => {
             <div className="lg:grid lg:grid-cols-3 gap-[22px] px-5 md:px-[35px] mt-[35px] mb-[103px]">
                 <RecentAppointments
                     type="Doctor"
-                    appointments={doctorDashboardData}
+                    appointments={appointmentsHistory}
                 />
                 <div className="mt-[47px] lg:mt-0 rounded-t-xl lg:rounded-none bg-white lg:bg-transparent">
                     <div className="px-4 lg:px-0">
@@ -51,7 +57,7 @@ const DoctorDashboard = () => {
                     <hr />
                     <div className="w-full bg-white lg:h-[531px] rounded-b-xl overflow-y-auto custom-scrollbar">
                         <PatientsList
-                            patientsdatalist={patientsdata}
+                            patientsdatalist={patients}
                             activePatient={activePatient}
                             setActivePatient={setActivePatient}
                         />

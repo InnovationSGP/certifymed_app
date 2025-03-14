@@ -1,10 +1,14 @@
 'use client';
 import { patientsdatalist } from '@/components/common/Helper';
 import { setPatients } from '@/redux/slices/allPatientsForDoctorSlice';
-import { setDoctorAppointments } from '@/redux/slices/doctorRecentAppointmentsSlice';
+import {
+    setDoctorAppointments,
+    setLoading
+} from '@/redux/slices/doctorRecentAppointmentsSlice';
 import { selectUser } from '@/redux/slices/userSlice';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { WelcomeHeaderSkeleton } from '@/components/common/SkeletonLoader';
 
 const NotesWelcome = ({
     data,
@@ -18,16 +22,32 @@ const NotesWelcome = ({
     const user = useSelector(selectUser);
 
     useEffect(() => {
-        dispatch(
-            setDoctorAppointments({
-                appointmentsHistory: data.data || [],
-                upcomingAppointments: data.upcoming_appointment_count || '0',
-                completedAppointments: data?.count || '0',
-                unreadMessages: '0'
-            })
-        );
+        // Set loading state to true while dispatching data
+        dispatch(setLoading(true));
 
-        dispatch(setPatients(patientsdatalist));
+        // Safely handle the data dispatch
+        const safeData = {
+            data: data?.data || [],
+            upcoming_appointment_count: data?.upcoming_appointment_count || '0',
+            count: data?.count || '0'
+        };
+
+        try {
+            dispatch(
+                setDoctorAppointments({
+                    appointmentsHistory: safeData.data,
+                    upcomingAppointments: safeData.upcoming_appointment_count,
+                    completedAppointments: safeData.count,
+                    unreadMessages: '0'
+                })
+            );
+
+            dispatch(setPatients(patientsdatalist));
+        } catch (error) {
+            console.error('Error setting appointments data:', error);
+            // Set loading to false even if there's an error
+            dispatch(setLoading(false));
+        }
 
         // Check if user data is loaded
         if (user && (user.firstName || user.lastName)) {
@@ -37,7 +57,11 @@ const NotesWelcome = ({
             const timer = setTimeout(() => setNameLoading(false), 1500);
             return () => clearTimeout(timer);
         }
-    }, [dispatch, user]);
+    }, [dispatch, data, user]);
+
+    if (nameLoading) {
+        return <WelcomeHeaderSkeleton />;
+    }
 
     const userFullName = `Dr. ${user?.firstName || ''} ${
         user?.lastName || ''
@@ -47,14 +71,9 @@ const NotesWelcome = ({
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
                 <div>
-                    {nameLoading ? (
-                        // Skeleton for loading doctor name
-                        <div className="h-[51px] w-64 bg-gray-200 rounded mb-2.5 animate-pulse"></div>
-                    ) : (
-                        <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
-                            Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
-                        </h2>
-                    )}
+                    <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
+                        Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
+                    </h2>
                     {description && (
                         <p className="text-mainblack font-semibold">
                             {description}

@@ -4,23 +4,47 @@ import DoctorDashboard from '@/components/dashboard/doctor/DoctorDashboard';
 import NotesWelcome from '@/components/dashboard/patients/notes/NotesWelcome';
 import { getAppointmentsDoctor } from '@/services/AppointmentService';
 import { cookies } from 'next/headers';
+import { Suspense } from 'react';
+import { PatientDashboardSkeleton } from '@/components/common/SkeletonLoader';
 
 export const dynamic = 'force-dynamic';
 
+// Fallback component to use while loading
+const LoadingFallback = () => (
+    <DashboardLayout className="overflow-auto">
+        <PatientDashboardSkeleton />
+    </DashboardLayout>
+);
+
 const DoctorDashboardPage = async () => {
-    const cookiesStore = await cookies();
-    const token = cookiesStore.get('jwt')?.value;
-    const appointments = await getAppointmentsDoctor(token);
+    let appointments = { data: [] }; // Initialize with default empty structure
+
+    try {
+        const cookiesStore = await cookies();
+        const token = cookiesStore.get('jwt')?.value;
+
+        if (token) {
+            const fetchedAppointments = await getAppointmentsDoctor(token);
+            if (fetchedAppointments) {
+                appointments = fetchedAppointments;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        // Continue rendering with empty data
+    }
 
     return (
-        <DashboardLayout className="overflow-auto">
-            <NotesWelcome
-                data={appointments || []}
-                description="Welcome back!"
-            />
-            <DoctorAnalytics />
-            <DoctorDashboard />
-        </DashboardLayout>
+        <Suspense fallback={<LoadingFallback />}>
+            <DashboardLayout className="overflow-auto">
+                <NotesWelcome
+                    data={appointments || { data: [] }}
+                    description="Welcome back!"
+                />
+                <DoctorAnalytics />
+                <DoctorDashboard />
+            </DashboardLayout>
+        </Suspense>
     );
 };
 

@@ -1,33 +1,31 @@
-import { useState, useEffect } from 'react';
 import PatientListItem from './PatientListItem';
-import { PatientsListSkeleton } from './SkeletonLoader';
+import { PatientsListSkeleton } from '@/components/common/SkeletonLoader';
+import { useSelector } from 'react-redux';
 
 const PatientsList = ({
     patientsdatalist = [],
     activePatient,
     setActivePatient
 }) => {
-    const [loading, setLoading] = useState(true);
+    // Get loading state from Redux
+    const isLoading = useSelector(
+        (state) => state.allConcernedPatients.isLoading
+    );
 
-    useEffect(() => {
-        // Simulate loading state
-        if (patientsdatalist.length > 0) {
-            const timer = setTimeout(() => setLoading(false), 1000);
-            return () => clearTimeout(timer);
-        } else {
-            setLoading(false);
-        }
-    }, [patientsdatalist]);
+    // Create a safe reference to patients array
+    const validPatients = Array.isArray(patientsdatalist)
+        ? patientsdatalist
+        : [];
 
-    if (loading) {
+    if (isLoading) {
         return <PatientsListSkeleton />;
     }
 
     return (
         <>
             <ul className="divide-y divide-lightgray">
-                {patientsdatalist.length > 0 ? (
-                    patientsdatalist.map((patient, index) => (
+                {validPatients.length > 0 ? (
+                    validPatients.map((patient, index) => (
                         <PatientListItem
                             patient={patient}
                             key={index}

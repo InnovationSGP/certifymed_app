@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import ListHeading from '@/components/common/ListHeading';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,11 +12,40 @@ import {
 import { useSelector } from 'react-redux';
 
 const RecentAppointments = ({ type, appointments = [] }) => {
-    // Get loading state from Redux
-    const isLoading = useSelector((state) => state.patientDashboard.isLoading);
+    const [localLoading, setLocalLoading] = useState(true);
+
+    // Get loading state from the appropriate Redux store based on type
+    const reduxLoading = useSelector((state) => {
+        if (type === 'Doctor') {
+            return state.doctorDashboard?.isLoading !== undefined
+                ? state.doctorDashboard.isLoading
+                : true;
+        } else {
+            return state.patientDashboard?.isLoading !== undefined
+                ? state.patientDashboard.isLoading
+                : true;
+        }
+    });
 
     // Create a safe reference to appointments array
     const validAppointments = Array.isArray(appointments) ? appointments : [];
+
+    useEffect(() => {
+        // Set a reasonable timeout to prevent infinite loading
+        const timer = setTimeout(() => {
+            setLocalLoading(false);
+        }, 2000);
+
+        // If we have appointments data, show it faster
+        if (validAppointments.length > 0) {
+            setLocalLoading(false);
+        }
+
+        return () => clearTimeout(timer);
+    }, [validAppointments]);
+
+    // Use either Redux loading state or local loading state (whichever is faster)
+    const isLoading = localLoading && reduxLoading;
 
     return (
         <>
