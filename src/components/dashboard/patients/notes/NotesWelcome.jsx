@@ -3,7 +3,7 @@ import { patientsdatalist } from '@/components/common/Helper';
 import { setPatients } from '@/redux/slices/allPatientsForDoctorSlice';
 import { setDoctorAppointments } from '@/redux/slices/doctorRecentAppointmentsSlice';
 import { selectUser } from '@/redux/slices/userSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NotesWelcome = ({
@@ -13,8 +13,10 @@ const NotesWelcome = ({
     emergencycall,
     buttontext
 }) => {
+    const [nameLoading, setNameLoading] = useState(true);
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
+
     useEffect(() => {
         dispatch(
             setDoctorAppointments({
@@ -26,17 +28,33 @@ const NotesWelcome = ({
         );
 
         dispatch(setPatients(patientsdatalist));
-    }, [dispatch]);
+
+        // Check if user data is loaded
+        if (user && (user.firstName || user.lastName)) {
+            setNameLoading(false);
+        } else {
+            // If no user data yet, wait briefly then fallback to default
+            const timer = setTimeout(() => setNameLoading(false), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [dispatch, user]);
+
     const userFullName = `Dr. ${user?.firstName || ''} ${
         user?.lastName || ''
     }`.trim();
+
     return (
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
                 <div>
-                    <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
-                        Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
-                    </h2>
+                    {nameLoading ? (
+                        // Skeleton for loading doctor name
+                        <div className="h-[51px] w-64 bg-gray-200 rounded mb-2.5 animate-pulse"></div>
+                    ) : (
+                        <h2 className="section-heading leading-[51px] mb-2.5 capitalize">
+                            Hi ,{userFullName ? userFullName : 'Dr. John Doe'}
+                        </h2>
+                    )}
                     {description && (
                         <p className="text-mainblack font-semibold">
                             {description}

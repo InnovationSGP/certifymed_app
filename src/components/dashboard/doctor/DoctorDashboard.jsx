@@ -1,22 +1,38 @@
 'use client';
+import React, { useEffect, useState } from 'react';
 import ListHeading from '@/components/common/ListHeading';
-import PatientsList from '@/components/common/PatientsList';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import RecentAppointments from '../patients/appointments/RecentAppointments';
+import PatientsList from '@/components/common/PatientsList';
+import DashboardSkeleton from '@/components/common/SkeletonLoader';
 
 const DoctorDashboard = () => {
-    // for all recent appointments on doctor dashboard
+    const [loading, setLoading] = useState(true);
+    const [activePatient, setActivePatient] = useState('');
+
+    // Get data from Redux store
     const doctorDashboardData = useSelector(
         (state) => state.doctorDashboard.appointmentsHistory
     );
-    // for sidebox patients data
     const patientsdata = useSelector(
         (state) => state.allConcernedPatients.patients
     );
-    const [activePatient, setActivePatient] = useState(
-        patientsdata[0]?.name || ''
-    );
+
+    useEffect(() => {
+        // Simulate data loading
+        const timer = setTimeout(() => {
+            setLoading(false);
+            if (patientsdata && patientsdata.length > 0) {
+                setActivePatient(patientsdata[0]?.name || '');
+            }
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, [patientsdata]);
+
+    if (loading) {
+        return <DashboardSkeleton />;
+    }
 
     return (
         <>
