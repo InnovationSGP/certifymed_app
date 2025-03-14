@@ -1,10 +1,14 @@
 'use client';
-import { setAppointmentsForPatients } from '@/redux/slices/patientAppointments';
+import {
+    setAppointmentsForPatients,
+    setLoading
+} from '@/redux/slices/patientAppointments';
 import { selectUser } from '@/redux/slices/userSlice';
 import { useTransitionRouteChange } from '@/utils/useTransitionRouteChange';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { WelcomeHeaderSkeleton } from '@/components/common/SkeletonLoader';
 
 const DashboardWelcome = ({
     data = [],
@@ -12,20 +16,42 @@ const DashboardWelcome = ({
     emergencycall,
     buttontext
 }) => {
+    const [nameLoading, setNameLoading] = useState(true);
     const { handleTransition } = useTransitionRouteChange();
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
 
     useEffect(() => {
-        dispatch(
-            setAppointmentsForPatients({
-                appointmentsHistory: data?.data || [],
-                upcomingAppointments: data?.upcoming_appointment_count || 0,
-                completedAppointments: data?.data.length || 0,
-                cancelledAppointments: data?.cancel_appointment_count || 0
-            })
-        );
-    }, [dispatch]);
+        // Set loading state to true while dispatching data
+        dispatch(setLoading(true));
+
+        try {
+            dispatch(
+                setAppointmentsForPatients({
+                    appointmentsHistory: data?.data || [],
+                    upcomingAppointments: data?.upcoming_appointment_count || 0,
+                    completedAppointments: data?.data?.length || 0,
+                    cancelledAppointments: data?.cancel_appointment_count || 0
+                })
+            );
+        } catch (error) {
+            console.error('Error setting appointments data:', error);
+            // Set loading to false even if there's an error
+            dispatch(setLoading(false));
+        }
+
+        // Handle user data loading
+        if (user && (user.firstName || user.lastName)) {
+            setNameLoading(false);
+        } else {
+            const timer = setTimeout(() => setNameLoading(false), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [dispatch, data, user]);
+
+    if (nameLoading) {
+        return <WelcomeHeaderSkeleton />;
+    }
 
     const userFullName = `${user?.firstName || ''} ${
         user?.lastName || ''

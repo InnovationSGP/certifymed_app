@@ -1,37 +1,54 @@
-"use client"
-import AnalyticsCard from "@/components/common/AnalyticsCard";
+'use client';
+import AnalyticsCard from '@/components/common/AnalyticsCard';
+import { AnalyticsCardSkeleton } from '@/components/common/SkeletonLoader';
 import {
-  Prescriptions,
-  TotalAppointments,
-  UpcomingAppointments,
-} from "@/components/common/AppIcons";
-import { useSelector } from "react-redux";
+    Prescriptions,
+    TotalAppointments,
+    UpcomingAppointments
+} from '@/components/common/AppIcons';
+import { useSelector } from 'react-redux';
 
 const DashboardAnalytics = () => {
-  const upcomingAppointments = useSelector((state) => state.patientDashboard.upcomingAppointments)
-  const completedAppointments = useSelector((state) => state.patientDashboard.completedAppointments)
-  const cancelledAppointments = useSelector((state) => state.patientDashboard.cancelledAppointments)
-  return (
-    <>
-      <div className="grid lg:grid-cols-3 gap-3.5 sm:gap-[22px] px-5 md:px-[35px] mt-[26px]">
-        <AnalyticsCard
-          icon={<UpcomingAppointments />}
-          count={upcomingAppointments}
-          description="Upcoming Appointments"
-        />
-        <AnalyticsCard
-          icon={<TotalAppointments />}
-          count={completedAppointments}
-          description="Total Appointments"
-        />
-        <AnalyticsCard
-          icon={<Prescriptions />}
-          count={cancelledAppointments}
-          description="Prescriptions"
-        />
-      </div>
-    </>
-  );
+    // Get data and loading state from Redux
+    const {
+        upcomingAppointments,
+        completedAppointments,
+        cancelledAppointments,
+        isLoading
+    } = useSelector((state) => state.patientDashboard);
+
+    // Show skeleton loaders while data is loading
+    if (isLoading) {
+        return (
+            <div className="grid lg:grid-cols-3 gap-3.5 sm:gap-[22px] px-5 md:px-[35px] mt-[26px]">
+                <AnalyticsCardSkeleton />
+                <AnalyticsCardSkeleton />
+                <AnalyticsCardSkeleton />
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="grid lg:grid-cols-3 gap-3.5 sm:gap-[22px] px-5 md:px-[35px] mt-[26px]">
+                <AnalyticsCard
+                    icon={<UpcomingAppointments />}
+                    count={upcomingAppointments}
+                    description="Upcoming Appointments"
+                />
+                <AnalyticsCard
+                    icon={<TotalAppointments />}
+                    count={completedAppointments}
+                    description="Total Appointments"
+                />
+                <AnalyticsCard
+                    icon={<Prescriptions />}
+                    count={cancelledAppointments}
+                    description="Prescriptions"
+                />
+            </div>
+        </>
+    );
 };
 
 export default DashboardAnalytics;

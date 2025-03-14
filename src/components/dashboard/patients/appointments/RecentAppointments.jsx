@@ -1,30 +1,21 @@
 'use client';
-import { useState, useEffect } from 'react';
 import ListHeading from '@/components/common/ListHeading';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import RecentAppointmentsCard from './RecentAppointmentsCard';
 import RecentAppointmentsListItem from './RecentAppointmentsListItem';
 import {
-    AppointmentsCardSkeleton,
-    AppointmentsTableSkeleton
+    AppointmentsTableSkeleton,
+    AppointmentsCardSkeleton
 } from '@/components/common/SkeletonLoader';
+import { useSelector } from 'react-redux';
 
 const RecentAppointments = ({ type, appointments = [] }) => {
-    const [loading, setLoading] = useState(true);
+    // Get loading state from Redux
+    const isLoading = useSelector((state) => state.patientDashboard.isLoading);
 
-    useEffect(() => {
-        // Simulate loading
-        if (appointments.length > 0) {
-            // If we have appointments data, reduce loading time
-            const timer = setTimeout(() => setLoading(false), 800);
-            return () => clearTimeout(timer);
-        } else {
-            // If no appointments, still show loading for a bit
-            const timer = setTimeout(() => setLoading(false), 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [appointments]);
+    // Create a safe reference to appointments array
+    const validAppointments = Array.isArray(appointments) ? appointments : [];
 
     return (
         <>
@@ -39,7 +30,7 @@ const RecentAppointments = ({ type, appointments = [] }) => {
                         }
                     />
 
-                    {loading ? (
+                    {isLoading ? (
                         <>
                             {/* Skeleton loaders */}
                             <AppointmentsTableSkeleton />
@@ -75,8 +66,8 @@ const RecentAppointments = ({ type, appointments = [] }) => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200">
-                                        {appointments.length > 0 ? (
-                                            appointments.map(
+                                        {validAppointments.length > 0 ? (
+                                            validAppointments.map(
                                                 (appointment, index) => (
                                                     <RecentAppointmentsListItem
                                                         type={type}
@@ -116,8 +107,8 @@ const RecentAppointments = ({ type, appointments = [] }) => {
                                         }
                                     }}
                                 >
-                                    {appointments.length > 0 ? (
-                                        appointments.map(
+                                    {validAppointments.length > 0 ? (
+                                        validAppointments.map(
                                             (appointment, index) => (
                                                 <SwiperSlide key={index}>
                                                     <RecentAppointmentsCard
