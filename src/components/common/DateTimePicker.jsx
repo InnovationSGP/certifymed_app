@@ -1,9 +1,13 @@
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { HorizontalDatePickerArrow } from './Icons';
 
-const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
+const HorizontalDatePicker = ({
+    selectedDate,
+    setSelectedDate,
+    isDayAvailable
+}) => {
     const [startDate, setStartDate] = useState(dayjs().startOf('day'));
     const [dates, setDates] = useState(generateDates(startDate));
     const dateRefs = useRef({});
@@ -11,24 +15,6 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
     function generateDates(start) {
         return Array.from({ length: 7 }, (_, i) => start.add(i, 'day'));
     }
-
-    // Load saved date from sessionStorage on mount
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const savedDate = sessionStorage.getItem('selectedDate');
-            if (savedDate) {
-                const parsedDate = dayjs(savedDate, 'dddd, MMM D, YYYY');
-                setSelectedDate(parsedDate);
-                setStartDate(parsedDate);
-                setDates(generateDates(parsedDate));
-            }
-        }
-    }, []);
-
-    const saveDateToSession = (date) => {
-        const formattedDate = date.format('dddd, MMM D, YYYY');
-        sessionStorage.setItem('selectedDate', formattedDate);
-    };
 
     const handleNext = () => {
         const newStartDate = startDate.add(1, 'day');
@@ -38,13 +24,19 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
 
     const handlePrevious = () => {
         const newStartDate = startDate.subtract(1, 'day');
+        // Don't allow scrolling to dates before today
+        if (newStartDate.isBefore(dayjs().startOf('day'))) {
+            return;
+        }
         setStartDate(newStartDate);
         setDates(generateDates(newStartDate));
     };
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
-        saveDateToSession(date);
+
+        // Since we're now managing the selected date state in the parent component,
+        // we don't need to save it to sessionStorage here
 
         if (dateRefs.current[date.format('YYYY-MM-DD')]) {
             dateRefs.current[date.format('YYYY-MM-DD')].scrollIntoView({
@@ -58,14 +50,29 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
     return (
         <div className="flex items-center md:space-x-4 md:p-4 justify-center">
             {/* Left Arrow */}
-            <button className="p-1 group rotate-180" onClick={handlePrevious}>
-                <HorizontalDatePickerArrow />
+            <button
+                className="p-1 group rotate-180"
+                onClick={handlePrevious}
+                disabled={startDate.isSame(dayjs().startOf('day'))}
+            >
+                <HorizontalDatePickerArrow
+                    className={
+                        startDate.isSame(dayjs().startOf('day'))
+                            ? 'opacity-50'
+                            : ''
+                    }
+                />
             </button>
 
             {/* Date List */}
             <div className="flex md:space-x-4 gap-3 overflow-auto hide-scrollbar">
                 {dates.map((date) => {
-                    const isSelected = date.isSame(selectedDate, 'day');
+                    const isSelected =
+                        selectedDate && date.isSame(selectedDate, 'day');
+                    const isAvailable = isDayAvailable
+                        ? isDayAvailable(date)
+                        : true;
+                    const isPast = date.isBefore(dayjs().startOf('day'));
 
                     return (
                         <motion.button
@@ -74,25 +81,43 @@ const HorizontalDatePicker = ({ selectedDate, setSelectedDate }) => {
                                 (dateRefs.current[date.format('YYYY-MM-DD')] =
                                     el)
                             }
-                            onClick={() => handleDateChange(date)}
+                            onClick={() =>
+                                isAvailable && !isPast && handleDateChange(date)
+                            }
+                            disabled={!isAvailable || isPast}
                             className={`flex flex-col items-center py-4 sm:py-5 px-3 sm:px-4 h-full min-w-16 sm:min-w-20 rounded-[12px] border ${
                                 isSelected
                                     ? 'bg-bluetitmouse text-white border-bluetitmouse'
-                                    : 'bg-white border-gainsboro'
+                                    : isAvailable && !isPast
+                                    ? 'bg-white border-gainsboro'
+                                    : 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-60'
                             } transition`}
                         >
-                            <span className="text-sm font-medium">
+                            <span
+                                className={`text-sm font-medium ${
+                                    (!isAvailable || isPast) && !isSelected
+                                        ? 'text-gray-400'
+                                        : ''
+                                }`}
+                            >
                                 {date.format('ddd')}
                             </span>
                             <span
                                 className={`text-lg md:text-2xl font-bold ${
                                     isSelected
                                         ? 'text-white'
-                                        : 'text-bluetitmouse'
+                                        : isAvailable && !isPast
+                                        ? 'text-bluetitmouse'
+                                        : 'text-gray-400'
                                 }`}
                             >
                                 {date.format('DD')}
                             </span>
+                            {isAvailable && !isPast && !isSelected && (
+                                <span className="text-xs bg-green-100 text-green-700 px-1 rounded mt-1">
+                                    Available
+                                </span>
+                            )}
                         </motion.button>
                     );
                 })}

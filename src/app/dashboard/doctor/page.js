@@ -11,7 +11,6 @@ const DoctorDashboardPage = async () => {
     const cookiesStore = await cookies();
     const token = cookiesStore.get('jwt')?.value;
     const appointments = await getAppointmentsDoctor(token);
-    console.log(appointments);
     return (
         <DashboardLayout className="overflow-auto">
             <NotesWelcome

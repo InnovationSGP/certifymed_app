@@ -48,7 +48,7 @@ export default function ChooseProvider() {
     const debouncedSetCity = useRef(
         debounce((value) => {
             setCity(value);
-        }, 100) // 300ms debounce delay
+        }, 50)
     ).current;
 
     return (
