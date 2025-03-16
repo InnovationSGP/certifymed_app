@@ -29,11 +29,17 @@ export const createAppointment = async (data) => {
 };
 //Get doctor appointments
 export const getAppointmentsDoctor = async (token) => {
-    const reponse = await axios(`${API_BASE_URL}/doctor`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    const data = reponse.data;
-    return data;
+    try {
+
+        const reponse = await axios(`${API_BASE_URL}/doctor`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = reponse.data;
+        return data;
+    } catch (error) {
+        console.log(error);
+
+    }
 };

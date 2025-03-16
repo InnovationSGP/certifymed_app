@@ -70,23 +70,23 @@ export default function BioCardDoctor() {
                     </div>
                 </div>
                 <p className="mt-4">{profileData?.bio || 'doctor bio'}</p>
-                <button
+                {/* <button
                     onClick={() => setIsBioShow(true)}
                     className="flex items-center justify-center rounded-xl bg-[#4864FF29] transition-all duration-200 ease-in-out hover:bg-[#4863ff1c] text-bluetitmouse whitespace-nowrap p-4 px-8 mt-8 text-center"
                 >
                     <p className="flex items-center justify-center gap-4">
                         BIO
                     </p>
-                </button>
+                </button> */}
             </div>
             {/* Overlay with fade-in effect */}
-            <div
+            {/* <div
                 className={`fixed inset-0 bg-gray-600 transition-opacity duration-300 ${
                     isBioShow ? 'opacity-40 visible' : 'opacity-0 invisible'
                 }`}
                 onClick={() => setIsBioShow(false)}
-            />
-            <div
+            /> */}
+            {/* <div
                 className={`${
                     isBioShow ? 'translate-x-0' : 'translate-x-full'
                 } fixed right-0 opacity-100 transition-transform duration-300 transform z-50 overflow-auto  md:max-w-[549px] w-full h-screen top-0  p-4 sm:p-6 bg-white custom-tabs`}
@@ -145,7 +145,7 @@ export default function BioCardDoctor() {
                         </p>
                     </button>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

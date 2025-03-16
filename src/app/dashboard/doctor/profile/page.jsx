@@ -10,11 +10,9 @@ export const metadata = {
 export const dyanmic = 'force-dynamic';
 const ProfilePage = () => {
     return (
-        <>
-            <DashboardLayout className="overflow-auto">
-                <UserProfile />
-            </DashboardLayout>
-        </>
+        <DashboardLayout className="overflow-auto">
+            <UserProfile />
+        </DashboardLayout>
     );
 };
 
