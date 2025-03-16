@@ -1,10 +1,12 @@
 'use client';
 import { patientsdatalist } from '@/components/common/Helper';
+import { useProfileData } from '@/hooks/useProfileData';
 import { setPatients } from '@/redux/slices/allPatientsForDoctorSlice';
 import { setDoctorAppointments } from '@/redux/slices/doctorRecentAppointmentsSlice';
-import { selectUser } from '@/redux/slices/userSlice';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
 const NotesWelcome = ({
     data,
@@ -13,8 +15,17 @@ const NotesWelcome = ({
     emergencycall,
     buttontext
 }) => {
+    const router = useRouter();
     const dispatch = useDispatch();
-    const user = useSelector(selectUser);
+    const { user } = useProfileData();
+
+    function handleRouteChange() {
+        if (!user.isProfileCompleted) {
+            return router.replace('/dashboard/doctor/profile');
+        } else if (!user.isTimeScheduled) {
+            return router.replace('/dashboard/doctor/appointments');
+        }
+    }
     useEffect(() => {
         dispatch(
             setDoctorAppointments({
@@ -26,10 +37,42 @@ const NotesWelcome = ({
         );
 
         dispatch(setPatients(patientsdatalist));
-    }, [dispatch]);
+
+        if (
+            user &&
+            (user?.isProfileCompleted === false ||
+                user?.isTimeScheduled === false)
+        ) {
+            const hasShownProfileToast = sessionStorage.getItem(
+                'profile_toast_shown'
+            );
+
+            if (!hasShownProfileToast) {
+                toast.custom(
+                    <div className="flex items-center gap-x-2 p-2.5 shadow-xl rounded-xl bg-white">
+                        <span>
+                            Please complete your profile and schedule timing to
+                            get appointments.
+                        </span>
+                        <button
+                            onClick={handleRouteChange}
+                            className="bg-primary text-white py-1 px-2 rounded text-sm"
+                        >
+                            Complete Now
+                        </button>
+                    </div>,
+                    {
+                        duration: 2000
+                    }
+                );
+                sessionStorage.setItem('profile_toast_shown', 'true');
+            }
+        }
+    }, [dispatch, user]);
     const userFullName = `Dr. ${user?.firstName || ''} ${
         user?.lastName || ''
     }`.trim();
+
     return (
         <>
             <div className="flex items-center flex-wrap justify-between mt-[29px] md:mt-16 gap-[29px] px-[35px]">
