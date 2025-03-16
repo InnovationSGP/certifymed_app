@@ -71,9 +71,9 @@ export const getWeekDays = (date) => {
  * @returns {Array<{time: number, label: string}>}
  */
 export const generateTimeSlots = () => {
-  return Array.from({ length: 13 }, (_, i) => ({
-    time: i + 9,
-    label: `${(i + 9) % 12 || 12}:00${i + 9 >= 12 ? "pm" : "am"}`,
+  return Array.from({ length: 17 }, (_, i) => ({
+    time: i + 8,
+    label: `${(i + 8) % 12 || 12}:00${i + 8 >= 12 ? "pm" : "am"}`,
   }));
 };
 

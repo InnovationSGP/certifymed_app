@@ -247,7 +247,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                     )}
                                 </div>
                             </div>
-                            <button
+                            {/* <button
                                 type="button"
                                 onClick={() => {
                                     setShowPreferred(!showPreferred);
@@ -264,7 +264,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                     </label>
                                     <Input placeholder="Enter your name" />
                                 </div>
-                            )}
+                            )} */}
                         </div>
                         <div>
                             <p className="text-lg font-poppins md:text-xl text-secondary my-3 sm:my-4">
@@ -393,7 +393,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                         )}
                                     </div>
                                 </div>
-                                <button
+                                {/* <button
                                     type="button"
                                     onClick={() => {
                                         setShowGenderPronouns(
@@ -412,7 +412,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                         </label>
                                         <Input placeholder="Enter Gender Identity / Prederred Pronouns" />
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
                         <div>
@@ -456,7 +456,7 @@ export default function CompleteBooking({ tabNumber, setTabNumber }) {
                                         </div>
                                         <div className="w-full">
                                             <label className="text-base font-medium font-poppins text-dimGray">
-                                                Apartment, etc
+                                                Apartment
                                             </label>
                                             <Input
                                                 name="apartment"
