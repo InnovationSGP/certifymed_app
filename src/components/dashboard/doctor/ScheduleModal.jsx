@@ -6,7 +6,8 @@ import { Clock, Plus, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
-const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
+const ScheduleModal = ({ selectedDate, onClose, onSave, data }) => {
+    console.log(data);
     const [scheduleTitle, setScheduleTitle] = useState('');
     const [isClosing, setIsClosing] = useState(false);
     const [isEntering, setIsEntering] = useState(true);
@@ -132,7 +133,60 @@ const ScheduleModal = ({ selectedDate, onClose, onSave }) => {
             };
         });
     };
+    const fullDayToAbbrev = {
+        Sunday: 'Sun',
+        Monday: 'Mon',
+        Tuesday: 'Tue',
+        Wednesday: 'Wed',
+        Thursday: 'Thu',
+        Friday: 'Fri',
+        Saturday: 'Sat'
+    };
 
+    const timeToMinutes = (time) => {
+        const [timePart, modifier] = time.split(/(am|pm)/);
+        let [hours, minutes] = timePart.split(':').map(Number);
+        if (modifier === 'pm' && hours !== 12) hours += 12;
+        if (modifier === 'am' && hours === 12) hours = 0;
+        return hours * 60 + (minutes || 0);
+    };
+
+    // Process data on load/update
+    useEffect(() => {
+        if (data?.length > 0) {
+            const processedData = data.reduce((acc, appointment) => {
+                const abbrevDay = fullDayToAbbrev[appointment.day];
+                if (!abbrevDay) return acc;
+
+                const slots = appointment.slots.map((slot) => ({
+                    id: slot._id || Date.now(),
+                    start: slot.startTime,
+                    end: slot.endTime
+                }));
+
+                if (!acc[abbrevDay]) acc[abbrevDay] = [];
+                acc[abbrevDay].push(...slots);
+                return acc;
+            }, {});
+
+            Object.keys(processedData).forEach((day) => {
+                processedData[day].sort(
+                    (a, b) => timeToMinutes(a.start) - timeToMinutes(b.start)
+                );
+            });
+
+            setAvailability((prev) => ({
+                ...prev,
+                ...Object.keys(processedData).reduce((acc, day) => {
+                    acc[day] = {
+                        isBooked: true,
+                        slots: processedData[day]
+                    };
+                    return acc;
+                }, {})
+            }));
+        }
+    }, [data]);
     const removeTimeSlot = (day, slotId) => {
         setAvailability((prev) => {
             const updatedSlots = prev[day].slots.filter(

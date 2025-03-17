@@ -8,7 +8,7 @@ import CalendarModal from './CalenderModal';
 import MiniCalendar from './MiniCalendar';
 import ScheduleModal from './ScheduleModal';
 
-const AppointmentSystem = ({ data = [] }) => {
+const AppointmentSystem = ({ data = [], scheduleTimings = [] }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -81,7 +81,7 @@ const AppointmentSystem = ({ data = [] }) => {
         const newDate = new Date(
             currentDate.getUTCFullYear(),
             currentDate.getUTCMonth(),
-            day 
+            day
         );
         setSelectedDate(newDate);
         setCurrentDate(newDate);
@@ -137,6 +137,7 @@ const AppointmentSystem = ({ data = [] }) => {
             {/* Schedule Modal */}
             {showScheduleModal && (
                 <ScheduleModal
+                    data={scheduleTimings}
                     selectedDate={selectedDate}
                     onClose={() => setShowScheduleModal(false)}
                     onSave={handleSaveAppointment}

@@ -1,75 +1,44 @@
 'use client';
+import { TabDownArrowIcon } from '@/components/common/AppIcons';
+import { Badge } from '@/components/common/badge';
+import { Card } from '@/components/common/Card';
+import PrimaryBtn from '@/components/common/PrimaryBtn';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { TabDownArrowIcon } from './AppIcons';
-import { Badge } from './badge';
-import { Card } from './Card';
-import PrimaryBtn from './PrimaryBtn';
+import React, { useEffect, useState } from 'react';
 
-export default function AppointmentTypes({
-    selectedIdType,
-    setSelectedIdType
-}) {
-    const [selectedId, setSelectedId] = useState(selectedIdType);
-    const searchParams = useSearchParams();
-
+const SelectDoctor = () => {
+    const [doctorsData, setDoctorsData] = useState();
+    const [selectedId, setSelectedId] = useState();
     const router = useRouter();
-    const doctors = useSelector((state) => state.patientsDoctor.data);
+    const searchParams = useSearchParams();
     const handleToggle = (id) => {
         setSelectedId(selectedId === id ? null : id);
     };
     const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', 'payment'.toString());
 
-    function handleAppointment(disease) {
+    function handleAppointment(data) {
         if (typeof window !== 'undefined') {
-            const modifiedData = {
-                doctors: doctors[disease],
-                diseaseName: disease
-            };
-            if (doctors[disease].length === 1) {
-                newParams.set('tab', 'payment'.toString());
-                sessionStorage.setItem(
-                    'appointmentData',
-                    JSON.stringify(doctors[disease][0])
-                );
-                return router.push(`?${newParams.toString()}`, {
-                    scroll: false
-                });
-            } else {
-                newParams.set('tab', 'select-doctor'.toString());
-                sessionStorage.setItem(
-                    'selectedDoctors',
-                    JSON.stringify(modifiedData)
-                );
-                return router.push(`?${newParams.toString()}`, {
-                    scroll: false
-                });
-            }
+            sessionStorage.setItem('appointmentData', JSON.stringify(data));
+            router.push(`?${newParams.toString()}`, { scroll: false });
         }
     }
+    useEffect(() => {
+        if (typeof window !== undefined) {
+            const data = sessionStorage.getItem('selectedDoctors');
+            setDoctorsData(JSON.parse(data));
+        }
+    }, []);
+
     return (
         <div className="bg-white pr-2 w-full sm:w-11/12 mx-auto shadow-tab py-3 rounded-[12px]">
             <div className="h-[calc(100vh-255px)] sm:h-[calc(100vh-268px)] xl:h-[calc(100vh-238px)] p-3 sm:px-6 sm:py-3 overflow-auto custom-tabs">
-                <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2">
-                    How do you want to be seen?
+                <h1 className="text-lg sm:text-xl font-poppins font-semibold text-secondary mb-2 capitalize">
+                    Select Doctor for {doctorsData?.diseaseName}
                 </h1>
 
-                <div className="flex items-center gap-2 mb-6 text-sm">
-                    <button
-                        onClick={() => setSelectedIdType(null)}
-                        className="text-base text-bluetitmouse hover:underline font-poppins"
-                    >
-                        Appointment
-                    </button>
-                    <span className="text-secondary">/</span>
-                    <span className="text-base capitalize text-secondary font-poppins">
-                        {selectedIdType}
-                    </span>
-                </div>
-
-                <div className="space-y-4">
-                    {Object.keys(doctors).map((appointment, index) => (
+                <div className="space-y-4 mt-4">
+                    {doctorsData?.doctors?.map((appointment, index) => (
                         <Card
                             key={index}
                             className="p-3 transition-colors cursor-pointer sm:p-4 hover:bg-gray-50"
@@ -79,7 +48,8 @@ export default function AppointmentTypes({
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between gap-2 sm:gap-0 sm:mb-2">
                                         <h3 className="text-base font-medium text-gray-900 capitalize">
-                                            {appointment}
+                                            {appointment.firstName +
+                                                appointment.lastName}
                                         </h3>
                                         <div className="flex items-center gap-1 sm:gap-2">
                                             <Badge
@@ -109,13 +79,7 @@ export default function AppointmentTypes({
                                         }`}
                                     >
                                         <p className="!text-sm sm:!text-base paragraph leading-[120%] mb-4 capitalize">
-                                            Doctor specializing in {appointment}
-                                            , verify credentials, experience,
-                                            and patient reviews. Ensure they are
-                                            board-certified, accessible, and
-                                            communicate effectively for proper
-                                            diagnosis and treatment. Prioritize
-                                            expertise and trust.
+                                            {appointment.email}
                                         </p>
                                         <PrimaryBtn
                                             className="h-[52px] md:h-[60px]"
@@ -123,7 +87,7 @@ export default function AppointmentTypes({
                                                 handleAppointment(appointment)
                                             }
                                         >
-                                            Select Doctor
+                                            View Availability
                                         </PrimaryBtn>
                                     </div>
                                 </div>
@@ -134,4 +98,6 @@ export default function AppointmentTypes({
             </div>
         </div>
     );
-}
+};
+
+export default SelectDoctor;

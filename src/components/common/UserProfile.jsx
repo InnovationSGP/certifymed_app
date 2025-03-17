@@ -6,7 +6,7 @@ import PrimaryBtn from '@/components/common/PrimaryBtn';
 import { useProfileData } from '@/hooks/useProfileData';
 import { useProfileForm } from '@/hooks/useProfileForm';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from './Input';
 import {
     Select,
@@ -15,9 +15,13 @@ import {
     SelectTrigger,
     SelectValue
 } from './select';
+import UserImageProfile from './UserImage';
+import axiosInstance from '@/utils/axios';
 
 const UserProfile = () => {
     const pathname = usePathname();
+    const [imageFile, setimageFile] = useState(null);
+    const [diseases, setDiseases] = useState([]);
     const isDoctor = pathname.includes('/doctor/profile');
     const {
         formData,
@@ -30,17 +34,44 @@ const UserProfile = () => {
 
     const { isLoading, saveProfile, user } = useProfileData();
 
+    function handleImageChange(file) {
+        setimageFile(file);
+    }
     const handleSave = async () => {
+        const multiPartFormData = new FormData();
+        if (imageFile) {
+            multiPartFormData.append('imageFile', imageFile);
+        }
         const success = await saveProfile(formData);
         if (success) {
             setIsEditing(false);
         }
     };
+
+    async function getDiseases() {
+        const response = await axiosInstance.get('/api/diseases');
+        if (response.status === 200) {
+            const diseaseSelectArray = response.data.map((item) => {
+                return {
+                    value: item,
+                    label: item
+                };
+            });
+            setDiseases(diseaseSelectArray);
+        }
+    }
+
     useEffect(() => {
         if (user) {
             resetForm(user);
         }
     }, [user]);
+
+    useEffect(() => {
+        if (isDoctor) {
+            getDiseases();
+        }
+    }, [isDoctor]);
 
     if (isLoading) {
         return <div className="p-6 lg:p-10">Loading...</div>;
@@ -54,6 +85,9 @@ const UserProfile = () => {
                 </h1>
 
                 <div className="pb-14 lg:pb-6">
+                    <div className="">
+                        <UserImageProfile onChange={handleImageChange} />
+                    </div>
                     <div className="grid md:grid-cols-2 gap-6 sm:mt-8">
                         {/* First Name */}
                         <div>
@@ -70,7 +104,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Last Name */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -86,7 +119,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Email */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -99,7 +131,6 @@ const UserProfile = () => {
                                 disabled={true}
                             />
                         </div>
-
                         {/* Phone Number */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -112,7 +143,6 @@ const UserProfile = () => {
                                 onChange={updatePhoneData}
                             />
                         </div>
-
                         {/* Gender */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -130,7 +160,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Date of Birth */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -144,9 +173,24 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Speciality (for doctors) */}
                         {isDoctor && (
+                            <div>
+                                <label className="block text-[15px] font-medium text-gray-700">
+                                    Speciality
+                                </label>
+                                <CustomSelect
+                                    options={diseases}
+                                    value={formData.specialization}
+                                    disabled={!isEditing}
+                                    onChange={(value) =>
+                                        updateFormField('specialization', value)
+                                    }
+                                />
+                            </div>
+                        )}
+                        {/* Speciality (for doctors) */}
+                        {/* {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">
                                     Speciality
@@ -164,17 +208,35 @@ const UserProfile = () => {
                                     }
                                 />
                             </div>
+                        )} */}
+                        {isDoctor && (
+                            <div>
+                                <label className="block text-[15px] font-medium text-gray-700">
+                                    Experience
+                                </label>
+                                <input
+                                    type="text"
+                                    className="mt-1 input-style disabled:opacity-70 p-2"
+                                    value={formData.experience}
+                                    disabled={!isEditing}
+                                    onChange={(e) =>
+                                        updateFormField(
+                                            'experience',
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </div>
                         )}
-
                         {/* Bio (for doctors) */}
                         {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">
                                     Bio
                                 </label>
-                                <input
+                                <textarea
                                     type="text"
-                                    className="mt-1 input-style disabled:opacity-70"
+                                    className="mt-1 input-style disabled:opacity-70 px-2 py-3"
                                     value={formData.bio}
                                     disabled={!isEditing}
                                     onChange={(e) =>
