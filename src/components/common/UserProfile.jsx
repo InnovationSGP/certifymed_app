@@ -16,10 +16,12 @@ import {
     SelectValue
 } from './select';
 import UserImageProfile from './UserImage';
+import axiosInstance from '@/utils/axios';
 
 const UserProfile = () => {
     const pathname = usePathname();
     const [imageFile, setimageFile] = useState(null);
+    const [diseases, setDiseases] = useState([]);
     const isDoctor = pathname.includes('/doctor/profile');
     const {
         formData,
@@ -45,11 +47,31 @@ const UserProfile = () => {
             setIsEditing(false);
         }
     };
+
+    async function getDiseases() {
+        const response = await axiosInstance.get('/api/diseases');
+        if (response.status === 200) {
+            const diseaseSelectArray = response.data.map((item) => {
+                return {
+                    value: item,
+                    label: item
+                };
+            });
+            setDiseases(diseaseSelectArray);
+        }
+    }
+
     useEffect(() => {
         if (user) {
             resetForm(user);
         }
     }, [user]);
+
+    useEffect(() => {
+        if (isDoctor) {
+            getDiseases();
+        }
+    }, [isDoctor]);
 
     if (isLoading) {
         return <div className="p-6 lg:p-10">Loading...</div>;
@@ -82,7 +104,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Last Name */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -98,7 +119,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Email */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -111,7 +131,6 @@ const UserProfile = () => {
                                 disabled={true}
                             />
                         </div>
-
                         {/* Phone Number */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -124,7 +143,6 @@ const UserProfile = () => {
                                 onChange={updatePhoneData}
                             />
                         </div>
-
                         {/* Gender */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -142,7 +160,6 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Date of Birth */}
                         <div>
                             <label className="block text-[15px] font-medium text-gray-700">
@@ -156,9 +173,24 @@ const UserProfile = () => {
                                 }
                             />
                         </div>
-
                         {/* Speciality (for doctors) */}
                         {isDoctor && (
+                            <div>
+                                <label className="block text-[15px] font-medium text-gray-700">
+                                    Speciality
+                                </label>
+                                <CustomSelect
+                                    options={diseases}
+                                    value={formData.specialization}
+                                    disabled={!isEditing}
+                                    onChange={(value) =>
+                                        updateFormField('specialization', value)
+                                    }
+                                />
+                            </div>
+                        )}
+                        {/* Speciality (for doctors) */}
+                        {/* {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">
                                     Speciality
@@ -176,8 +208,7 @@ const UserProfile = () => {
                                     }
                                 />
                             </div>
-                        )}
-
+                        )} */}
                         {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">
@@ -198,7 +229,6 @@ const UserProfile = () => {
                             </div>
                         )}
                         {/* Bio (for doctors) */}
-
                         {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">

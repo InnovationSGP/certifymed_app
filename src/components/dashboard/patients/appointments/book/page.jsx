@@ -8,6 +8,7 @@ import CompleteBooking from '@/components/dashboard/patients/appointments/book/B
 import { useRouter, useSearchParams } from 'next/navigation';
 import BioCardDoctor from './BookComponents/BioCardDoctor';
 import PayOutOfPocket from './BookComponents/PayOutOfPocketComponent';
+import SelectDoctor from './BookComponents/SelectDoctor';
 
 const FindProvider = () => {
     const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ const FindProvider = () => {
     const validTabs = [
         'provider',
         'appointment',
+        'select-doctor',
         'payment',
         'payout',
         'datetime',
@@ -80,6 +82,7 @@ const FindProvider = () => {
                             setTabNumber={handleStepClick}
                         />
                     )}
+                    {currentTab === 'select-doctor' && <SelectDoctor />}
                     {currentTab === 'doctor-profile' && <BioCardDoctor />}
                 </div>
             </div>

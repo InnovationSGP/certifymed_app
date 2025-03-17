@@ -9,6 +9,7 @@ import { selectUser } from '@/redux/slices/userSlice';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { WelcomeHeaderSkeleton } from '@/components/common/SkeletonLoader';
+import { useRouter } from 'next/navigation';
 
 const NotesWelcome = ({
     data,
@@ -18,6 +19,7 @@ const NotesWelcome = ({
     buttontext
 }) => {
     const [nameLoading, setNameLoading] = useState(true);
+    const router = useRouter();
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
 
