@@ -5,6 +5,7 @@ import PhoneNumberInput from '@/components/common/PhoneNumberInput';
 import PrimaryBtn from '@/components/common/PrimaryBtn';
 import { useProfileData } from '@/hooks/useProfileData';
 import { useProfileForm } from '@/hooks/useProfileForm';
+import axiosInstance from '@/utils/axios';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Input } from './Input';
@@ -16,7 +17,6 @@ import {
     SelectValue
 } from './select';
 import UserImageProfile from './UserImage';
-import axiosInstance from '@/utils/axios';
 
 const UserProfile = () => {
     const pathname = usePathname();
@@ -97,7 +97,7 @@ const UserProfile = () => {
                             <input
                                 type="text"
                                 className="mt-1 input-style disabled:opacity-70"
-                                value={formData.firstName}
+                                value={formData.firstName || ''}
                                 disabled={!isEditing}
                                 onChange={(e) =>
                                     updateFormField('firstName', e.target.value)
@@ -112,7 +112,7 @@ const UserProfile = () => {
                             <input
                                 type="text"
                                 className="mt-1 input-style disabled:opacity-70"
-                                value={formData.lastName}
+                                value={formData.lastName || ''}
                                 disabled={!isEditing}
                                 onChange={(e) =>
                                     updateFormField('lastName', e.target.value)
@@ -127,7 +127,7 @@ const UserProfile = () => {
                             <input
                                 type="email"
                                 className="mt-1 input-style opacity-70 cursor-not-allowed"
-                                value={formData.email}
+                                value={formData.email || ''}
                                 disabled={true}
                             />
                         </div>
@@ -137,8 +137,8 @@ const UserProfile = () => {
                                 Phone Number
                             </label>
                             <PhoneNumberInput
-                                value={formData.phoneNumber}
-                                defaultCountryCode={formData.countryCode}
+                                value={formData.phoneNumber || ''}
+                                defaultCountryCode={formData.countryCode || ''}
                                 disabled={!isEditing}
                                 onChange={updatePhoneData}
                             />
@@ -153,7 +153,7 @@ const UserProfile = () => {
                                     { value: 'Male', label: 'Male' },
                                     { value: 'Female', label: 'Female' }
                                 ]}
-                                value={formData.gender}
+                                value={formData.gender || ''}
                                 disabled={!isEditing}
                                 onChange={(value) =>
                                     updateFormField('gender', value)
@@ -166,7 +166,7 @@ const UserProfile = () => {
                                 Date of Birth
                             </label>
                             <CustomDatePicker
-                                value={formData.dateOfBirth}
+                                value={formData.dateOfBirth || ''}
                                 disabled={!isEditing}
                                 onChange={(date) =>
                                     updateFormField('dateOfBirth', date)
@@ -181,7 +181,7 @@ const UserProfile = () => {
                                 </label>
                                 <CustomSelect
                                     options={diseases}
-                                    value={formData.specialization}
+                                    value={formData.specialization || ''}
                                     disabled={!isEditing}
                                     onChange={(value) =>
                                         updateFormField('specialization', value)
@@ -189,26 +189,6 @@ const UserProfile = () => {
                                 />
                             </div>
                         )}
-                        {/* Speciality (for doctors) */}
-                        {/* {isDoctor && (
-                            <div>
-                                <label className="block text-[15px] font-medium text-gray-700">
-                                    Speciality
-                                </label>
-                                <input
-                                    type="text"
-                                    className="mt-1 input-style disabled:opacity-70"
-                                    value={formData.specialization}
-                                    disabled={!isEditing}
-                                    onChange={(e) =>
-                                        updateFormField(
-                                            'specialization',
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                            </div>
-                        )} */}
                         {isDoctor && (
                             <div>
                                 <label className="block text-[15px] font-medium text-gray-700">
@@ -217,7 +197,7 @@ const UserProfile = () => {
                                 <input
                                     type="text"
                                     className="mt-1 input-style disabled:opacity-70 p-2"
-                                    value={formData.experience}
+                                    value={formData.experience || ''}
                                     disabled={!isEditing}
                                     onChange={(e) =>
                                         updateFormField(
@@ -237,7 +217,7 @@ const UserProfile = () => {
                                 <textarea
                                     type="text"
                                     className="mt-1 input-style disabled:opacity-70 px-2 py-3"
-                                    value={formData.bio}
+                                    value={formData.bio || ''}
                                     disabled={!isEditing}
                                     onChange={(e) =>
                                         updateFormField('bio', e.target.value)
@@ -257,7 +237,7 @@ const UserProfile = () => {
                                         <label>Address</label>
                                         <Input
                                             name="address"
-                                            value={formData.address}
+                                            value={formData.address || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -273,7 +253,7 @@ const UserProfile = () => {
                                         <label>Apartment</label>
                                         <Input
                                             name="apartment"
-                                            value={formData.apartment}
+                                            value={formData.apartment || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -291,7 +271,7 @@ const UserProfile = () => {
                                         <label>Postal Code</label>
                                         <Input
                                             name="zipcode"
-                                            value={formData.zipcode}
+                                            value={formData.zipcode || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -307,7 +287,7 @@ const UserProfile = () => {
                                         <label>City</label>
                                         <Input
                                             name="City"
-                                            value={formData.city}
+                                            value={formData.city || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -325,7 +305,7 @@ const UserProfile = () => {
                                         <label>State</label>
                                         <Input
                                             name="state"
-                                            value={formData.state}
+                                            value={formData.state || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -341,7 +321,7 @@ const UserProfile = () => {
                                         <label>Country / Region</label>
                                         <Input
                                             name="countryName"
-                                            value={formData.countryName}
+                                            value={formData.countryName || ''}
                                             disabled={!isEditing}
                                             onChange={(e) =>
                                                 updateFormField(
@@ -370,7 +350,9 @@ const UserProfile = () => {
                                             <label>Phone Number</label>
                                             <Input
                                                 name="phoneNumber"
-                                                value={formData.phoneNumber}
+                                                value={
+                                                    formData.phoneNumber || ''
+                                                }
                                                 disabled={!isEditing}
                                                 placeholder="1234567890"
                                                 onChange={(e) =>
@@ -389,7 +371,8 @@ const UserProfile = () => {
                                             <Input
                                                 name="emergencyContactName"
                                                 value={
-                                                    formData.emergencyContactName
+                                                    formData.emergencyContactName ||
+                                                    ''
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(e) =>
@@ -412,7 +395,8 @@ const UserProfile = () => {
                                                 name="emergencyContactPhoneNumber"
                                                 disabled={!isEditing}
                                                 value={
-                                                    formData.emergencyContactPhoneNumber
+                                                    formData.emergencyContactPhoneNumber ||
+                                                    ''
                                                 }
                                                 onChange={(e) =>
                                                     updateFormField(
@@ -430,7 +414,8 @@ const UserProfile = () => {
                                             </p>
                                             <Select
                                                 value={
-                                                    formData.emergencyContactRelationship
+                                                    formData.emergencyContactRelationship ||
+                                                    ''
                                                 }
                                                 onValueChange={(value) =>
                                                     updateFormField(
@@ -484,7 +469,7 @@ const UserProfile = () => {
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                                     onClick={() => {
                                         setIsEditing(false);
-                                        resetForm();
+                                        resetForm(user);
                                     }}
                                 >
                                     Cancel
