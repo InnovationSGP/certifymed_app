@@ -47,6 +47,6 @@ export const getAppointmentsDoctor = async (token) => {
         const data = reponse.data;
         return data;
     } catch (error) {
-        console.log(error);
+        console.log(JSON.stringify(error));
     }
 };
