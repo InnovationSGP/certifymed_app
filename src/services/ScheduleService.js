@@ -41,14 +41,17 @@ export const deleteSchedule = async (id) => {
     }
 };
 export const getAllDoctorTiming = async (token) => {
+    console.log("getAllDoctorTiming token");
     try {
+        console.log("getAllDoctorTiming token");
         const reponse = await axios.get(`${API_BASE_URL}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+        console.log("debug 888:", reponse.data);
         return reponse.data;
     } catch (error) {
-        console.log(error);
+        console.log("debug 555: ",JSON.stringify(error));
     }
 };

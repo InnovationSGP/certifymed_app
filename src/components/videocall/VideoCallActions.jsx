@@ -5,13 +5,42 @@ import {
   VideoMessage,
 } from "../common/AppIcons";
 
-const VideoCallActions = ({ isShowMessageSlide, setShowMessageSlide }) => {
+const VideoCallActions = ({ isShowMessageSlide, setShowMessageSlide, isAudioMuted, setIsAudioMuted, client, isVideoMuted, setIsVideoMuted, setJoin}) => {
+
+  const onMicrophoneClick = async () => {
+    const mediaStream = client.current.getMediaStream();
+    isAudioMuted ? await mediaStream?.unmuteAudio() : await mediaStream?.muteAudio();
+    console.log("isAudioMuted: ", client.current.getCurrentUserInfo().muted);
+    setIsAudioMuted(client.current.getCurrentUserInfo().muted);
+  };
+
+  const onVideoClick = async () => {
+    
+    if(isVideoMuted){
+      console.log("in if")
+      const mediaStream = client.current.getMediaStream();
+      await mediaStream?.startVideo();
+      setIsVideoMuted(!mediaStream.isCapturingVideo());
+    } else {
+      console.log("in else")
+      const mediaStream = client.current.getMediaStream();
+      await mediaStream?.stopVideo();
+      setIsVideoMuted(!mediaStream.isCapturingVideo());
+    }
+  };
+
+  const leaveSession = async () => {
+    console.log("leaving session")
+    await client.current.leave();
+    setJoin(false);
+  }
+
   return (
     <>
-      <button className="w-[60px] h-[60px] bg-brilliantblue rounded-full grid place-content-center">
-        <MikeIcon />
+      <button onClick={onMicrophoneClick} className="w-[60px] h-[60px] bg-brilliantblue rounded-full grid place-content-center">
+        <MikeIcon isAudioMuted={isAudioMuted} />
       </button>
-      <button className="w-[60px] h-[60px] bg-brilliantblue rounded-full grid place-content-center">
+      <button onClick={onVideoClick} className="w-[60px] h-[60px] bg-brilliantblue rounded-full grid place-content-center">
         <VideoCallingIcon />
       </button>
       <button
@@ -22,7 +51,7 @@ const VideoCallActions = ({ isShowMessageSlide, setShowMessageSlide }) => {
       >
         <VideoMessage isShowMessageSlide={isShowMessageSlide} />
       </button>
-      <button className="w-[60px] sm:w-auto h-[60px] bg-lightred font-medium text-white font-poppins sm:px-10 rounded-full flex items-center justify-center">
+      <button onClick={leaveSession} className="w-[60px] sm:w-auto h-[60px] bg-lightred font-medium text-white font-poppins sm:px-10 rounded-full flex items-center justify-center">
         <span className="hidden sm:block">End Call</span>
         <span className="sm:hidden m-auto">
           <CallIcon />

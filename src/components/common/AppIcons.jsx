@@ -507,7 +507,7 @@ export const UserImage = () => {
         </>
     );
 };
-export const MikeIcon = () => {
+export const MikeIcon = ({ isAudioMuted }) => {
     return (
         <>
             <svg
@@ -519,43 +519,55 @@ export const MikeIcon = () => {
             >
                 <path
                     d="M18 23.25C21.315 23.25 24 20.565 24 17.25V9C24 5.685 21.315 3 18 3C14.685 3 12 5.685 12 9V17.25C12 20.565 14.685 23.25 18 23.25Z"
-                    stroke="white"
+                    stroke={isAudioMuted ? "#ccc" : "white"}
                     strokeWidth="1.66129"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
                     d="M6.52539 14.4766V17.0266C6.52539 23.3566 11.6704 28.5016 18.0004 28.5016C24.3304 28.5016 29.4754 23.3566 29.4754 17.0266V14.4766"
-                    stroke="white"
+                    stroke={isAudioMuted ? "#ccc" : "white"}
                     strokeWidth="1.66129"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
                     d="M15.915 9.64469C17.265 9.14969 18.735 9.14969 20.085 9.64469"
-                    stroke="white"
+                    stroke={isAudioMuted ? "#ccc" : "white"}
                     strokeWidth="1.66129"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
                     d="M16.7998 12.8255C17.5948 12.6155 18.4198 12.6155 19.2148 12.8255"
-                    stroke="white"
+                    stroke={isAudioMuted ? "#ccc" : "white"}
                     strokeWidth="1.66129"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <path
                     d="M18.001 28.5V33"
-                    stroke="white"
+                    stroke={isAudioMuted ? "#ccc" : "white"}
                     strokeWidth="1.66129"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
+                {isAudioMuted && (
+                    <line
+                        x1="8"
+                        y1="8"
+                        x2="28"
+                        y2="28"
+                        stroke="#FF0000"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                    />
+                )}
             </svg>
         </>
     );
 };
+
 export const VideoCallingIcon = () => {
     return (
         <>

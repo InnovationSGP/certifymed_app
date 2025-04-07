@@ -3,15 +3,17 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/api/appointments';
 export const getAppointments = async (token) => {
+    console.log("debug 898: ", token);
     try {
         const response = await axios(`${API_BASE_URL}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+        console.log("debug 999:", response.data);
         return response.data;
     } catch (error) {
-        console.log(error);
+        console.log("debug 666: ",error.message);
     }
 };
 
@@ -45,8 +47,9 @@ export const getAppointmentsDoctor = async (token) => {
             }
         });
         const data = reponse.data;
+        console.log("debug 999:", data);
         return data;
     } catch (error) {
-        console.log(error);
+        console.log("debug 888: ", JSON.stringify(error));
     }
 };

@@ -9,7 +9,8 @@ const routes = {
         '/sign-up/doctor',
         '/reset-password',
         '/reset-password/authentication-code',
-        '/'
+        '/',
+        '/video-call/test'
     ],
     patientRoutes: ['/dashboard/patients'], // Only accessible by CUSTOMER
     doctorRoutes: ['/dashboard/doctor'] // Only accessible by CARE_COORDINATOR

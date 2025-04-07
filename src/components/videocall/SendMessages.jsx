@@ -4,42 +4,66 @@ import { XIcon } from "lucide-react";
 import { useState } from "react";
 import MessageListItem from "./MessageListItem";
 import VideoMessageInput from "./VideoMessageInput";
+import { useEffect } from "react";
 
-const SendMessages = ({ setShowMessageSlide, isShowMessageSlide }) => {
-  const [messages, setMessages] = useState([
-    {
-      sender: "Dr. Anita Joseph",
-      text: "Hey, I’ll text you the name of the drug here",
-      time: "11:01 AM",
-    },
-    {
-      sender: "Me",
-      text: "Okay, thanks",
-      time: "11:02 AM",
-    },
-    {
-      sender: "Dr. Anita Joseph",
-      text: "The name is tetracyline",
-      time: "11:05 AM",
-    },
-  ]);
 
+const SendMessages = ({ setShowMessageSlide, isShowMessageSlide, client }) => {
+
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const chatClient = useRef<any>(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const currentTime = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
+
+  useEffect(() => {
+    console.log()
+    const initializeMessage = async () => {
+      chatClient.current = client.current.getChatClient();
+      client.current.on("chat-on-message", (payload) => {
+        console.log("message payload: ", payload)
+        if(payload.sender.userId !== client.current.getCurrentUserInfo().userId) {
+          handleIncomingMessage(payload);
+        }
       });
+    }
+    initializeMessage();
+    return () => {
+      client.current.off("chat-on-message", (payload) => {
+        if(payload.sender.userId !== client.current.getCurrentUserInfo().userId) {
+          handleIncomingMessage(payload);
+        }
+      });
+    };
+  }, []);
 
-      setMessages([
-        ...messages,
-        { sender: "Me", text: newMessage, time: currentTime },
+  const handleIncomingMessage = (payload) => {    
+    let sender = payload.sender.name;
+    let text = payload.message;
+    if (text) {
+      setMessages((prev) => [
+        ...prev,
+        { sender, text }
       ]);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (newMessage.trim() === "") return;
+    
+    try {
+      console.log("Attempting to send message:", newMessage);
+      
+      await client.current.sendToAll(newMessage);
+      setMessages((prev) => [...prev, { sender: "You", text: newMessage }]);
+      setNewMessage("");
+      console.log("Message sent successfully");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Add message to local state anyway to improve UX
+      setMessages((prev) => [...prev, { sender: "You (not sent)", text: newMessage }]);
       setNewMessage("");
     }
   };
+  
   return (
     <>
       <div
@@ -68,7 +92,7 @@ const SendMessages = ({ setShowMessageSlide, isShowMessageSlide }) => {
           </div>
           {/* SEND MESSAGE  */}
           <VideoMessageInput
-            handleSendMessage={handleSendMessage}
+            handleSendMessage={sendMessage}
             setNewMessage={setNewMessage}
             newMessage={newMessage}
           />
