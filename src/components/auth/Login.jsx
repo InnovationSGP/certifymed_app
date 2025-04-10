@@ -75,7 +75,7 @@ const Login = () => {
     setIsLoggingIn(true);
 
     try {
-      const response = await axiosInstance.post("/auth/api/users", {
+      const response = await axiosInstance.post("/user/auth/api/users", {
         email: formData.email,
         password: formData.password,
       });
@@ -128,7 +128,7 @@ const Login = () => {
         ] = `Bearer ${authData.access_token}`;
 
         try {
-          const userResponse = await axiosInstance.get("/auth/api/users/user");
+          const userResponse = await axiosInstance.get("/user/auth/api/users/user");
           const userData = userResponse.data;
 
           if (userData && userData.roleType) {
@@ -182,7 +182,7 @@ const Login = () => {
 
     try {
       const registerResponse = await axiosInstance.post(
-        "/auth/api/users/register",
+        "/user/auth/api/users/register",
         {
           ...pendingGoogleData,
           roleType: selectedRole,

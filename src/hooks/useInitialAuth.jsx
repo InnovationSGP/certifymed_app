@@ -38,7 +38,7 @@ const useInitialAuth = () => {
                 'Authorization'
             ] = `Bearer ${token}`;
 
-            const response = await axiosInstance.get('/auth/api/users/user');
+            const response = await axiosInstance.get('/user/auth/api/users/user');
 
             if (response.data) {
                 const userData = response.data;

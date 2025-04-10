@@ -164,8 +164,8 @@ export const logout = async () => {
 
     // Backend logout calls
     const logoutPromises = [
-      axiosInstance.post("/auth/api/users/logout"),
-      axiosInstance.get("/auth/logout"),
+      axiosInstance.post("/user/auth/api/users/logout"),
+      axiosInstance.get("/user/auth/logout"),
     ];
     await Promise.allSettled(logoutPromises);
 
