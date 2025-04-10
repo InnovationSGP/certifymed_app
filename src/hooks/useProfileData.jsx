@@ -52,7 +52,7 @@ export function useProfileData() {
     const fetchProfile = async () => {
         try {
             setIsLoading(true);
-            const response = await axiosInstance.get('/user/auth/api/users/user');
+            const response = await axiosInstance.get('/user/auth/users/user');
 
             if (response.data) {
                 const profileData = response.data;
@@ -105,7 +105,7 @@ export function useProfileData() {
                 dataToSend.specialization = formData.specialization;
             }
             const response = await axiosInstance.put(
-                `/user/auth/api/users/${userId}`,
+                `/user/auth/users/${userId}`,
                 dataToSend
             );
 
@@ -170,7 +170,7 @@ export function useProfileData() {
                 dataToSend.specialization = formData.specialization;
             }
             const response = await axiosInstance.put(
-                `/user/auth/api/users/${userId}`,
+                `/user/auth/users/${userId}`,
                 dataToSend
             );
 
